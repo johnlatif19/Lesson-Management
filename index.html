@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>إدارة الدروس</title>
+  <style>
+    body {
+      font-family: Arial;
+      direction: rtl;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    input, select, button {
+      padding: 8px;
+      margin: 5px;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    .box {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>تسجيل طالب</h2>
+
+  <input type="text" id="name" placeholder="اسم الطالب" required>
+  <input type="text" id="class" placeholder="الفصل">
+
+  <select id="paymentType">
+    <option value="full">دفع كامل</option>
+    <option value="partial">دفع جزء</option>
+  </select>
+
+  <input type="number" id="amount" placeholder="المبلغ">
+
+  <select id="method">
+    <option value="cash">نقدي</option>
+    <option value="transfer">تحويل</option>
+  </select>
+
+  <br>
+
+  <button onclick="addStudent()">إضافة</button>
+  <button onclick="printPage()">طباعة</button>
+
+  <div class="top">
+    <h3>عدد الطلاب: <span id="count">0</span></h3>
+    <h3>الإجمالي: <span id="total">0</span> جنيه</h3>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>الاسم</th>
+        <th>الفصل</th>
+        <th>نوع الدفع</th>
+        <th>المبلغ</th>
+        <th>الطريقة</th>
+        <th>حذف</th>
+      </tr>
+    </thead>
+    <tbody id="table"></tbody>
+  </table>
+</div>
+
+<script>
+  let students = JSON.parse(localStorage.getItem("students")) || [];
+
+  function render() {
+    const table = document.getElementById("table");
+    table.innerHTML = "";
+
+    let total = 0;
+
+    students.forEach((s, index) => {
+      total += s.amount;
+
+      table.innerHTML += `
+        <tr>
+          <td>${s.name}</td>
+          <td>${s.class}</td>
+          <td>${s.paymentType}</td>
+          <td>${s.amount}</td>
+          <td>${s.method}</td>
+          <td><button onclick="deleteStudent(${index})">❌</button></td>
+        </tr>
+      `;
+    });
+
+    document.getElementById("count").innerText = students.length;
+    document.getElementById("total").innerText = total;
+
+    localStorage.setItem("students", JSON.stringify(students));
+  }
+
+  function addStudent() {
+    const name = document.getElementById("name").value;
+    const className = document.getElementById("class").value;
+    const paymentType = document.getElementById("paymentType").value;
+    const amount = Number(document.getElementById("amount").value);
+    const method = document.getElementById("method").value;
+
+    if (!name || !amount) return alert("اكمل البيانات");
+
+    students.push({
+      name,
+      class: className,
+      paymentType,
+      amount,
+      method
+    });
+
+    document.getElementById("name").value = "";
+    document.getElementById("class").value = "";
+    document.getElementById("amount").value = "";
+
+    render();
+  }
+
+  function deleteStudent(index) {
+    students.splice(index, 1);
+    render();
+  }
+
+  function printPage() {
+    window.print();
+  }
+
+  render();
+</script>
+
+</body>
+</html>
