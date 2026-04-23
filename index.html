@@ -464,7 +464,7 @@
 <div class="master-container">
   <div class="hero-section">
     <h1>📘 منصة إدارة الدروس – الصف الثاني الثانوي</h1>
-    <p>للأستاذ / المُعلم المتميز | متابعة الطلاب، المدفوعات، والتقارير الاحترافية</p>
+    <p>للأستاذ / المُعلم المتميز | متابعة الطلاب</p>
   </div>
 
   <div class="card-inner">
@@ -474,7 +474,7 @@
         <input type="text" id="teacherName" placeholder="مثال: أ. محمد صلاح" autocomplete="off">
       </div>
       <div class="teacher-field">
-        <label>📸 صورة المعلم (اختياري)</label>
+        <label>📸 صورة المعلم</label>
         <input type="file" id="teacherImage" accept="image/*">
       </div>
     </div>
@@ -483,7 +483,7 @@
       <div class="form-title">➕ تسجيل طالب جديد</div>
       <div class="input-flex">
         <div class="input-group"><label>👤 الاسم الكامل</label><input type="text" id="name" placeholder="أحمد محمود"></div>
-        <div class="input-group"><label>📚 الفصل / الشعبة</label><input type="text" id="class" placeholder="2/ علمي"></div>
+        <div class="input-group"><label>📚 الفصل</label><input type="text" id="class" placeholder="2/ علمي"></div>
         <div class="input-group"><label>💳 نوع الدفع</label><select id="paymentType"><option value="كامل">✅ دفع كامل</option><option value="جزء">🔄 دفع جزء</option></select></div>
         <div class="input-group"><label>💰 المبلغ (ج.م)</label><input type="number" id="amount" placeholder="450"></div>
         <div class="input-group"><label>💵 طريقة الدفع</label><select id="method"><option value="نقدي">💰 نقدي</option><option value="تحويل">🏦 تحويل بنكي</option></select></div>
@@ -571,7 +571,7 @@
       row.insertCell(1).textContent = student.class || "-";
       row.insertCell(2).textContent = student.paymentType === "كامل" ? "دفع كامل" : "دفع جزء";
       row.insertCell(3).textContent = student.amount;
-      row.insertCell(4).textContent = student.method === "نقدي" ? "نقدي" : "تحويل بنكي";
+      row.insertCell(4).textContent = student.method === "نقدي" ? "نقدي" : "تحويل محفظة";
       
       const actionCell = row.insertCell(5);
       actionCell.className = "no-print";
@@ -669,7 +669,7 @@
         <div><label style="font-weight:600;">الفصل</label><input id="editClass" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.class)}"></div>
         <div><label style="font-weight:600;">نوع الدفع</label><select id="editPayment" style="width:100%; padding:12px; border-radius:1rem;"><option value="كامل" ${student.paymentType === "كامل" ? "selected" : ""}>دفع كامل</option><option value="جزء" ${student.paymentType === "جزء" ? "selected" : ""}>دفع جزء</option></select></div>
         <div><label style="font-weight:600;">المبلغ (ج.م)</label><input id="editAmount" type="number" style="width:100%; padding:12px; border-radius:1rem;" value="${student.amount}"></div>
-        <div><label style="font-weight:600;">طريقة الدفع</label><select id="editMethod" style="width:100%; padding:12px; border-radius:1rem;"><option value="نقدي" ${student.method === "نقدي" ? "selected" : ""}>نقدي</option><option value="تحويل" ${student.method === "تحويل" ? "selected" : ""}>تحويل بنكي</option></select></div>
+        <div><label style="font-weight:600;">طريقة الدفع</label><select id="editMethod" style="width:100%; padding:12px; border-radius:1rem;"><option value="نقدي" ${student.method === "نقدي" ? "selected" : ""}>نقدي</option><option value="تحويل" ${student.method === "تحويل" ? "selected" : ""}>تحويل محفظة</option></select></div>
         <div style="display:flex; gap:12px; margin-top:12px;"><button id="saveEdit" style="background:#1e3c72; border:none; padding:10px 22px; border-radius:2rem; color:white; font-weight:bold;">💾 حفظ التعديل</button><button id="cancelEdit" style="background:#e2e8f0; border:none; padding:10px 22px; border-radius:2rem;">إلغاء</button></div>
       </div>
     `;
@@ -742,7 +742,7 @@
           <td>${s.class || "-"}</td>
           <td>${s.paymentType === "كامل" ? "دفع كامل" : "دفع جزء"}</td>
           <td>${s.amount} ج.م</td>
-          <td>${s.method === "نقدي" ? "نقدي" : "تحويل بنكي"}</td>
+          <td>${s.method === "نقدي" ? "نقدي" : "تحويل محفظة"}</td>
         </tr>
       `;
     });
@@ -762,13 +762,13 @@
         </div>
         
         <div class="pdf-teacher-info">
-          <div><strong>👨‍🏫 المعلم/ة:</strong> ${teacher}</div>
+          <div><strong>👨‍🏫 المعلم:</strong> ${teacher}</div>
           <div><strong>📅 التاريخ:</strong> ${currentDate}</div>
         </div>
         
         <div class="pdf-stats">
           <strong>📊 إحصائيات التقرير:</strong><br>
-          عدد الطلاب: ${students.length} طالب/طالبة | إجمالي المدفوعات: ${totalMoney} جنيه مصري
+          عدد الطلاب: ${students.length} طالب | إجمالي المدفوعات: ${totalMoney} جنيه مصري
         </div>
         
         <table style="width: 100%; border-collapse: collapse;">
