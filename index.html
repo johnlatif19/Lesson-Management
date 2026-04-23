@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>نظام إدارة الدروس</title>
+<title>نظام إدارة الدروس | معلم الصف الثاني الثانوي</title>
 
 <!-- jsPDF and autoTable libraries for PDF generation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -24,7 +24,6 @@
     min-height: 100vh;
   }
 
-  /* حاوية أنيقة وحديثة */
   .master-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -35,7 +34,6 @@
     transition: all 0.2s;
   }
 
-  /* رأس مخصص للمعلم */
   .hero-section {
     background: linear-gradient(105deg, #1e3c72 0%, #2a5298 100%);
     padding: 1.6rem 2rem;
@@ -64,12 +62,10 @@
     font-weight: 400;
   }
 
-  /* محتوى البطاقة */
   .card-inner {
     padding: 2rem;
   }
 
-  /* صف المعلم والتحميل */
   .teacher-panel {
     background: #f8fafd;
     border-radius: 1.5rem;
@@ -113,12 +109,6 @@
     outline: none;
   }
 
-  .teacher-field input[type="file"] {
-    font-size: 0.8rem;
-    color: #2c5282;
-  }
-
-  /* نموذج إضافة أنيق */
   .form-elegant {
     background: #ffffff;
     border-radius: 1.5rem;
@@ -175,7 +165,6 @@
     box-shadow: 0 0 0 3px rgba(246, 184, 62, 0.2);
   }
 
-  /* أزرار أنيقة */
   .btn {
     border: none;
     padding: 10px 20px;
@@ -231,7 +220,6 @@
     align-items: center;
   }
 
-  /* إحصائيات حديثة */
   .stats-modern {
     display: flex;
     gap: 1.2rem;
@@ -267,7 +255,6 @@
     line-height: 1.2;
   }
 
-  /* الجدول العصري */
   .table-wrapper {
     overflow-x: auto;
     border-radius: 1.2rem;
@@ -337,40 +324,71 @@
     background: #ffd6d1;
   }
 
-.master-container {
-  page-break-inside: avoid;
-}
-
-tr {
-  page-break-inside: avoid;
-}
-    body {
-      background: white;
-      padding: 0.2in;
-    }
-    .hero-section, .teacher-panel, .form-elegant, .stats-modern, .action-bar, .action-btns, .icon-btn, .btn, .no-print {
+  /* قواعد الطباعة المحسنة */
+  @media print {
+    /* إخفاء العناصر غير المرغوب فيها */
+    .no-print,
+    .action-bar,
+    .form-elegant,
+    .teacher-panel,
+    .stats-modern,
+    .hero-section .no-print,
+    .action-btns,
+    .icon-btn,
+    .btn,
+    th:last-child,
+    td:last-child {
       display: none !important;
     }
+    
+    /* إظهار المحتوى الأساسي */
+    body {
+      background: white;
+      padding: 0;
+      margin: 0;
+    }
+    
     .master-container {
       box-shadow: none;
       background: white;
-    }
-    .card-inner {
+      margin: 0;
       padding: 0;
     }
+    
+    .card-inner {
+      padding: 0.5cm;
+    }
+    
+    .hero-section {
+      background: #1e3c72;
+      color: white;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
     .table-wrapper {
-      border: none;
+      border: 1px solid #ddd;
+      overflow: visible;
     }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
     th, td {
-      border: 1px solid #aaa;
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: center;
     }
-    /* إخفاء عمود الإجراءات بالكامل أثناء الطباعة */
-    td:last-child, th:last-child {
-      display: none;
+    
+    th {
+      background: #f0f0f0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
   }
 
-  /* توافق الجوال */
   @media (max-width: 700px) {
     body {
       padding: 1rem;
@@ -388,12 +406,11 @@ tr {
 
 <div class="master-container">
   <div class="hero-section">
-    <h1>منصة إدارة الدروس</h1>
-    <p>للأستاذ / المُعلم المتميز | متابعة الطلاب</p>
+    <h1>📘 منصة إدارة الدروس – الصف الثاني الثانوي</h1>
+    <p>للأستاذ / المُعلم المتميز | متابعة الطلاب، المدفوعات، والتقارير الاحترافية</p>
   </div>
 
   <div class="card-inner">
-    <!-- لوحة بيانات المعلم مع الصورة -->
     <div class="teacher-panel no-print">
       <div class="teacher-field">
         <label>👨‍🏫 اسم المدرس</label>
@@ -405,7 +422,6 @@ tr {
       </div>
     </div>
 
-    <!-- نموذج إضافة الطالب بتصميم جذاب -->
     <div class="form-elegant no-print">
       <div class="form-title">➕ تسجيل طالب جديد</div>
       <div class="input-flex">
@@ -418,7 +434,6 @@ tr {
       </div>
     </div>
 
-    <!-- أزرار الإجراءات وإحصائيات -->
     <div class="action-bar no-print">
       <button class="btn btn-secondary" onclick="printPage()">🖨️ طباعة القائمة (بيانات فقط)</button>
       <button class="btn btn-outline" onclick="downloadPDF()">📄 تحميل PDF تقرير كامل</button>
@@ -429,8 +444,8 @@ tr {
       <div class="stat-card"><span>💰 إجمالي المدفوعات</span><div class="stat-number" id="total">0</div><span style="font-size:0.7rem;">جنيه</span></div>
     </div>
 
-    <!-- الجدول الرئيسي -->
-    <div class="table-wrapper">
+    <!-- منطقة الطباعة الرئيسية -->
+    <div class="table-wrapper" id="printArea">
       <table id="studentsTable">
         <thead>
           <tr>
@@ -445,29 +460,20 @@ tr {
 </div>
 
 <script>
-  // ---- لا بيانات تجريبية ----
   let students = [];
   let teacherName = localStorage.getItem("teacherName") || "";
   let teacherImageBase64 = localStorage.getItem("teacherImage") || "";
 
-  // ربط اسم المعلم
   const teacherNameInput = document.getElementById("teacherName");
   const teacherImageInput = document.getElementById("teacherImage");
 
   if(teacherNameInput) teacherNameInput.value = teacherName;
-  
-  // تحميل صورة المعلم إن وجدت
-  if(teacherImageBase64) {
-    // فقط للتخزين، لن نعرضها في الواجهة لأنها في localStorage
-  }
 
-  // حفظ اسم المعلم فور كتابته
   teacherNameInput?.addEventListener("input", function(e) {
     teacherName = e.target.value;
     localStorage.setItem("teacherName", teacherName);
   });
 
-  // معالجة صورة المعلم وتخزينها base64
   teacherImageInput?.addEventListener("change", function(e) {
     const file = e.target.files[0];
     if(file) {
@@ -480,13 +486,12 @@ tr {
     }
   });
 
-  // تحميل بيانات الطلاب من localStorage (بدون بيانات تجريبية إطلاقاً)
   function loadStudentsData() {
     const stored = localStorage.getItem("students_management");
     if(stored) {
       students = JSON.parse(stored);
     } else {
-      students = [];  // مصفوفة فارغة تمامًا بدون عينات
+      students = [];
     }
   }
   
@@ -494,7 +499,6 @@ tr {
     localStorage.setItem("students_management", JSON.stringify(students));
   }
 
-  // عرض الجدول وعملية التجميع
   function renderTable() {
     const tbody = document.getElementById("tableBody");
     if(!tbody) return;
@@ -506,11 +510,10 @@ tr {
       const row = tbody.insertRow();
       row.insertCell(0).textContent = student.name || "-";
       row.insertCell(1).textContent = student.class || "-";
-      row.insertCell(2).textContent = student.paymentType === "كامل" ? "✅ دفع كامل" : "🔄 دفع جزء";
+      row.insertCell(2).textContent = student.paymentType === "كامل" ? "دفع كامل" : "دفع جزء";
       row.insertCell(3).textContent = student.amount;
-      row.insertCell(4).textContent = student.method === "نقدي" ? "💰 نقدي" : "🏦 تحويل بنكي";
+      row.insertCell(4).textContent = student.method === "نقدي" ? "نقدي" : "تحويل بنكي";
       
-      // خلية الإجراءات (تعديل وحذف)
       const actionCell = row.insertCell(5);
       actionCell.className = "no-print";
       const divActions = document.createElement("div");
@@ -542,7 +545,6 @@ tr {
     saveStudentsToLocal();
   }
 
-  // إضافة طالب جديد
   function addStudent() {
     const name = document.getElementById("name").value.trim();
     const className = document.getElementById("class").value.trim();
@@ -567,23 +569,18 @@ tr {
       method: method
     });
     
-    // مسح الحقول
     document.getElementById("name").value = "";
     document.getElementById("class").value = "";
     document.getElementById("amount").value = "";
-    document.getElementById("paymentType").value = "كامل";
-    document.getElementById("method").value = "نقدي";
     
     renderTable();
     showFloatingMessage("✅ تم إضافة الطالب بنجاح", "#1e3c72");
   }
   
-  // نافذة تعديل أنيقة وعصرية
   function openEditModal(index) {
     const student = students[index];
     if(!student) return;
     
-    // إنشاء مودال
     const modalOverlay = document.createElement("div");
     modalOverlay.style.position = "fixed";
     modalOverlay.style.top = "0";
@@ -596,7 +593,6 @@ tr {
     modalOverlay.style.alignItems = "center";
     modalOverlay.style.justifyContent = "center";
     modalOverlay.style.zIndex = "2000";
-    modalOverlay.style.fontFamily = "inherit";
     
     const modalCard = document.createElement("div");
     modalCard.style.backgroundColor = "white";
@@ -612,9 +608,9 @@ tr {
       <div style="display:flex; flex-direction:column; gap:1rem;">
         <div><label style="font-weight:600;">الاسم الكامل</label><input id="editName" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.name)}"></div>
         <div><label style="font-weight:600;">الفصل</label><input id="editClass" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.class)}"></div>
-        <div><label style="font-weight:600;">نوع الدفع</label><select id="editPayment" style="width:100%; padding:12px; border-radius:1rem;"><option value="كامل" ${student.paymentType === "كامل" ? "selected" : ""}>✅ دفع كامل</option><option value="جزء" ${student.paymentType === "جزء" ? "selected" : ""}>🔄 دفع جزء</option></select></div>
+        <div><label style="font-weight:600;">نوع الدفع</label><select id="editPayment" style="width:100%; padding:12px; border-radius:1rem;"><option value="كامل" ${student.paymentType === "كامل" ? "selected" : ""}>دفع كامل</option><option value="جزء" ${student.paymentType === "جزء" ? "selected" : ""}>دفع جزء</option></select></div>
         <div><label style="font-weight:600;">المبلغ (ج.م)</label><input id="editAmount" type="number" style="width:100%; padding:12px; border-radius:1rem;" value="${student.amount}"></div>
-        <div><label style="font-weight:600;">طريقة الدفع</label><select id="editMethod" style="width:100%; padding:12px; border-radius:1rem;"><option value="نقدي" ${student.method === "نقدي" ? "selected" : ""}>💰 نقدي</option><option value="تحويل" ${student.method === "تحويل" ? "selected" : ""}>🏦 تحويل بنكي</option></select></div>
+        <div><label style="font-weight:600;">طريقة الدفع</label><select id="editMethod" style="width:100%; padding:12px; border-radius:1rem;"><option value="نقدي" ${student.method === "نقدي" ? "selected" : ""}>نقدي</option><option value="تحويل" ${student.method === "تحويل" ? "selected" : ""}>تحويل بنكي</option></select></div>
         <div style="display:flex; gap:12px; margin-top:12px;"><button id="saveEdit" style="background:#1e3c72; border:none; padding:10px 22px; border-radius:2rem; color:white; font-weight:bold;">💾 حفظ التعديل</button><button id="cancelEdit" style="background:#e2e8f0; border:none; padding:10px 22px; border-radius:2rem;">إلغاء</button></div>
       </div>
     `;
@@ -653,52 +649,103 @@ tr {
     modalOverlay.onclick = (e) => { if(e.target === modalOverlay) closeModal(); };
   }
   
-  // حذف الطالب
-  function deleteStudent(index) {
-    if(confirm("هل أنت متأكد من الحذف؟")) {
-      students.splice(index, 1);
-      renderTable();
-    }
-  }
-  
-  // دالة الطباعة: تخفي الأزرار والمدخلات بشكل تام (تم بالـ media print ولكن أيضاً نضيف class)
+  // دالة الطباعة المحسنة
   function printPage() {
+    // التحقق من وجود بيانات
+    if(students.length === 0) {
+      alert("⚠️ لا يوجد طلاب لعرضهم في الطباعة!");
+      return;
+    }
     window.print();
   }
   
-  // إنشاء ملف PDF مع بيانات المعلم والطلاب
-function downloadPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  let total = students.reduce((sum,s)=>sum+s.amount,0);
-
-  doc.setFontSize(14);
-  doc.text("Students Report", 10, 15);
-
-  doc.text("Teacher: " + (teacherNameInput.value || ""), 10, 25);
-
-  const rows = students.map(s => [
-    s.name,
-    s.class,
-    s.paymentType,
-    s.amount,
-    s.method
-  ]);
-
-  doc.autoTable({
-    startY: 35,
-    head: [["Name","Class","Payment","Amount","Method"]],
-    body: rows
-  });
-
-  doc.text("Total Students: " + students.length, 10, doc.lastAutoTable.finalY + 10);
-  doc.text("Total Money: " + total, 10, doc.lastAutoTable.finalY + 20);
-
-  doc.save("report.pdf");
-}
+  // دالة PDF المحسنة لدعم اللغة العربية
+  async function downloadPDF() {
+    if(students.length === 0) {
+      alert("⚠️ لا يوجد طلاب لإنشاء التقرير!");
+      return;
+    }
+    
+    const { jsPDF } = window.jspdf;
+    
+    // إنشاء PDF بحجم A4
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+    
+    const teacher = teacherNameInput?.value || "غير محدد";
+    const totalMoney = students.reduce((sum, s) => sum + s.amount, 0);
+    const currentDate = new Date().toLocaleDateString('ar-EG');
+    
+    // إضافة عنوان التقرير (استخدام النص العادي مع دعم RTL)
+    doc.setFont("helvetica");
+    doc.setFontSize(18);
+    doc.text("تقرير إدارة الدروس", 105, 20, { align: "center" });
+    
+    doc.setFontSize(12);
+    doc.text(`المعلم/ة: ${teacher}`, 15, 35);
+    doc.text(`تاريخ التقرير: ${currentDate}`, 15, 42);
+    doc.text(`عدد الطلاب: ${students.length} طالب/طالبة`, 15, 49);
+    doc.text(`إجمالي المدفوعات: ${totalMoney} جنيه مصري`, 15, 56);
+    
+    // إضافة صورة المعلم إن وجدت
+    if(teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
+      try {
+        doc.addImage(teacherImageBase64, "JPEG", 155, 30, 40, 40);
+      } catch(e) {
+        console.warn("لا يمكن إضافة الصورة");
+      }
+    }
+    
+    // إعداد بيانات الجدول
+    const tableData = students.map(s => [
+      s.name || "-",
+      s.class || "-",
+      s.paymentType === "كامل" ? "دفع كامل" : "دفع جزء",
+      `${s.amount} ج.م`,
+      s.method === "نقدي" ? "نقدي" : "تحويل بنكي"
+    ]);
+    
+    // إنشاء الجدول مع دعم اللغة العربية عن طريق تعيين خيارات محددة
+    doc.autoTable({
+      startY: 65,
+      head: [["الاسم", "الفصل", "نوع الدفع", "المبلغ", "طريقة الدفع"]],
+      body: tableData,
+      theme: "grid",
+      headStyles: { 
+        fillColor: [30, 60, 114], 
+        textColor: 255, 
+        halign: "center",
+        fontStyle: "bold"
+      },
+      styles: { 
+        font: "helvetica",
+        fontSize: 10,
+        cellPadding: 3,
+        halign: "center",
+        valign: "middle"
+      },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 30 },
+        3: { cellWidth: 30 },
+        4: { cellWidth: 30 }
+      },
+      margin: { right: 15, left: 15 },
+      didDrawPage: function(data) {
+        // إضافة تذييل في كل صفحة
+        doc.setFontSize(8);
+        doc.text("© نظام إدارة الدروس - الصف الثاني الثانوي", 105, 285, { align: "center" });
+      }
+    });
+    
+    // حفظ الملف
+    doc.save(`تقرير_الطلاب_${currentDate.replace(/\//g, '-')}.pdf`);
+  }
   
-  // رسالة عائمة جميلة
   function showFloatingMessage(msg, bgColor) {
     let toast = document.createElement("div");
     toast.innerText = msg;
@@ -712,11 +759,13 @@ function downloadPDF() {
     toast.style.borderRadius = "40px";
     toast.style.fontWeight = "bold";
     toast.style.zIndex = "2100";
-    toast.style.fontFamily = "inherit";
     toast.style.boxShadow = "0 8px 18px rgba(0,0,0,0.2)";
     toast.style.direction = "rtl";
     document.body.appendChild(toast);
-    setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 400); }, 2000);
+    setTimeout(() => { 
+      toast.style.opacity = "0"; 
+      setTimeout(() => toast.remove(), 400); 
+    }, 2000);
   }
   
   function escapeHtml(str) {
@@ -729,14 +778,10 @@ function downloadPDF() {
     });
   }
   
-  // ربط دوال عامة
   window.addStudent = addStudent;
   window.printPage = printPage;
   window.downloadPDF = downloadPDF;
-  window.deleteStudent = deleteStudent;
-  window.openEditModal = openEditModal;
   
-  // تحميل البيانات وبدء التشغيل بدون أي بيانات تجريبية
   loadStudentsData();
   renderTable();
 </script>
