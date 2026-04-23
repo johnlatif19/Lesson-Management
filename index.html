@@ -2,152 +2,718 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>إدارة الدروس</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>نظام إدارة الدروس</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial;
+      background: linear-gradient(145deg, #e9f0f5 0%, #d9e2ec 100%);
+      font-family: 'Segoe UI', 'Tajawal', 'Cairo', 'Roboto', system-ui, -apple-system, sans-serif;
+      padding: 2rem 1.5rem;
+      min-height: 100vh;
       direction: rtl;
-      padding: 20px;
-      background: #f5f5f5;
     }
-    input, select, button {
-      padding: 8px;
-      margin: 5px;
+
+    /* حاوية رئيسية أنيقة */
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(0px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.2s;
     }
-    table {
-      width: 100%;
-      margin-top: 20px;
-      border-collapse: collapse;
-      background: white;
+
+    /* رأس جذاب */
+    .hero {
+      background: linear-gradient(135deg, #1e3c72, #2b4c7c);
+      padding: 1.8rem 2rem;
+      color: white;
+      border-bottom: 4px solid #ffb74d;
     }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
+
+    .hero h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .box {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
+
+    .hero h1::before {
+      content: "📚";
+      font-size: 2rem;
+      filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
     }
-    .top {
+
+    .hero p {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-top: 8px;
+      font-weight: 400;
+    }
+
+    /* محتوى داخلي */
+    .card-content {
+      padding: 2rem;
+    }
+
+    /* نموذج الإضافة بتصميم عصري */
+    .form-grid {
+      background: #ffffff;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      transition: 0.2s;
+    }
+
+    .form-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #1e3c72;
+      margin-bottom: 1.2rem;
+      border-right: 5px solid #ffb74d;
+      padding-right: 1rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+
+    .field {
+      flex: 1 1 180px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #2c3e66;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .field input, .field select {
+      padding: 12px 14px;
+      border-radius: 1rem;
+      border: 1.5px solid #e2e8f0;
+      background: #fefefe;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: 0.2s;
+      outline: none;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: #ffb74d;
+      box-shadow: 0 0 0 3px rgba(255, 183, 77, 0.2);
+    }
+
+    button {
+      background: #1e3c72;
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 1.5rem;
+      font-weight: 600;
+      font-family: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    button:hover {
+      background: #2b4c7c;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background: #ffb74d;
+      color: #2d3748;
+    }
+
+    .btn-secondary:hover {
+      background: #ffa01e;
+      color: #1e2a3a;
+    }
+
+    /* إحصائيات علوية */
+    .stats {
       display: flex;
       justify-content: space-between;
-      margin-top: 10px;
+      background: #f8fafc;
+      padding: 1rem 1.8rem;
+      border-radius: 1.5rem;
+      margin-bottom: 1.8rem;
+      flex-wrap: wrap;
+      gap: 20px;
+      border: 1px solid #eef2f6;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 1.2rem;
+      padding: 0.8rem 1.8rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      text-align: center;
+      flex: 1;
+      min-width: 130px;
+    }
+
+    .stat-card span:first-child {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #577a9e;
+      display: block;
+    }
+
+    .stat-card .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #1e3c72;
+      line-height: 1.2;
+    }
+
+    /* جدول أنيق ومتجاوب */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 1.2rem;
+      background: white;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #1e293b;
+      padding: 1rem 0.8rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    td {
+      padding: 1rem 0.7rem;
+      border-bottom: 1px solid #edf2f7;
+      color: #1e2a3e;
+      vertical-align: middle;
+    }
+
+    tr:hover {
+      background: #fef9f0;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .edit-btn, .delete-btn {
+      background: none;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 2rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: none;
+    }
+
+    .edit-btn {
+      background: #eef2ff;
+      color: #2563eb;
+    }
+
+    .edit-btn:hover {
+      background: #dbeafe;
+      transform: scale(1.02);
+    }
+
+    .delete-btn {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .delete-btn:hover {
+      background: #fecaca;
+    }
+
+    /* تحسين الطباعة: إخفاء الأزرار والنماذج وعناصر التحكم */
+    @media print {
+      body {
+        background: white;
+        padding: 0.2in;
+        margin: 0;
+      }
+      .hero, .form-grid, .stats, .btn-secondary, .action-buttons button, .edit-btn, .delete-btn, button, .top-buttons, .no-print {
+        display: none !important;
+      }
+      .dashboard {
+        box-shadow: none;
+        background: white;
+        margin: 0;
+        padding: 0;
+      }
+      .card-content {
+        padding: 0;
+      }
+      .table-wrapper {
+        box-shadow: none;
+        overflow-x: visible;
+      }
+      table {
+        border: 1px solid #ccc;
+        width: 100%;
+      }
+      th, td {
+        border: 1px solid #aaa;
+        padding: 8px;
+      }
+      th {
+        background: #f1f1f1 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .action-buttons {
+        display: none;
+      }
+      td:last-child, th:last-child {
+        display: none;
+      }
+    }
+
+    /* زر الطباعة + responsiveness */
+    .action-top {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1.2rem;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        padding: 1rem;
+      }
+      .card-content {
+        padding: 1rem;
+      }
+      .field {
+        flex: 1 1 100%;
+      }
+      .stat-card .stat-number {
+        font-size: 1.5rem;
+      }
+      th, td {
+        font-size: 0.8rem;
+        padding: 0.7rem 0.3rem;
+      }
     }
   </style>
 </head>
-
 <body>
-
-<div class="box">
-  <h2>تسجيل طالب</h2>
-
-  <input type="text" id="name" placeholder="اسم الطالب" required>
-  <input type="text" id="class" placeholder="الفصل">
-
-  <select id="paymentType">
-    <option value="full">دفع كامل</option>
-    <option value="partial">دفع جزء</option>
-  </select>
-
-  <input type="number" id="amount" placeholder="المبلغ">
-
-  <select id="method">
-    <option value="cash">نقدي</option>
-    <option value="transfer">تحويل</option>
-  </select>
-
-  <br>
-
-  <button onclick="addStudent()">إضافة</button>
-  <button onclick="printPage()">طباعة</button>
-
-  <div class="top">
-    <h3>عدد الطلاب: <span id="count">0</span></h3>
-    <h3>الإجمالي: <span id="total">0</span> جنيه</h3>
+<div class="dashboard">
+  <div class="hero">
+    <h1>دفتر إدارة الدروس</h1>
+    <p>سجل الطلاب</p>
   </div>
+  <div class="card-content">
+    <!-- نموذج الإضافة أنيق -->
+    <div class="form-grid no-print">
+      <div class="form-title">➕ تسجيل طالب جديد</div>
+      <div class="input-group">
+        <div class="field">
+          <label>👤 اسم الطالب</label>
+          <input type="text" id="name" placeholder="مثال: أحمد يوسف" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>📚 الفصل / الشعبة</label>
+          <input type="text" id="class" placeholder="مثال: 2/ علمي">
+        </div>
+        <div class="field">
+          <label>💰 نوع الدفع</label>
+          <select id="paymentType">
+            <option value="كامل">✅ دفع كامل</option>
+            <option value="جزء">🔄 دفع جزء</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>💵 المبلغ (جنيه)</label>
+          <input type="number" id="amount" placeholder="المبلغ المدفوع" step="1">
+        </div>
+        <div class="field">
+          <label>💳 طريقة الدفع</label>
+          <select id="method">
+            <option value="نقدي">💰 نقدي</option>
+            <option value="تحويل بنكي">🏦 تحويل بنكي</option>
+          </select>
+        </div>
+        <div class="field" style="justify-content: flex-end;">
+          <button onclick="addStudent()" style="margin-top: 6px;">➕ إضافة الطالب</button>
+        </div>
+      </div>
+    </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>الاسم</th>
-        <th>الفصل</th>
-        <th>نوع الدفع</th>
-        <th>المبلغ</th>
-        <th>الطريقة</th>
-        <th>حذف</th>
-      </tr>
-    </thead>
-    <tbody id="table"></tbody>
-  </table>
+    <!-- شريط الإحصائيات وزر الطباعة -->
+    <div class="stats no-print">
+      <div class="stat-card">
+        <span>👨‍🎓 عدد الطلاب</span>
+        <div class="stat-number" id="count">0</div>
+      </div>
+      <div class="stat-card">
+        <span>💰 إجمالي المدفوعات</span>
+        <div class="stat-number" id="total">0</div>
+        <span style="font-size: 0.7rem;">جنيه</span>
+      </div>
+    </div>
+
+    <div class="action-top no-print">
+      <button onclick="printPage()" class="btn-secondary">🖨️ طباعة القائمة (بيانات فقط)</button>
+    </div>
+
+    <!-- الجدول الرئيسي -->
+    <div class="table-wrapper">
+      <table id="studentsTable">
+        <thead>
+          <tr>
+            <th>الاسم</th>
+            <th>الفصل</th>
+            <th>نوع الدفع</th>
+            <th>المبلغ (ج.م)</th>
+            <th>طريقة الدفع</th>
+            <th class="no-print">الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <script>
-  let students = JSON.parse(localStorage.getItem("students")) || [];
+  // تحميل البيانات من localStorage
+  let students = [];
 
-  function render() {
-    const table = document.getElementById("table");
-    table.innerHTML = "";
+  function loadFromStorage() {
+    const stored = localStorage.getItem("lessons_students");
+    if (stored) {
+      students = JSON.parse(stored);
+    } else {
+      // بيانات تجريبية أنيقة للمعلم (اختيارية) ولكن تبقى قابلة للتعديل
+      students = [
+        { name: "ليلى محمد", class: "2/ علمي", paymentType: "كامل", amount: 450, method: "نقدي" },
+        { name: "كريم حسن", class: "2/ أدبي", paymentType: "جزء", amount: 250, method: "تحويل بنكي" },
+        { name: "سلمى خالد", class: "2/ علمي", paymentType: "كامل", amount: 450, method: "نقدي" }
+      ];
+    }
+  }
 
-    let total = 0;
+  function saveToStorage() {
+    localStorage.setItem("lessons_students", JSON.stringify(students));
+  }
 
-    students.forEach((s, index) => {
-      total += s.amount;
+  // عرض الجدول بشكل احترافي
+  function renderTable() {
+    const tbody = document.getElementById("tableBody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
 
-      table.innerHTML += `
-        <tr>
-          <td>${s.name}</td>
-          <td>${s.class}</td>
-          <td>${s.paymentType}</td>
-          <td>${s.amount}</td>
-          <td>${s.method}</td>
-          <td><button onclick="deleteStudent(${index})">❌</button></td>
-        </tr>
-      `;
+    let totalAmount = 0;
+    students.forEach((student, idx) => {
+      totalAmount += student.amount;
+      const row = tbody.insertRow();
+
+      // خلايا البيانات
+      const cellName = row.insertCell(0);
+      const cellClass = row.insertCell(1);
+      const cellPayment = row.insertCell(2);
+      const cellAmount = row.insertCell(3);
+      const cellMethod = row.insertCell(4);
+      const cellActions = row.insertCell(5);
+
+      cellName.textContent = student.name || "-";
+      cellClass.textContent = student.class || "-";
+      cellPayment.textContent = student.paymentType === "كامل" ? "✅ دفع كامل" : "🔄 دفع جزء";
+      cellAmount.textContent = student.amount;
+      cellMethod.textContent = student.method === "نقدي" ? "💰 نقدي" : "🏦 تحويل بنكي";
+
+      // أزرار التعديل والحذف (تختفي أثناء الطباعة عبر media print)
+      cellActions.className = "no-print";
+      const actionDiv = document.createElement("div");
+      actionDiv.className = "action-buttons";
+
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "✏️ تعديل";
+      editBtn.className = "edit-btn";
+      editBtn.onclick = (e) => {
+        e.stopPropagation();
+        openEditModal(idx);
+      };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "🗑️ حذف";
+      deleteBtn.className = "delete-btn";
+      deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (confirm(`هل تريد حذف الطالب "${student.name}"؟`)) {
+          deleteStudentByIdx(idx);
+        }
+      };
+
+      actionDiv.appendChild(editBtn);
+      actionDiv.appendChild(deleteBtn);
+      cellActions.appendChild(actionDiv);
     });
 
     document.getElementById("count").innerText = students.length;
-    document.getElementById("total").innerText = total;
-
-    localStorage.setItem("students", JSON.stringify(students));
+    document.getElementById("total").innerText = totalAmount;
+    saveToStorage();
   }
 
+  // دالة إضافة طالب
   function addStudent() {
-    const name = document.getElementById("name").value;
-    const className = document.getElementById("class").value;
-    const paymentType = document.getElementById("paymentType").value;
-    const amount = Number(document.getElementById("amount").value);
-    const method = document.getElementById("method").value;
+    const nameInput = document.getElementById("name");
+    const classInput = document.getElementById("class");
+    const paymentSelect = document.getElementById("paymentType");
+    const amountInput = document.getElementById("amount");
+    const methodSelect = document.getElementById("method");
 
-    if (!name || !amount) return alert("اكمل البيانات");
+    const name = nameInput.value.trim();
+    const className = classInput.value.trim();
+    const paymentType = paymentSelect.value;     // "كامل" أو "جزء"
+    let amount = Number(amountInput.value);
+    const method = methodSelect.value;            // "نقدي" أو "تحويل بنكي"
 
+    if (!name) {
+      alert("❌ الرجاء إدخال اسم الطالب");
+      return;
+    }
+    if (isNaN(amount) || amount <= 0) {
+      alert("❌ المبلغ يجب أن يكون رقماً موجباً");
+      return;
+    }
+
+    // إضافة الطالب
     students.push({
-      name,
+      name: name,
       class: className,
-      paymentType,
-      amount,
-      method
+      paymentType: paymentType,
+      amount: amount,
+      method: method
     });
 
-    document.getElementById("name").value = "";
-    document.getElementById("class").value = "";
-    document.getElementById("amount").value = "";
+    // تفريغ الحقول
+    nameInput.value = "";
+    classInput.value = "";
+    amountInput.value = "";
+    paymentSelect.value = "كامل";
+    methodSelect.value = "نقدي";
 
-    render();
+    renderTable();
+    // رسالة نجاح خفيفة
+    showTemporaryMessage("✅ تم تسجيل الطالب بنجاح", "#1e3c72");
   }
 
-  function deleteStudent(index) {
-    students.splice(index, 1);
-    render();
+  // حذف طالب
+  function deleteStudentByIdx(index) {
+    if (index >= 0 && index < students.length) {
+      students.splice(index, 1);
+      renderTable();
+    }
   }
 
+  // ----- نظام تعديل أنيق (مودال جميل ومدمج) -----
+  function openEditModal(index) {
+    const student = students[index];
+    if (!student) return;
+
+    // إنشاء نافذة منبثقة مخصصة (modal) بتصميم جميل وحديث
+    const modalOverlay = document.createElement("div");
+    modalOverlay.style.position = "fixed";
+    modalOverlay.style.top = "0";
+    modalOverlay.style.left = "0";
+    modalOverlay.style.width = "100%";
+    modalOverlay.style.height = "100%";
+    modalOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+    modalOverlay.style.backdropFilter = "blur(5px)";
+    modalOverlay.style.display = "flex";
+    modalOverlay.style.alignItems = "center";
+    modalOverlay.style.justifyContent = "center";
+    modalOverlay.style.zIndex = "1000";
+    modalOverlay.style.fontFamily = "inherit";
+
+    const modalCard = document.createElement("div");
+    modalCard.style.backgroundColor = "white";
+    modalCard.style.borderRadius = "2rem";
+    modalCard.style.width = "90%";
+    modalCard.style.maxWidth = "500px";
+    modalCard.style.padding = "1.8rem";
+    modalCard.style.boxShadow = "0 25px 40px rgba(0,0,0,0.3)";
+    modalCard.style.direction = "rtl";
+    modalCard.style.textAlign = "right";
+
+    modalCard.innerHTML = `
+      <h3 style="color:#1e3c72; margin-bottom:1rem; border-right:4px solid #ffb74d; padding-right:1rem;">✏️ تعديل بيانات الطالب</h3>
+      <div style="display:flex; flex-direction:column; gap:1rem;">
+        <div>
+          <label style="font-weight:600; display:block; margin-bottom:5px;">الاسم الكامل</label>
+          <input type="text" id="editName" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.name)}">
+        </div>
+        <div>
+          <label style="font-weight:600; display:block; margin-bottom:5px;">الفصل</label>
+          <input type="text" id="editClass" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.class)}">
+        </div>
+        <div>
+          <label style="font-weight:600; display:block; margin-bottom:5px;">نوع الدفع</label>
+          <select id="editPayment" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;">
+            <option value="كامل" ${student.paymentType === "كامل" ? "selected" : ""}>✅ دفع كامل</option>
+            <option value="جزء" ${student.paymentType === "جزء" ? "selected" : ""}>🔄 دفع جزء</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-weight:600; display:block; margin-bottom:5px;">المبلغ (جنيه)</label>
+          <input type="number" id="editAmount" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${student.amount}">
+        </div>
+        <div>
+          <label style="font-weight:600; display:block; margin-bottom:5px;">طريقة الدفع</label>
+          <select id="editMethod" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;">
+            <option value="نقدي" ${student.method === "نقدي" ? "selected" : ""}>💰 نقدي</option>
+            <option value="تحويل بنكي" ${student.method === "تحويل بنكي" ? "selected" : ""}>🏦 تحويل بنكي</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:12px; justify-content:flex-start; margin-top:12px;">
+          <button id="saveEditBtn" style="background:#1e3c72; border:none; padding:10px 20px; border-radius:2rem; color:white; font-weight:bold; cursor:pointer;">💾 حفظ التعديلات</button>
+          <button id="cancelEditBtn" style="background:#e2e8f0; border:none; padding:10px 20px; border-radius:2rem; color:#1e293b; font-weight:bold; cursor:pointer;">إلغاء</button>
+        </div>
+      </div>
+    `;
+
+    modalOverlay.appendChild(modalCard);
+    document.body.appendChild(modalOverlay);
+
+    const saveBtn = modalCard.querySelector("#saveEditBtn");
+    const cancelBtn = modalCard.querySelector("#cancelEditBtn");
+
+    const closeModal = () => {
+      modalOverlay.remove();
+    };
+
+    saveBtn.onclick = () => {
+      const newName = modalCard.querySelector("#editName").value.trim();
+      const newClass = modalCard.querySelector("#editClass").value.trim();
+      const newPayment = modalCard.querySelector("#editPayment").value;
+      const newAmount = Number(modalCard.querySelector("#editAmount").value);
+      const newMethod = modalCard.querySelector("#editMethod").value;
+
+      if (!newName) {
+        alert("⚠️ اسم الطالب لا يمكن أن يكون فارغاً");
+        return;
+      }
+      if (isNaN(newAmount) || newAmount <= 0) {
+        alert("⚠️ المبلغ يجب أن يكون رقماً موجباً");
+        return;
+      }
+
+      // تحديث بيانات الطالب
+      students[index] = {
+        name: newName,
+        class: newClass,
+        paymentType: newPayment,
+        amount: newAmount,
+        method: newMethod
+      };
+      renderTable();
+      closeModal();
+      showTemporaryMessage("✨ تم تعديل البيانات بنجاح", "#2b6e4f");
+    };
+
+    cancelBtn.onclick = closeModal;
+    // إغلاق عند الضغط على الخلفية
+    modalOverlay.onclick = (e) => {
+      if (e.target === modalOverlay) closeModal();
+    };
+  }
+
+  // مساعدة لعرض رسائل منبثقة جميلة بديلاً عن alert مزعج
+  function showTemporaryMessage(msg, bgColor = "#1e3c72") {
+    let toast = document.createElement("div");
+    toast.innerText = msg;
+    toast.style.position = "fixed";
+    toast.style.bottom = "30px";
+    toast.style.left = "50%";
+    toast.style.transform = "translateX(-50%)";
+    toast.style.backgroundColor = bgColor;
+    toast.style.color = "white";
+    toast.style.padding = "12px 24px";
+    toast.style.borderRadius = "40px";
+    toast.style.fontWeight = "bold";
+    toast.style.zIndex = "1100";
+    toast.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
+    toast.style.fontFamily = "inherit";
+    toast.style.direction = "rtl";
+    toast.style.backdropFilter = "blur(4px)";
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 400);
+    }, 2000);
+  }
+
+  // حماية ضد ال XSS بسيطة
+  function escapeHtml(str) {
+    if (!str) return "";
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+      return c;
+    });
+  }
+
+  // طباعة: نخفي كل الأزرار والنماذج بشكل تام (تم بالـ css media print)
+  // لكن للتأكد إضافيًا: نمنع ظهور أزرار التعديل والحذف في print عبر class no-print والـ media
   function printPage() {
     window.print();
   }
 
-  render();
-</script>
+  // دالة حذف عامة تستخدم من الحذف المباشر
+  window.deleteStudentByIdx = deleteStudentByIdx;
+  // ربط الدوال بالـ global حتى تعمل من onclicks في الـ HTML
+  window.addStudent = addStudent;
+  window.printPage = printPage;
+  window.openEditModal = openEditModal; // تستخدم داخل التعديل المباشر من الجدول
 
+  // تهيئة أولية
+  loadFromStorage();
+  renderTable();
+</script>
 </body>
 </html>
