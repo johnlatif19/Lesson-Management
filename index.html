@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>نظام إدارة الدروس | معلم الصف الثاني الثانوي</title>
+ <link rel="icon" href="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg">
 
 <!-- jsPDF مكتبات -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -464,21 +465,10 @@
 <div class="master-container">
   <div class="hero-section">
     <h1>📘 منصة إدارة الدروس – الصف الثاني الثانوي</h1>
-    <p>للأستاذ / المُعلم المتميز | متابعة الطلاب</p>
+     <p>للأستاذ / تيست</p>
+   <img src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg"
+     style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid #f6b83e;">
   </div>
-
-  <div class="card-inner">
-    <div class="teacher-panel no-print">
-      <div class="teacher-field">
-        <label>👨‍🏫 اسم المدرس</label>
-        <input type="text" id="teacherName" placeholder="مثال: أ. محمد صلاح" autocomplete="off">
-      </div>
-      <div class="teacher-field">
-        <label>📸 صورة المعلم</label>
-        <input type="file" id="teacherImage" accept="image/*">
-      </div>
-    </div>
-
     <div class="form-elegant no-print">
       <div class="form-title">➕ تسجيل طالب جديد</div>
       <div class="input-flex">
@@ -520,31 +510,9 @@
 
 <script>
   let students = [];
-  let teacherName = localStorage.getItem("teacherName") || "";
-  let teacherImageBase64 = localStorage.getItem("teacherImage") || "";
-
-  const teacherNameInput = document.getElementById("teacherName");
-  const teacherImageInput = document.getElementById("teacherImage");
-
-  if(teacherNameInput) teacherNameInput.value = teacherName;
-
-  teacherNameInput?.addEventListener("input", function(e) {
-    teacherName = e.target.value;
-    localStorage.setItem("teacherName", teacherName);
-  });
-
-  teacherImageInput?.addEventListener("change", function(e) {
-    const file = e.target.files[0];
-    if(file) {
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        teacherImageBase64 = ev.target.result;
-        localStorage.setItem("teacherImage", teacherImageBase64);
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
+ 
+const teacher = "أ. محمد صلاح";
+ 
   function loadStudentsData() {
     const stored = localStorage.getItem("students_management");
     if(stored) {
@@ -749,9 +717,8 @@
     
     // صورة المعلم
     let teacherImageHtml = "";
-    if(teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
-      teacherImageHtml = `<img src="${teacherImageBase64}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">`;
-    }
+   let teacherImageHtml = `<img src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" style="width:80px;height:80px;border-radius:50%;">`;
+  }
     
     pdfContainer.innerHTML = `
       <div style="font-family: 'Cairo', 'Tajawal', 'Segoe UI', Arial, sans-serif; padding: 20px;">
