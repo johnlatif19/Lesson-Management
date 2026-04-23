@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>نظام إدارة الدروس | معلم الصف الثاني الثانوي</title>
 
-<!-- jsPDF and autoTable libraries for PDF generation -->
+<!-- jsPDF مكتبات -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+<!-- html2canvas لتحويل HTML إلى صورة -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
   * {
@@ -324,15 +325,72 @@
     background: #ffd6d1;
   }
 
-  /* قواعد الطباعة المحسنة */
+  /* منطقة تقرير PDF المخفية */
+  .pdf-report-container {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    width: 800px;
+    background: white;
+    padding: 20px;
+    direction: rtl;
+    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Arial, sans-serif;
+    z-index: -1;
+  }
+
+  .pdf-report-container .pdf-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1e3c72;
+  }
+
+  .pdf-report-container .pdf-header h2 {
+    color: #1e3c72;
+    margin: 5px 0;
+  }
+
+  .pdf-report-container .pdf-teacher-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f8fafd;
+    border-radius: 10px;
+  }
+
+  .pdf-report-container .pdf-stats {
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #eef2f7;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .pdf-report-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+
+  .pdf-report-container th,
+  .pdf-report-container td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .pdf-report-container th {
+    background: #1e3c72;
+    color: white;
+  }
+
   @media print {
-    /* إخفاء العناصر غير المرغوب فيها */
     .no-print,
     .action-bar,
     .form-elegant,
     .teacher-panel,
     .stats-modern,
-    .hero-section .no-print,
     .action-btns,
     .icon-btn,
     .btn,
@@ -341,7 +399,6 @@
       display: none !important;
     }
     
-    /* إظهار المحتوى الأساسي */
     body {
       background: white;
       padding: 0;
@@ -444,7 +501,6 @@
       <div class="stat-card"><span>💰 إجمالي المدفوعات</span><div class="stat-number" id="total">0</div><span style="font-size:0.7rem;">جنيه</span></div>
     </div>
 
-    <!-- منطقة الطباعة الرئيسية -->
     <div class="table-wrapper" id="printArea">
       <table id="studentsTable">
         <thead>
@@ -458,6 +514,9 @@
     </div>
   </div>
 </div>
+
+<!-- منطقة مخفية لإنشاء تقرير PDF -->
+<div id="pdfContainer" class="pdf-report-container"></div>
 
 <script>
   let students = [];
@@ -649,9 +708,7 @@
     modalOverlay.onclick = (e) => { if(e.target === modalOverlay) closeModal(); };
   }
   
-  // دالة الطباعة المحسنة
   function printPage() {
-    // التحقق من وجود بيانات
     if(students.length === 0) {
       alert("⚠️ لا يوجد طلاب لعرضهم في الطباعة!");
       return;
@@ -659,91 +716,130 @@
     window.print();
   }
   
-  // دالة PDF المحسنة لدعم اللغة العربية
+  // دالة PDF المحسنة باستخدام html2canvas
   async function downloadPDF() {
     if(students.length === 0) {
       alert("⚠️ لا يوجد طلاب لإنشاء التقرير!");
       return;
     }
     
-    const { jsPDF } = window.jspdf;
-    
-    // إنشاء PDF بحجم A4
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
+    // إظهار مؤشر التحميل
+    showFloatingMessage("⏳ جاري إنشاء ملف PDF...", "#f6b83e");
     
     const teacher = teacherNameInput?.value || "غير محدد";
     const totalMoney = students.reduce((sum, s) => sum + s.amount, 0);
     const currentDate = new Date().toLocaleDateString('ar-EG');
     
-    // إضافة عنوان التقرير (استخدام النص العادي مع دعم RTL)
-    doc.setFont("helvetica");
-    doc.setFontSize(18);
-    doc.text("تقرير إدارة الدروس", 105, 20, { align: "center" });
+    // إنشاء محتوى التقرير في العنصر المخفي
+    const pdfContainer = document.getElementById("pdfContainer");
     
-    doc.setFontSize(12);
-    doc.text(`المعلم/ة: ${teacher}`, 15, 35);
-    doc.text(`تاريخ التقرير: ${currentDate}`, 15, 42);
-    doc.text(`عدد الطلاب: ${students.length} طالب/طالبة`, 15, 49);
-    doc.text(`إجمالي المدفوعات: ${totalMoney} جنيه مصري`, 15, 56);
-    
-    // إضافة صورة المعلم إن وجدت
-    if(teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
-      try {
-        doc.addImage(teacherImageBase64, "JPEG", 155, 30, 40, 40);
-      } catch(e) {
-        console.warn("لا يمكن إضافة الصورة");
-      }
-    }
-    
-    // إعداد بيانات الجدول
-    const tableData = students.map(s => [
-      s.name || "-",
-      s.class || "-",
-      s.paymentType === "كامل" ? "دفع كامل" : "دفع جزء",
-      `${s.amount} ج.م`,
-      s.method === "نقدي" ? "نقدي" : "تحويل بنكي"
-    ]);
-    
-    // إنشاء الجدول مع دعم اللغة العربية عن طريق تعيين خيارات محددة
-    doc.autoTable({
-      startY: 65,
-      head: [["الاسم", "الفصل", "نوع الدفع", "المبلغ", "طريقة الدفع"]],
-      body: tableData,
-      theme: "grid",
-      headStyles: { 
-        fillColor: [30, 60, 114], 
-        textColor: 255, 
-        halign: "center",
-        fontStyle: "bold"
-      },
-      styles: { 
-        font: "helvetica",
-        fontSize: 10,
-        cellPadding: 3,
-        halign: "center",
-        valign: "middle"
-      },
-      columnStyles: {
-        0: { cellWidth: 40 },
-        1: { cellWidth: 30 },
-        2: { cellWidth: 30 },
-        3: { cellWidth: 30 },
-        4: { cellWidth: 30 }
-      },
-      margin: { right: 15, left: 15 },
-      didDrawPage: function(data) {
-        // إضافة تذييل في كل صفحة
-        doc.setFontSize(8);
-        doc.text("© نظام إدارة الدروس - الصف الثاني الثانوي", 105, 285, { align: "center" });
-      }
+    // بناء الجدول
+    let tableRows = "";
+    students.forEach(s => {
+      tableRows += `
+        <tr>
+          <td>${s.name || "-"}</td>
+          <td>${s.class || "-"}</td>
+          <td>${s.paymentType === "كامل" ? "دفع كامل" : "دفع جزء"}</td>
+          <td>${s.amount} ج.م</td>
+          <td>${s.method === "نقدي" ? "نقدي" : "تحويل بنكي"}</td>
+        </tr>
+      `;
     });
     
-    // حفظ الملف
-    doc.save(`تقرير_الطلاب_${currentDate.replace(/\//g, '-')}.pdf`);
+    // صورة المعلم
+    let teacherImageHtml = "";
+    if(teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
+      teacherImageHtml = `<img src="${teacherImageBase64}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">`;
+    }
+    
+    pdfContainer.innerHTML = `
+      <div style="font-family: 'Cairo', 'Tajawal', 'Segoe UI', Arial, sans-serif; padding: 20px;">
+        <div class="pdf-header">
+          ${teacherImageHtml}
+          <h2>نظام إدارة الدروس - الصف الثاني الثانوي</h2>
+          <h3>تقرير الطلاب</h3>
+        </div>
+        
+        <div class="pdf-teacher-info">
+          <div><strong>👨‍🏫 المعلم/ة:</strong> ${teacher}</div>
+          <div><strong>📅 التاريخ:</strong> ${currentDate}</div>
+        </div>
+        
+        <div class="pdf-stats">
+          <strong>📊 إحصائيات التقرير:</strong><br>
+          عدد الطلاب: ${students.length} طالب/طالبة | إجمالي المدفوعات: ${totalMoney} جنيه مصري
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #1e3c72; color: white;">
+              <th>الاسم</th>
+              <th>الفصل</th>
+              <th>نوع الدفع</th>
+              <th>المبلغ</th>
+              <th>طريقة الدفع</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+        
+        <div style="margin-top: 20px; text-align: center; font-size: 10px; color: #666;">
+          تم إنشاء هذا التقرير بواسطة نظام إدارة الدروس
+        </div>
+      </div>
+    `;
+    
+    // انتظر قليلاً للتأكد من تحميل المحتوى
+    setTimeout(async () => {
+      try {
+        // تحويل المحتوى إلى صورة
+        const canvas = await html2canvas(pdfContainer, {
+          scale: 2,
+          backgroundColor: '#ffffff',
+          logging: false,
+          useCORS: true
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        
+        // حساب أبعاد PDF
+        const imgWidth = 210; // A4 width in mm
+        const pageHeight = 297; // A4 height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+        
+        const doc = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
+        });
+        
+        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        
+        doc.save(`تقرير_الطلاب_${currentDate.replace(/\//g, '-')}.pdf`);
+        showFloatingMessage("✅ تم إنشاء ملف PDF بنجاح!", "#1e3c72");
+        
+        // تنظيف
+        pdfContainer.innerHTML = "";
+      } catch(error) {
+        console.error("خطأ في إنشاء PDF:", error);
+        showFloatingMessage("❌ حدث خطأ في إنشاء PDF", "#c53030");
+        pdfContainer.innerHTML = "";
+      }
+    }, 100);
   }
   
   function showFloatingMessage(msg, bgColor) {
@@ -759,6 +855,7 @@
     toast.style.borderRadius = "40px";
     toast.style.fontWeight = "bold";
     toast.style.zIndex = "2100";
+    toast.style.fontFamily = "inherit";
     toast.style.boxShadow = "0 8px 18px rgba(0,0,0,0.2)";
     toast.style.direction = "rtl";
     document.body.appendChild(toast);
