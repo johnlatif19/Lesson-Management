@@ -339,6 +339,22 @@
 
   /* زر الحذف والتعديل في الطباعة يختفيان */
   @media print {
+   @page {
+  size: auto;
+  margin: 10mm;
+}
+
+html, body {
+  height: auto;
+}
+
+.master-container {
+  page-break-inside: avoid;
+}
+
+tr {
+  page-break-inside: avoid;
+}
     body {
       background: white;
       padding: 0.2in;
@@ -662,40 +678,46 @@
   }
   
   // إنشاء ملف PDF مع بيانات المعلم والطلاب
-  function downloadPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ direction: "rtl" });
-    
-    const teacher = teacherNameInput?.value || "";
-    const totalMoney = students.reduce((sum, s) => sum + s.amount, 0);
-    
-    doc.setFont("helvetica");
-    doc.text("نظام إدارة الدروس - تقرير الطلاب", 105, 15, { align: "center" });
-    doc.text(`المدرس: ${teacher || "غير محدد"}`, 15, 27);
-    
-    if(teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
-      try {
-        doc.addImage(teacherImageBase64, "JPEG", 150, 10, 35, 35);
-      } catch(e) { console.warn("خطأ بإضافة الصورة"); }
-    }
-    
-    const tableData = students.map(s => [s.name, s.class, s.paymentType === "كامل" ? "دفع كامل" : "دفع جزء", s.amount.toString(), s.method === "نقدي" ? "نقدي" : "تحويل بنكي"]);
-    
-    doc.autoTable({
-      startY: 45,
-      head: [["الاسم", "الفصل", "نوع الدفع", "المبلغ (ج.م)", "الطريقة"]],
-      body: tableData,
-      theme: "grid",
-      headStyles: { fillColor: [30, 60, 114], textColor: 255, halign: "center" },
-      styles: { font: "helvetica", cellPadding: 3, halign: "center" },
-      margin: { right: 15, left: 15 }
-    });
-    
-    const finalY = doc.lastAutoTable.finalY + 8;
-    doc.text(`عدد الطلاب: ${students.length}`, 15, finalY);
-    doc.text(`الإجمالي المدفوع: ${totalMoney} جنيه`, 15, finalY + 8);
-    doc.save("تقرير_الطلاب.pdf");
-  }
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 20;
+
+  // عنوان
+  doc.setFontSize(14);
+  doc.text("Students Report", 10, y);
+
+  y += 10;
+
+  // اسم المدرس
+  const teacher = teacherNameInput?.value || "";
+  doc.text("Teacher: " + teacher, 10, y);
+
+  y += 10;
+
+  // الجدول
+  const rows = students.map(s => [
+    s.name,
+    s.class,
+    s.paymentType,
+    s.amount,
+    s.method
+  ]);
+
+  doc.autoTable({
+    head: [["Name", "Class", "Payment", "Amount", "Method"]],
+    body: rows,
+    startY: y
+  });
+
+  let total = students.reduce((sum, s) => sum + s.amount, 0);
+
+  doc.text("Students: " + students.length, 10, doc.lastAutoTable.finalY + 10);
+  doc.text("Total: " + total, 10, doc.lastAutoTable.finalY + 20);
+
+  doc.save("report.pdf");
+}
   
   // رسالة عائمة جميلة
   function showFloatingMessage(msg, bgColor) {
