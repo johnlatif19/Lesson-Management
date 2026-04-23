@@ -1,400 +1,427 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>نظام إدارة الدروس</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>نظام إدارة الدروس</title>
 
+<!-- jsPDF and autoTable libraries for PDF generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', 'Tajawal', 'Cairo', 'Arial', system-ui, -apple-system, sans-serif;
+    direction: rtl;
+    background: linear-gradient(135deg, #eef2f7 0%, #d9e2ec 100%);
+    padding: 2rem 1.5rem;
+    min-height: 100vh;
+  }
+
+  /* حاوية أنيقة وحديثة */
+  .master-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.97);
+    border-radius: 2rem;
+    box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 4px 14px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+
+  /* رأس مخصص للمعلم */
+  .hero-section {
+    background: linear-gradient(105deg, #1e3c72 0%, #2a5298 100%);
+    padding: 1.6rem 2rem;
+    color: white;
+    border-bottom: 5px solid #f6b83e;
+  }
+
+  .hero-section h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: -0.3px;
+  }
+
+  .hero-section h1::before {
+    content: "📖";
+    font-size: 2rem;
+  }
+
+  .hero-section p {
+    font-size: 0.95rem;
+    opacity: 0.92;
+    margin-top: 8px;
+    font-weight: 400;
+  }
+
+  /* محتوى البطاقة */
+  .card-inner {
+    padding: 2rem;
+  }
+
+  /* صف المعلم والتحميل */
+  .teacher-panel {
+    background: #f8fafd;
+    border-radius: 1.5rem;
+    padding: 1.2rem 1.8rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e9edf2;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  }
+
+  .teacher-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: white;
+    padding: 0.3rem 1.2rem 0.3rem 0.8rem;
+    border-radius: 3rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .teacher-field label {
+    font-weight: 700;
+    color: #1e3c72;
+    background: #eef3fc;
+    padding: 6px 14px;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+  }
+
+  .teacher-field input, .teacher-field input[type="file"] {
+    border: none;
+    background: transparent;
+    padding: 8px 5px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+  }
+
+  .teacher-field input[type="file"] {
+    font-size: 0.8rem;
+    color: #2c5282;
+  }
+
+  /* نموذج إضافة أنيق */
+  .form-elegant {
+    background: #ffffff;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #eef2f8;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
+  }
+
+  .form-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e3c72;
+    margin-bottom: 1.2rem;
+    border-right: 5px solid #f6b83e;
+    padding-right: 1rem;
+  }
+
+  .input-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+  }
+
+  .input-group {
+    flex: 1 1 170px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .input-group label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #4a627a;
+    letter-spacing: 0.4px;
+  }
+
+  .input-group input, .input-group select {
+    padding: 10px 12px;
+    border-radius: 1rem;
+    border: 1.5px solid #e2edf7;
+    background: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    outline: none;
+  }
+
+  .input-group input:focus, .input-group select:focus {
+    border-color: #f6b83e;
+    box-shadow: 0 0 0 3px rgba(246, 184, 62, 0.2);
+  }
+
+  /* أزرار أنيقة */
+  .btn {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1e3c72;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+
+  .btn-primary {
+    background: #1e3c72;
+  }
+
+  .btn-primary:hover {
+    background: #0f2b4f;
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: #f6b83e;
+    color: #2d3748;
+  }
+
+  .btn-secondary:hover {
+    background: #e5a72a;
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    background: #eff3f8;
+    color: #1e3c72;
+    border: 1px solid #cbdde9;
+  }
+
+  .btn-outline:hover {
+    background: #e2edf7;
+  }
+
+  .action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-bottom: 1.8rem;
+    align-items: center;
+  }
+
+  /* إحصائيات حديثة */
+  .stats-modern {
+    display: flex;
+    gap: 1.2rem;
+    background: #f8fafd;
+    border-radius: 1.5rem;
+    padding: 0.8rem 2rem;
+    margin-bottom: 2rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    border: 1px solid #eef2f6;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 1.3rem;
+    padding: 0.6rem 1.6rem;
+    text-align: center;
+    min-width: 130px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+  }
+
+  .stat-card span:first-child {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #5a7188;
+    display: block;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e3c72;
+    line-height: 1.2;
+  }
+
+  /* الجدول العصري */
+  .table-wrapper {
+    overflow-x: auto;
+    border-radius: 1.2rem;
+    background: white;
+    border: 1px solid #edf2f7;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  th {
+    background: #f1f6fc;
+    color: #1e2f44;
+    padding: 1rem 0.8rem;
+    font-weight: 700;
+    border-bottom: 2px solid #e2edf7;
+  }
+
+  td {
+    padding: 0.9rem 0.7rem;
+    border-bottom: 1px solid #ecf3f9;
+    color: #253746;
+    vertical-align: middle;
+  }
+
+  tr:hover td {
+    background-color: #fef9ef;
+  }
+
+  .action-btns {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 2rem;
+    transition: 0.2s;
+    font-weight: 600;
+    box-shadow: none;
+  }
+
+  .edit-icon {
+    background: #eef2ff;
+    color: #2b6cb0;
+  }
+
+  .edit-icon:hover {
+    background: #d9e6ff;
+    transform: scale(0.97);
+  }
+
+  .delete-icon {
+    background: #ffe8e6;
+    color: #c53030;
+  }
+
+  .delete-icon:hover {
+    background: #ffd6d1;
+  }
+
+  /* زر الحذف والتعديل في الطباعة يختفيان */
+  @media print {
     body {
-      background: linear-gradient(145deg, #e9f0f5 0%, #d9e2ec 100%);
-      font-family: 'Segoe UI', 'Tajawal', 'Cairo', 'Roboto', system-ui, -apple-system, sans-serif;
-      padding: 2rem 1.5rem;
-      min-height: 100vh;
-      direction: rtl;
-    }
-
-    /* حاوية رئيسية أنيقة */
-    .dashboard {
-      max-width: 1400px;
-      margin: 0 auto;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(0px);
-      border-radius: 2rem;
-      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.05);
-      overflow: hidden;
-      transition: all 0.2s;
-    }
-
-    /* رأس جذاب */
-    .hero {
-      background: linear-gradient(135deg, #1e3c72, #2b4c7c);
-      padding: 1.8rem 2rem;
-      color: white;
-      border-bottom: 4px solid #ffb74d;
-    }
-
-    .hero h1 {
-      font-size: 1.9rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .hero h1::before {
-      content: "📚";
-      font-size: 2rem;
-      filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
-    }
-
-    .hero p {
-      font-size: 1rem;
-      opacity: 0.9;
-      margin-top: 8px;
-      font-weight: 400;
-    }
-
-    /* محتوى داخلي */
-    .card-content {
-      padding: 2rem;
-    }
-
-    /* نموذج الإضافة بتصميم عصري */
-    .form-grid {
-      background: #ffffff;
-      border-radius: 1.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-      margin-bottom: 2rem;
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      transition: 0.2s;
-    }
-
-    .form-title {
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: #1e3c72;
-      margin-bottom: 1.2rem;
-      border-right: 5px solid #ffb74d;
-      padding-right: 1rem;
-    }
-
-    .input-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      align-items: flex-end;
-    }
-
-    .field {
-      flex: 1 1 180px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .field label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #2c3e66;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .field input, .field select {
-      padding: 12px 14px;
-      border-radius: 1rem;
-      border: 1.5px solid #e2e8f0;
-      background: #fefefe;
-      font-family: inherit;
-      font-size: 0.95rem;
-      transition: 0.2s;
-      outline: none;
-    }
-
-    .field input:focus, .field select:focus {
-      border-color: #ffb74d;
-      box-shadow: 0 0 0 3px rgba(255, 183, 77, 0.2);
-    }
-
-    button {
-      background: #1e3c72;
-      border: none;
-      color: white;
-      padding: 12px 24px;
-      border-radius: 1.5rem;
-      font-weight: 600;
-      font-family: inherit;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    button:hover {
-      background: #2b4c7c;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-secondary {
-      background: #ffb74d;
-      color: #2d3748;
-    }
-
-    .btn-secondary:hover {
-      background: #ffa01e;
-      color: #1e2a3a;
-    }
-
-    /* إحصائيات علوية */
-    .stats {
-      display: flex;
-      justify-content: space-between;
-      background: #f8fafc;
-      padding: 1rem 1.8rem;
-      border-radius: 1.5rem;
-      margin-bottom: 1.8rem;
-      flex-wrap: wrap;
-      gap: 20px;
-      border: 1px solid #eef2f6;
-    }
-
-    .stat-card {
       background: white;
-      border-radius: 1.2rem;
-      padding: 0.8rem 1.8rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-      text-align: center;
-      flex: 1;
-      min-width: 130px;
+      padding: 0.2in;
     }
-
-    .stat-card span:first-child {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #577a9e;
-      display: block;
+    .hero-section, .teacher-panel, .form-elegant, .stats-modern, .action-bar, .action-btns, .icon-btn, .btn, .no-print {
+      display: none !important;
     }
-
-    .stat-card .stat-number {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #1e3c72;
-      line-height: 1.2;
-    }
-
-    /* جدول أنيق ومتجاوب */
-    .table-wrapper {
-      overflow-x: auto;
-      border-radius: 1.2rem;
-      background: white;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.95rem;
-    }
-
-    th {
-      background: #f1f5f9;
-      color: #1e293b;
-      padding: 1rem 0.8rem;
-      font-weight: 700;
-      font-size: 0.9rem;
-      border-bottom: 2px solid #e2e8f0;
-    }
-
-    td {
-      padding: 1rem 0.7rem;
-      border-bottom: 1px solid #edf2f7;
-      color: #1e2a3e;
-      vertical-align: middle;
-    }
-
-    tr:hover {
-      background: #fef9f0;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .edit-btn, .delete-btn {
-      background: none;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 2rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
+    .master-container {
       box-shadow: none;
+      background: white;
     }
+    .card-inner {
+      padding: 0;
+    }
+    .table-wrapper {
+      border: none;
+    }
+    th, td {
+      border: 1px solid #aaa;
+    }
+    /* إخفاء عمود الإجراءات بالكامل أثناء الطباعة */
+    td:last-child, th:last-child {
+      display: none;
+    }
+  }
 
-    .edit-btn {
-      background: #eef2ff;
-      color: #2563eb;
+  /* توافق الجوال */
+  @media (max-width: 700px) {
+    body {
+      padding: 1rem;
     }
-
-    .edit-btn:hover {
-      background: #dbeafe;
-      transform: scale(1.02);
+    .card-inner {
+      padding: 1rem;
     }
-
-    .delete-btn {
-      background: #fee2e2;
-      color: #dc2626;
+    .input-group {
+      flex: 1 1 100%;
     }
-
-    .delete-btn:hover {
-      background: #fecaca;
-    }
-
-    /* تحسين الطباعة: إخفاء الأزرار والنماذج وعناصر التحكم */
-    @media print {
-      body {
-        background: white;
-        padding: 0.2in;
-        margin: 0;
-      }
-      .hero, .form-grid, .stats, .btn-secondary, .action-buttons button, .edit-btn, .delete-btn, button, .top-buttons, .no-print {
-        display: none !important;
-      }
-      .dashboard {
-        box-shadow: none;
-        background: white;
-        margin: 0;
-        padding: 0;
-      }
-      .card-content {
-        padding: 0;
-      }
-      .table-wrapper {
-        box-shadow: none;
-        overflow-x: visible;
-      }
-      table {
-        border: 1px solid #ccc;
-        width: 100%;
-      }
-      th, td {
-        border: 1px solid #aaa;
-        padding: 8px;
-      }
-      th {
-        background: #f1f1f1 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-      .action-buttons {
-        display: none;
-      }
-      td:last-child, th:last-child {
-        display: none;
-      }
-    }
-
-    /* زر الطباعة + responsiveness */
-    .action-top {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 1.2rem;
-    }
-
-    @media (max-width: 700px) {
-      body {
-        padding: 1rem;
-      }
-      .card-content {
-        padding: 1rem;
-      }
-      .field {
-        flex: 1 1 100%;
-      }
-      .stat-card .stat-number {
-        font-size: 1.5rem;
-      }
-      th, td {
-        font-size: 0.8rem;
-        padding: 0.7rem 0.3rem;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-<div class="dashboard">
-  <div class="hero">
-    <h1>دفتر إدارة الدروس</h1>
-    <p>سجل الطلاب</p>
+
+<div class="master-container">
+  <div class="hero-section">
+    <h1>منصة إدارة الدروس</h1>
+    <p>للأستاذ / المُعلم المتميز | متابعة الطلاب</p>
   </div>
-  <div class="card-content">
-    <!-- نموذج الإضافة أنيق -->
-    <div class="form-grid no-print">
+
+  <div class="card-inner">
+    <!-- لوحة بيانات المعلم مع الصورة -->
+    <div class="teacher-panel no-print">
+      <div class="teacher-field">
+        <label>👨‍🏫 اسم المدرس</label>
+        <input type="text" id="teacherName" placeholder="مثال: أ. محمد صلاح" autocomplete="off">
+      </div>
+      <div class="teacher-field">
+        <label>📸 صورة المعلم (اختياري)</label>
+        <input type="file" id="teacherImage" accept="image/*">
+      </div>
+    </div>
+
+    <!-- نموذج إضافة الطالب بتصميم جذاب -->
+    <div class="form-elegant no-print">
       <div class="form-title">➕ تسجيل طالب جديد</div>
-      <div class="input-group">
-        <div class="field">
-          <label>👤 اسم الطالب</label>
-          <input type="text" id="name" placeholder="مثال: أحمد يوسف" autocomplete="off">
-        </div>
-        <div class="field">
-          <label>📚 الفصل / الشعبة</label>
-          <input type="text" id="class" placeholder="مثال: 2/ علمي">
-        </div>
-        <div class="field">
-          <label>💰 نوع الدفع</label>
-          <select id="paymentType">
-            <option value="كامل">✅ دفع كامل</option>
-            <option value="جزء">🔄 دفع جزء</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>💵 المبلغ (جنيه)</label>
-          <input type="number" id="amount" placeholder="المبلغ المدفوع" step="1">
-        </div>
-        <div class="field">
-          <label>💳 طريقة الدفع</label>
-          <select id="method">
-            <option value="نقدي">💰 نقدي</option>
-            <option value="تحويل بنكي">🏦 تحويل بنكي</option>
-          </select>
-        </div>
-        <div class="field" style="justify-content: flex-end;">
-          <button onclick="addStudent()" style="margin-top: 6px;">➕ إضافة الطالب</button>
-        </div>
+      <div class="input-flex">
+        <div class="input-group"><label>👤 الاسم الكامل</label><input type="text" id="name" placeholder="أحمد محمود"></div>
+        <div class="input-group"><label>📚 الفصل / الشعبة</label><input type="text" id="class" placeholder="2/ علمي"></div>
+        <div class="input-group"><label>💳 نوع الدفع</label><select id="paymentType"><option value="كامل">✅ دفع كامل</option><option value="جزء">🔄 دفع جزء</option></select></div>
+        <div class="input-group"><label>💰 المبلغ (ج.م)</label><input type="number" id="amount" placeholder="450"></div>
+        <div class="input-group"><label>💵 طريقة الدفع</label><select id="method"><option value="نقدي">💰 نقدي</option><option value="تحويل">🏦 تحويل بنكي</option></select></div>
+        <div class="input-group" style="justify-content: flex-end;"><button class="btn btn-primary" onclick="addStudent()">➕ إضافة الطالب</button></div>
       </div>
     </div>
 
-    <!-- شريط الإحصائيات وزر الطباعة -->
-    <div class="stats no-print">
-      <div class="stat-card">
-        <span>👨‍🎓 عدد الطلاب</span>
-        <div class="stat-number" id="count">0</div>
-      </div>
-      <div class="stat-card">
-        <span>💰 إجمالي المدفوعات</span>
-        <div class="stat-number" id="total">0</div>
-        <span style="font-size: 0.7rem;">جنيه</span>
-      </div>
+    <!-- أزرار الإجراءات وإحصائيات -->
+    <div class="action-bar no-print">
+      <button class="btn btn-secondary" onclick="printPage()">🖨️ طباعة القائمة (بيانات فقط)</button>
+      <button class="btn btn-outline" onclick="downloadPDF()">📄 تحميل PDF تقرير كامل</button>
     </div>
 
-    <div class="action-top no-print">
-      <button onclick="printPage()" class="btn-secondary">🖨️ طباعة القائمة (بيانات فقط)</button>
+    <div class="stats-modern no-print">
+      <div class="stat-card"><span>👨‍🎓 إجمالي الطلاب</span><div class="stat-number" id="count">0</div></div>
+      <div class="stat-card"><span>💰 إجمالي المدفوعات</span><div class="stat-number" id="total">0</div><span style="font-size:0.7rem;">جنيه</span></div>
     </div>
 
     <!-- الجدول الرئيسي -->
@@ -402,11 +429,7 @@
       <table id="studentsTable">
         <thead>
           <tr>
-            <th>الاسم</th>
-            <th>الفصل</th>
-            <th>نوع الدفع</th>
-            <th>المبلغ (ج.م)</th>
-            <th>طريقة الدفع</th>
+            <th>الاسم</th><th>الفصل</th><th>نوع الدفع</th><th>المبلغ (ج.م)</th><th>طريقة الدفع</th>
             <th class="no-print">الإجراءات</th>
           </tr>
         </thead>
@@ -417,109 +440,120 @@
 </div>
 
 <script>
-  // تحميل البيانات من localStorage
+  // ---- لا بيانات تجريبية ----
   let students = [];
+  let teacherName = localStorage.getItem("teacherName") || "";
+  let teacherImageBase64 = localStorage.getItem("teacherImage") || "";
 
-  function loadFromStorage() {
-    const stored = localStorage.getItem("lessons_students");
-    if (stored) {
+  // ربط اسم المعلم
+  const teacherNameInput = document.getElementById("teacherName");
+  const teacherImageInput = document.getElementById("teacherImage");
+
+  if(teacherNameInput) teacherNameInput.value = teacherName;
+  
+  // تحميل صورة المعلم إن وجدت
+  if(teacherImageBase64) {
+    // فقط للتخزين، لن نعرضها في الواجهة لأنها في localStorage
+  }
+
+  // حفظ اسم المعلم فور كتابته
+  teacherNameInput?.addEventListener("input", function(e) {
+    teacherName = e.target.value;
+    localStorage.setItem("teacherName", teacherName);
+  });
+
+  // معالجة صورة المعلم وتخزينها base64
+  teacherImageInput?.addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if(file) {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        teacherImageBase64 = ev.target.result;
+        localStorage.setItem("teacherImage", teacherImageBase64);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // تحميل بيانات الطلاب من localStorage (بدون بيانات تجريبية إطلاقاً)
+  function loadStudentsData() {
+    const stored = localStorage.getItem("students_management");
+    if(stored) {
       students = JSON.parse(stored);
     } else {
-      // بيانات تجريبية أنيقة للمعلم (اختيارية) ولكن تبقى قابلة للتعديل
-      students = [
-        { name: "ليلى محمد", class: "2/ علمي", paymentType: "كامل", amount: 450, method: "نقدي" },
-        { name: "كريم حسن", class: "2/ أدبي", paymentType: "جزء", amount: 250, method: "تحويل بنكي" },
-        { name: "سلمى خالد", class: "2/ علمي", paymentType: "كامل", amount: 450, method: "نقدي" }
-      ];
+      students = [];  // مصفوفة فارغة تمامًا بدون عينات
     }
   }
-
-  function saveToStorage() {
-    localStorage.setItem("lessons_students", JSON.stringify(students));
+  
+  function saveStudentsToLocal() {
+    localStorage.setItem("students_management", JSON.stringify(students));
   }
 
-  // عرض الجدول بشكل احترافي
+  // عرض الجدول وعملية التجميع
   function renderTable() {
     const tbody = document.getElementById("tableBody");
-    if (!tbody) return;
+    if(!tbody) return;
     tbody.innerHTML = "";
-
-    let totalAmount = 0;
+    let totalSum = 0;
+    
     students.forEach((student, idx) => {
-      totalAmount += student.amount;
+      totalSum += student.amount;
       const row = tbody.insertRow();
-
-      // خلايا البيانات
-      const cellName = row.insertCell(0);
-      const cellClass = row.insertCell(1);
-      const cellPayment = row.insertCell(2);
-      const cellAmount = row.insertCell(3);
-      const cellMethod = row.insertCell(4);
-      const cellActions = row.insertCell(5);
-
-      cellName.textContent = student.name || "-";
-      cellClass.textContent = student.class || "-";
-      cellPayment.textContent = student.paymentType === "كامل" ? "✅ دفع كامل" : "🔄 دفع جزء";
-      cellAmount.textContent = student.amount;
-      cellMethod.textContent = student.method === "نقدي" ? "💰 نقدي" : "🏦 تحويل بنكي";
-
-      // أزرار التعديل والحذف (تختفي أثناء الطباعة عبر media print)
-      cellActions.className = "no-print";
-      const actionDiv = document.createElement("div");
-      actionDiv.className = "action-buttons";
-
+      row.insertCell(0).textContent = student.name || "-";
+      row.insertCell(1).textContent = student.class || "-";
+      row.insertCell(2).textContent = student.paymentType === "كامل" ? "✅ دفع كامل" : "🔄 دفع جزء";
+      row.insertCell(3).textContent = student.amount;
+      row.insertCell(4).textContent = student.method === "نقدي" ? "💰 نقدي" : "🏦 تحويل بنكي";
+      
+      // خلية الإجراءات (تعديل وحذف)
+      const actionCell = row.insertCell(5);
+      actionCell.className = "no-print";
+      const divActions = document.createElement("div");
+      divActions.className = "action-btns";
+      
       const editBtn = document.createElement("button");
       editBtn.textContent = "✏️ تعديل";
-      editBtn.className = "edit-btn";
-      editBtn.onclick = (e) => {
-        e.stopPropagation();
-        openEditModal(idx);
-      };
-
+      editBtn.className = "icon-btn edit-icon";
+      editBtn.onclick = () => openEditModal(idx);
+      
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "🗑️ حذف";
-      deleteBtn.className = "delete-btn";
-      deleteBtn.onclick = (e) => {
-        e.stopPropagation();
-        if (confirm(`هل تريد حذف الطالب "${student.name}"؟`)) {
-          deleteStudentByIdx(idx);
+      deleteBtn.className = "icon-btn delete-icon";
+      deleteBtn.onclick = () => {
+        if(confirm(`هل تريد حذف الطالب "${student.name}" نهائياً؟`)) {
+          students.splice(idx, 1);
+          renderTable();
+          saveStudentsToLocal();
         }
       };
-
-      actionDiv.appendChild(editBtn);
-      actionDiv.appendChild(deleteBtn);
-      cellActions.appendChild(actionDiv);
+      
+      divActions.appendChild(editBtn);
+      divActions.appendChild(deleteBtn);
+      actionCell.appendChild(divActions);
     });
-
+    
     document.getElementById("count").innerText = students.length;
-    document.getElementById("total").innerText = totalAmount;
-    saveToStorage();
+    document.getElementById("total").innerText = totalSum;
+    saveStudentsToLocal();
   }
 
-  // دالة إضافة طالب
+  // إضافة طالب جديد
   function addStudent() {
-    const nameInput = document.getElementById("name");
-    const classInput = document.getElementById("class");
-    const paymentSelect = document.getElementById("paymentType");
-    const amountInput = document.getElementById("amount");
-    const methodSelect = document.getElementById("method");
-
-    const name = nameInput.value.trim();
-    const className = classInput.value.trim();
-    const paymentType = paymentSelect.value;     // "كامل" أو "جزء"
-    let amount = Number(amountInput.value);
-    const method = methodSelect.value;            // "نقدي" أو "تحويل بنكي"
-
-    if (!name) {
+    const name = document.getElementById("name").value.trim();
+    const className = document.getElementById("class").value.trim();
+    const paymentType = document.getElementById("paymentType").value;
+    const amount = Number(document.getElementById("amount").value);
+    const method = document.getElementById("method").value;
+    
+    if(!name) {
       alert("❌ الرجاء إدخال اسم الطالب");
       return;
     }
-    if (isNaN(amount) || amount <= 0) {
+    if(isNaN(amount) || amount <= 0) {
       alert("❌ المبلغ يجب أن يكون رقماً موجباً");
       return;
     }
-
-    // إضافة الطالب
+    
     students.push({
       name: name,
       class: className,
@@ -527,120 +561,77 @@
       amount: amount,
       method: method
     });
-
-    // تفريغ الحقول
-    nameInput.value = "";
-    classInput.value = "";
-    amountInput.value = "";
-    paymentSelect.value = "كامل";
-    methodSelect.value = "نقدي";
-
+    
+    // مسح الحقول
+    document.getElementById("name").value = "";
+    document.getElementById("class").value = "";
+    document.getElementById("amount").value = "";
+    document.getElementById("paymentType").value = "كامل";
+    document.getElementById("method").value = "نقدي";
+    
     renderTable();
-    // رسالة نجاح خفيفة
-    showTemporaryMessage("✅ تم تسجيل الطالب بنجاح", "#1e3c72");
+    showFloatingMessage("✅ تم إضافة الطالب بنجاح", "#1e3c72");
   }
-
-  // حذف طالب
-  function deleteStudentByIdx(index) {
-    if (index >= 0 && index < students.length) {
-      students.splice(index, 1);
-      renderTable();
-    }
-  }
-
-  // ----- نظام تعديل أنيق (مودال جميل ومدمج) -----
+  
+  // نافذة تعديل أنيقة وعصرية
   function openEditModal(index) {
     const student = students[index];
-    if (!student) return;
-
-    // إنشاء نافذة منبثقة مخصصة (modal) بتصميم جميل وحديث
+    if(!student) return;
+    
+    // إنشاء مودال
     const modalOverlay = document.createElement("div");
     modalOverlay.style.position = "fixed";
     modalOverlay.style.top = "0";
     modalOverlay.style.left = "0";
     modalOverlay.style.width = "100%";
     modalOverlay.style.height = "100%";
-    modalOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-    modalOverlay.style.backdropFilter = "blur(5px)";
+    modalOverlay.style.backgroundColor = "rgba(0,0,0,0.55)";
+    modalOverlay.style.backdropFilter = "blur(6px)";
     modalOverlay.style.display = "flex";
     modalOverlay.style.alignItems = "center";
     modalOverlay.style.justifyContent = "center";
-    modalOverlay.style.zIndex = "1000";
+    modalOverlay.style.zIndex = "2000";
     modalOverlay.style.fontFamily = "inherit";
-
+    
     const modalCard = document.createElement("div");
     modalCard.style.backgroundColor = "white";
     modalCard.style.borderRadius = "2rem";
     modalCard.style.width = "90%";
-    modalCard.style.maxWidth = "500px";
+    modalCard.style.maxWidth = "520px";
     modalCard.style.padding = "1.8rem";
-    modalCard.style.boxShadow = "0 25px 40px rgba(0,0,0,0.3)";
+    modalCard.style.boxShadow = "0 30px 40px rgba(0,0,0,0.3)";
     modalCard.style.direction = "rtl";
-    modalCard.style.textAlign = "right";
-
+    
     modalCard.innerHTML = `
-      <h3 style="color:#1e3c72; margin-bottom:1rem; border-right:4px solid #ffb74d; padding-right:1rem;">✏️ تعديل بيانات الطالب</h3>
+      <h3 style="color:#1e3c72; margin-bottom:1.2rem; border-right:4px solid #f6b83e; padding-right:1rem;">✏️ تعديل بيانات الطالب</h3>
       <div style="display:flex; flex-direction:column; gap:1rem;">
-        <div>
-          <label style="font-weight:600; display:block; margin-bottom:5px;">الاسم الكامل</label>
-          <input type="text" id="editName" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.name)}">
-        </div>
-        <div>
-          <label style="font-weight:600; display:block; margin-bottom:5px;">الفصل</label>
-          <input type="text" id="editClass" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.class)}">
-        </div>
-        <div>
-          <label style="font-weight:600; display:block; margin-bottom:5px;">نوع الدفع</label>
-          <select id="editPayment" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;">
-            <option value="كامل" ${student.paymentType === "كامل" ? "selected" : ""}>✅ دفع كامل</option>
-            <option value="جزء" ${student.paymentType === "جزء" ? "selected" : ""}>🔄 دفع جزء</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-weight:600; display:block; margin-bottom:5px;">المبلغ (جنيه)</label>
-          <input type="number" id="editAmount" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${student.amount}">
-        </div>
-        <div>
-          <label style="font-weight:600; display:block; margin-bottom:5px;">طريقة الدفع</label>
-          <select id="editMethod" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;">
-            <option value="نقدي" ${student.method === "نقدي" ? "selected" : ""}>💰 نقدي</option>
-            <option value="تحويل بنكي" ${student.method === "تحويل بنكي" ? "selected" : ""}>🏦 تحويل بنكي</option>
-          </select>
-        </div>
-        <div style="display:flex; gap:12px; justify-content:flex-start; margin-top:12px;">
-          <button id="saveEditBtn" style="background:#1e3c72; border:none; padding:10px 20px; border-radius:2rem; color:white; font-weight:bold; cursor:pointer;">💾 حفظ التعديلات</button>
-          <button id="cancelEditBtn" style="background:#e2e8f0; border:none; padding:10px 20px; border-radius:2rem; color:#1e293b; font-weight:bold; cursor:pointer;">إلغاء</button>
-        </div>
+        <div><label style="font-weight:600;">الاسم الكامل</label><input id="editName" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.name)}"></div>
+        <div><label style="font-weight:600;">الفصل</label><input id="editClass" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.class)}"></div>
+        <div><label style="font-weight:600;">نوع الدفع</label><select id="editPayment" style="width:100%; padding:12px; border-radius:1rem;"><option value="كامل" ${student.paymentType === "كامل" ? "selected" : ""}>✅ دفع كامل</option><option value="جزء" ${student.paymentType === "جزء" ? "selected" : ""}>🔄 دفع جزء</option></select></div>
+        <div><label style="font-weight:600;">المبلغ (ج.م)</label><input id="editAmount" type="number" style="width:100%; padding:12px; border-radius:1rem;" value="${student.amount}"></div>
+        <div><label style="font-weight:600;">طريقة الدفع</label><select id="editMethod" style="width:100%; padding:12px; border-radius:1rem;"><option value="نقدي" ${student.method === "نقدي" ? "selected" : ""}>💰 نقدي</option><option value="تحويل" ${student.method === "تحويل" ? "selected" : ""}>🏦 تحويل بنكي</option></select></div>
+        <div style="display:flex; gap:12px; margin-top:12px;"><button id="saveEdit" style="background:#1e3c72; border:none; padding:10px 22px; border-radius:2rem; color:white; font-weight:bold;">💾 حفظ التعديل</button><button id="cancelEdit" style="background:#e2e8f0; border:none; padding:10px 22px; border-radius:2rem;">إلغاء</button></div>
       </div>
     `;
-
+    
     modalOverlay.appendChild(modalCard);
     document.body.appendChild(modalOverlay);
-
-    const saveBtn = modalCard.querySelector("#saveEditBtn");
-    const cancelBtn = modalCard.querySelector("#cancelEditBtn");
-
-    const closeModal = () => {
-      modalOverlay.remove();
-    };
-
+    
+    const saveBtn = modalCard.querySelector("#saveEdit");
+    const cancelBtn = modalCard.querySelector("#cancelEdit");
+    
+    const closeModal = () => modalOverlay.remove();
+    
     saveBtn.onclick = () => {
       const newName = modalCard.querySelector("#editName").value.trim();
       const newClass = modalCard.querySelector("#editClass").value.trim();
       const newPayment = modalCard.querySelector("#editPayment").value;
       const newAmount = Number(modalCard.querySelector("#editAmount").value);
       const newMethod = modalCard.querySelector("#editMethod").value;
-
-      if (!newName) {
-        alert("⚠️ اسم الطالب لا يمكن أن يكون فارغاً");
-        return;
-      }
-      if (isNaN(newAmount) || newAmount <= 0) {
-        alert("⚠️ المبلغ يجب أن يكون رقماً موجباً");
-        return;
-      }
-
-      // تحديث بيانات الطالب
+      
+      if(!newName) { alert("الاسم مطلوب"); return; }
+      if(isNaN(newAmount) || newAmount <= 0) { alert("أدخل مبلغ صحيح"); return; }
+      
       students[index] = {
         name: newName,
         class: newClass,
@@ -650,69 +641,102 @@
       };
       renderTable();
       closeModal();
-      showTemporaryMessage("✨ تم تعديل البيانات بنجاح", "#2b6e4f");
+      showFloatingMessage("✨ تم تعديل الطالب بنجاح", "#2b6e4f");
     };
-
+    
     cancelBtn.onclick = closeModal;
-    // إغلاق عند الضغط على الخلفية
-    modalOverlay.onclick = (e) => {
-      if (e.target === modalOverlay) closeModal();
-    };
+    modalOverlay.onclick = (e) => { if(e.target === modalOverlay) closeModal(); };
   }
-
-  // مساعدة لعرض رسائل منبثقة جميلة بديلاً عن alert مزعج
-  function showTemporaryMessage(msg, bgColor = "#1e3c72") {
+  
+  // حذف الطالب
+  function deleteStudent(index) {
+    if(confirm("هل أنت متأكد من الحذف؟")) {
+      students.splice(index, 1);
+      renderTable();
+    }
+  }
+  
+  // دالة الطباعة: تخفي الأزرار والمدخلات بشكل تام (تم بالـ media print ولكن أيضاً نضيف class)
+  function printPage() {
+    window.print();
+  }
+  
+  // إنشاء ملف PDF مع بيانات المعلم والطلاب
+  function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ direction: "rtl" });
+    
+    const teacher = teacherNameInput?.value || "";
+    const totalMoney = students.reduce((sum, s) => sum + s.amount, 0);
+    
+    doc.setFont("helvetica");
+    doc.text("نظام إدارة الدروس - تقرير الطلاب", 105, 15, { align: "center" });
+    doc.text(`المدرس: ${teacher || "غير محدد"}`, 15, 27);
+    
+    if(teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
+      try {
+        doc.addImage(teacherImageBase64, "JPEG", 150, 10, 35, 35);
+      } catch(e) { console.warn("خطأ بإضافة الصورة"); }
+    }
+    
+    const tableData = students.map(s => [s.name, s.class, s.paymentType === "كامل" ? "دفع كامل" : "دفع جزء", s.amount.toString(), s.method === "نقدي" ? "نقدي" : "تحويل بنكي"]);
+    
+    doc.autoTable({
+      startY: 45,
+      head: [["الاسم", "الفصل", "نوع الدفع", "المبلغ (ج.م)", "الطريقة"]],
+      body: tableData,
+      theme: "grid",
+      headStyles: { fillColor: [30, 60, 114], textColor: 255, halign: "center" },
+      styles: { font: "helvetica", cellPadding: 3, halign: "center" },
+      margin: { right: 15, left: 15 }
+    });
+    
+    const finalY = doc.lastAutoTable.finalY + 8;
+    doc.text(`عدد الطلاب: ${students.length}`, 15, finalY);
+    doc.text(`الإجمالي المدفوع: ${totalMoney} جنيه`, 15, finalY + 8);
+    doc.save("تقرير_الطلاب.pdf");
+  }
+  
+  // رسالة عائمة جميلة
+  function showFloatingMessage(msg, bgColor) {
     let toast = document.createElement("div");
     toast.innerText = msg;
     toast.style.position = "fixed";
-    toast.style.bottom = "30px";
+    toast.style.bottom = "25px";
     toast.style.left = "50%";
     toast.style.transform = "translateX(-50%)";
     toast.style.backgroundColor = bgColor;
     toast.style.color = "white";
-    toast.style.padding = "12px 24px";
+    toast.style.padding = "10px 24px";
     toast.style.borderRadius = "40px";
     toast.style.fontWeight = "bold";
-    toast.style.zIndex = "1100";
-    toast.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
+    toast.style.zIndex = "2100";
     toast.style.fontFamily = "inherit";
+    toast.style.boxShadow = "0 8px 18px rgba(0,0,0,0.2)";
     toast.style.direction = "rtl";
-    toast.style.backdropFilter = "blur(4px)";
     document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      setTimeout(() => toast.remove(), 400);
-    }, 2000);
+    setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 400); }, 2000);
   }
-
-  // حماية ضد ال XSS بسيطة
+  
   function escapeHtml(str) {
-    if (!str) return "";
+    if(!str) return "";
     return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
+      if(m === '&') return '&amp;';
+      if(m === '<') return '&lt;';
+      if(m === '>') return '&gt;';
       return m;
-    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-      return c;
     });
   }
-
-  // طباعة: نخفي كل الأزرار والنماذج بشكل تام (تم بالـ css media print)
-  // لكن للتأكد إضافيًا: نمنع ظهور أزرار التعديل والحذف في print عبر class no-print والـ media
-  function printPage() {
-    window.print();
-  }
-
-  // دالة حذف عامة تستخدم من الحذف المباشر
-  window.deleteStudentByIdx = deleteStudentByIdx;
-  // ربط الدوال بالـ global حتى تعمل من onclicks في الـ HTML
+  
+  // ربط دوال عامة
   window.addStudent = addStudent;
   window.printPage = printPage;
-  window.openEditModal = openEditModal; // تستخدم داخل التعديل المباشر من الجدول
-
-  // تهيئة أولية
-  loadFromStorage();
+  window.downloadPDF = downloadPDF;
+  window.deleteStudent = deleteStudent;
+  window.openEditModal = openEditModal;
+  
+  // تحميل البيانات وبدء التشغيل بدون أي بيانات تجريبية
+  loadStudentsData();
   renderTable();
 </script>
 </body>
