@@ -337,34 +337,6 @@
     background: #ffd6d1;
   }
 
-  /* زر الحذف والتعديل في الطباعة يختفيان */
-@media print {
-  @page {
-    margin: 10mm;
-    size: auto;
-  }
-
-  body {
-    background: white !important;
-  }
-
-  .no-print {
-    display: none !important;
-  }
-
-  table {
-    page-break-inside: avoid;
-  }
-
-  tr {
-    page-break-inside: avoid;
-  }
-
-  html, body {
-    height: auto !important;
-  }
-}
-
 .master-container {
   page-break-inside: avoid;
 }
