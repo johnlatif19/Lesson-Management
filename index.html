@@ -338,14 +338,31 @@
   }
 
   /* زر الحذف والتعديل في الطباعة يختفيان */
-  @media print {
-   @page {
-  size: auto;
-  margin: 10mm;
-}
+@media print {
+  @page {
+    margin: 10mm;
+    size: auto;
+  }
 
-html, body {
-  height: auto;
+  body {
+    background: white !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  table {
+    page-break-inside: avoid;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  html, body {
+    height: auto !important;
+  }
 }
 
 .master-container {
@@ -456,6 +473,9 @@ tr {
 </div>
 
 <script>
+ doc.addFileToVFS("Amiri-Regular.ttf", "BASE64_FONT_HERE");
+doc.addFont("Amiri-Regular.ttf", "Amiri", "normal");
+doc.setFont("Amiri");
   // ---- لا بيانات تجريبية ----
   let students = [];
   let teacherName = localStorage.getItem("teacherName") || "";
@@ -682,21 +702,13 @@ function downloadPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  let y = 20;
+  let total = students.reduce((sum,s)=>sum+s.amount,0);
 
-  // عنوان
   doc.setFontSize(14);
-  doc.text("Students Report", 10, y);
+  doc.text("Students Report", 10, 15);
 
-  y += 10;
+  doc.text("Teacher: " + (teacherNameInput.value || ""), 10, 25);
 
-  // اسم المدرس
-  const teacher = teacherNameInput?.value || "";
-  doc.text("Teacher: " + teacher, 10, y);
-
-  y += 10;
-
-  // الجدول
   const rows = students.map(s => [
     s.name,
     s.class,
@@ -706,15 +718,13 @@ function downloadPDF() {
   ]);
 
   doc.autoTable({
-    head: [["Name", "Class", "Payment", "Amount", "Method"]],
-    body: rows,
-    startY: y
+    startY: 35,
+    head: [["Name","Class","Payment","Amount","Method"]],
+    body: rows
   });
 
-  let total = students.reduce((sum, s) => sum + s.amount, 0);
-
-  doc.text("Students: " + students.length, 10, doc.lastAutoTable.finalY + 10);
-  doc.text("Total: " + total, 10, doc.lastAutoTable.finalY + 20);
+  doc.text("Total Students: " + students.length, 10, doc.lastAutoTable.finalY + 10);
+  doc.text("Total Money: " + total, 10, doc.lastAutoTable.finalY + 20);
 
   doc.save("report.pdf");
 }
