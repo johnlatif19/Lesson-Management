@@ -157,38 +157,6 @@
             color: #7C3AED;
         }
 
-        /* helper text for image preview */
-        .image-preview-area {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 0.5rem;
-            justify-content: flex-start;
-            flex-wrap: wrap;
-        }
-
-        .preview-img {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #e2e8f0;
-            background: #f1f5f9;
-            display: none;
-            transition: all 0.2s;
-        }
-
-        .preview-placeholder {
-            font-size: 0.75rem;
-            color: #5b6e8c;
-            background: #f8fafc;
-            padding: 0.3rem 0.9rem;
-            border-radius: 30px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
         /* button */
         .btn-signup {
             background: linear-gradient(95deg, #4F46E5, #7C3AED);
@@ -299,6 +267,17 @@
             cursor: wait;
             transform: none;
         }
+        
+        /* RTL fine tuning */
+        .btn-signup i:first-child {
+            margin-left: 5px;
+        }
+        .btn-signup i:last-child {
+            margin-right: 5px;
+        }
+        .toast-message i {
+            margin-left: 6px;
+        }
     </style>
 </head>
 <body>
@@ -322,6 +301,8 @@
         <input type="password" id="password" placeholder="كلمة المرور">
     </div>
 
+    <!-- تم إزالة حقل الصورة URL وكافة عناصر المعاينة المرتبطة به -->
+
     <button class="btn-signup" id="signupBtn">
         <i class="fas fa-pen-fancy"></i> تسجيل المعلم
         <i class="fas fa-arrow-left"></i>
@@ -340,7 +321,7 @@
 </div>
 
 <script>
-    // DOM elements
+    // DOM elements (تمت إزالة جميع عناصر الصورة URL والمعاينة)
     const nameInput = document.getElementById('name');
     const passwordInput = document.getElementById('password');
     const signupBtn = document.getElementById('signupBtn');
@@ -362,39 +343,35 @@
         }, 3000);
     }
     
-    // validate form fields with arabic/english support and trimming
-function validateForm() {
-    let nameVal = nameInput.value.trim();
-    let passVal = passwordInput.value;
-
-    if (nameVal === "") {
-        showToast("الرجاء إدخال الاسم الكامل", true);
-        nameInput.focus();
-        return false;
+    // validate form fields - فقط الاسم وكلمة المرور (لا يوجد صورة)
+    function validateForm() {
+        let nameVal = nameInput.value.trim();
+        let passVal = passwordInput.value;
+        
+        if (nameVal === "") {
+            showToast("الرجاء إدخال الاسم الكامل", true);
+            nameInput.focus();
+            return false;
+        }
+        if (nameVal.length < 3) {
+            showToast("الاسم يجب أن يكون 3 أحرف على الأقل", true);
+            nameInput.focus();
+            return false;
+        }
+        if (passVal === "") {
+            showToast("كلمة المرور مطلوبة", true);
+            passwordInput.focus();
+            return false;
+        }
+        if (passVal.length < 4) {
+            showToast("كلمة المرور يجب أن تكون 4 محارف أو أكثر", true);
+            passwordInput.focus();
+            return false;
+        }
+        return true;
     }
-
-    if (nameVal.length < 3) {
-        showToast("الاسم يجب أن يكون 3 أحرف على الأقل", true);
-        nameInput.focus();
-        return false;
-    }
-
-    if (passVal === "") {
-        showToast("كلمة المرور مطلوبة", true);
-        passwordInput.focus();
-        return false;
-    }
-
-    if (passVal.length < 4) {
-        showToast("كلمة المرور يجب أن تكون 4 محارف أو أكثر", true);
-        passwordInput.focus();
-        return false;
-    }
-
-    return true;
-}
     
-    // simulate loading state and call actual API (mock /api/signin)
+    // simulate loading state and call actual API (mock /api/signin) - بدون حقل الصورة
     async function signup() {
         // validation before any request
         if (!validateForm()) {
@@ -405,10 +382,10 @@ function validateForm() {
         const nameValue = nameInput.value.trim();
         const passwordValue = passwordInput.value;
         
-        // prepare payload
+        // prepare payload without image field
         const payload = {
             name: nameValue,
-            password: passwordValue,
+            password: passwordValue
         };
         
         // disable button and add loading class
@@ -418,62 +395,49 @@ function validateForm() {
         signupBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري التسجيل...';
         
         try {
-            // actual fetch to backend endpoint "/api/signin" (as in original code)
-            // but we also handle network errors gracefully and preserve the spec
+            // actual fetch to backend endpoint "/api/signin" (مطابق للمتطلبات)
             const response = await fetch("/api/signin", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
             
-            // even if response status is not OK, we still show the default message? 
-            // But according to original code, it just waits for activation regardless.
-            // We'll enhance: if server returns an error we show custom message, but after alert 
-            // we also keep the original "تم التسجيل وانتظر التفعيل" feel. 
-            // However original design: no error handling. But providing both styles:
+            // معالجة الاستجابة: إذا نجح الطلب أو حدث خطأ، نظهر رسالة فعالة
             if (response.ok) {
                 showToast("✅ تم التسجيل بنجاح! في انتظار التفعيل", false);
             } else {
-                // server responded with error (like 400/500) but we still want to show registration request sent
+                // server responded with error but registration request was sent
                 showToast("⚠️ تم إرسال الطلب، لكن الخادم استجاب بشكل غير متوقع، انتظر التفعيل", false);
             }
             
-            // original alert from requirement – but we also provide sweet modern toast
-            // to match expected user feedback, but we also keep alert? Actually the spec had alert("تم التسجيل وانتظر التفعيل");
-            // To be fully respectful, we will alert as well but also elegant toast. (double but consistent)
-            // BUT modern ux: can keep alert OR use only toast. I'll call alert but after small delay to not conflict? 
-            // However I'll keep both: alert after fetch (like original) plus toast modern. But alert might be intrusive but matches original expectation.
-            // Let's call alert exactly as requested but with nice design. Actually the requirement said "alert("تم التسجيل وانتظر التفعيل");"
-            // So we maintain that plus improved visuals.
+            // تنبيه أصلي كما هو مطلوب في المواصفات
             alert("تم التسجيل وانتظر التفعيل");
             
-            // optional: reset form? No, keep as is or clear sensitive? Up to preference, but we keep values.
-            // just to improve UX, clear password field for security
+            // إعادة تعيين حقل كلمة المرور لأمان المستخدم
             passwordInput.value = "";
-            // but name and image stay
-            // reset preview if image cleared? Not needed.
+            // يمكن ترك الاسم كما هو أو إعادة تعيينه حسب الرغبة - نتركه لتجربة أفضل
             
         } catch (error) {
             console.error("Fetch error:", error);
-            // network error or backend unreachable
+            // خطأ في الشبكة أو عدم توفر الخادم
             let errorMsg = "حدث خطأ في الاتصال بالخادم. تأكد من اتصال الإنترنت ثم حاول مجددًا.";
             showToast(errorMsg, true);
             alert("❗ فشل الاتصال: " + errorMsg);
         } finally {
-            // re-enable button after API call finishes
+            // إعادة تمكين الزر بعد انتهاء الطلب
             signupBtn.disabled = false;
             signupBtn.classList.remove('loading');
             signupBtn.innerHTML = originalBtnHTML;
         }
     }
     
-    // attach event to button with async function
+    // attach event to button
     signupBtn.addEventListener('click', (e) => {
         e.preventDefault();
         signup();
     });
     
-    // optional: allow pressing Enter key on any input to submit
+    // السماح بإرسال النموذج بالضغط على زر Enter في أي حقل إدخال
     const inputs = [nameInput, passwordInput];
     inputs.forEach(input => {
         input.addEventListener('keypress', (e) => {
@@ -483,6 +447,9 @@ function validateForm() {
             }
         });
     });
+    
+    // (تم إزالة أي كود متعلق بمعاينة الصورة أو حقل الرابط)
+    // تأكيد عدم وجود أي عناصر صور متبقية
 </script>
 </body>
 </html>
