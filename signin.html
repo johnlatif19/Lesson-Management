@@ -1,577 +1,413 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>تسجيل معلم | منصة التعليم</title>
-    <!-- Google Fonts - Tajawal for modern Arabic feel -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 (Free Icons) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>تسجيل الدخول - نظام إدارة الدروس</title>
+<link rel="icon" href="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg">
 
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            position: relative;
-        }
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-        /* decorative animated circles */
-        body::before {
-            content: "";
-            position: absolute;
-            top: 10%;
-            left: 5%;
-            width: 250px;
-            height: 250px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            animation: float 12s infinite ease-in-out;
-            z-index: 0;
-        }
+  body {
+    font-family: 'Segoe UI', 'Tajawal', 'Cairo', 'Arial', system-ui, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
 
-        body::after {
-            content: "";
-            position: absolute;
-            bottom: 8%;
-            right: 3%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 50%;
-            animation: float 10s infinite reverse;
-            z-index: 0;
-        }
+  /* خلفية متحركة جميلة */
+  body::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: moveBackground 20s linear infinite;
+    opacity: 0.3;
+  }
 
-        @keyframes float {
-            0% { transform: translateY(0px) scale(1);}
-            50% { transform: translateY(-30px) scale(1.05);}
-            100% { transform: translateY(0px) scale(1);}
-        }
+  @keyframes moveBackground {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(40px, 40px); }
+  }
 
-        /* main card */
-        .register-card {
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35), 0 4px 12px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 520px;
-            padding: 2rem 2rem 2.5rem;
-            transition: transform 0.2s ease;
-            z-index: 2;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
+  .login-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 400px;
+  }
 
-        .register-card:hover {
-            transform: translateY(-5px);
-        }
+  .card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    padding: 2.5rem;
+    border-radius: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
 
-        /* header */
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+  .card:hover {
+    transform: translateY(-5px);
+  }
 
-        .header h2 {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(120deg, #4F46E5, #7C3AED);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.3px;
-        }
+  .logo {
+    margin-bottom: 1.5rem;
+  }
 
-        .header p {
-            color: #5b6e8c;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
+  .logo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f6b83e;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
 
-        .teacher-icon {
-            background: #f3f4ff;
-            width: 70px;
-            height: 70px;
-            line-height: 70px;
-            text-align: center;
-            border-radius: 50%;
-            margin: 0 auto 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.3rem;
-            color: #4F46E5;
-            box-shadow: 0 6px 12px rgba(79,70,229,0.15);
-        }
+  h2 {
+    color: #1e3c72;
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
 
-        /* input groups */
-        .input-group {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
+  .subtitle {
+    color: #5a7188;
+    margin-bottom: 1.8rem;
+    font-size: 0.9rem;
+  }
 
-        .input-group i {
-            position: absolute;
-            right: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #a0aec0;
-            font-size: 1.2rem;
-            transition: color 0.2s;
-            pointer-events: none;
-        }
+  .input-group {
+    margin-bottom: 1.2rem;
+    text-align: right;
+  }
 
-        .input-group input {
-            width: 100%;
-            padding: 1rem 3rem 1rem 1.2rem;
-            font-size: 1rem;
-            font-family: 'Tajawal', sans-serif;
-            border: 2px solid #e2e8f0;
-            border-radius: 1.5rem;
-            background: #fefefe;
-            transition: all 0.2s;
-            outline: none;
-            font-weight: 500;
-            color: #1e293b;
-        }
+  .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #4a627a;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
 
-        .input-group input:focus {
-            border-color: #7C3AED;
-            box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
-            background: #ffffff;
-        }
+  .input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 1rem;
+    border: 1.5px solid #e2edf7;
+    background: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+  }
 
-        .input-group input:focus + i {
-            color: #7C3AED;
-        }
+  .input-group input:focus {
+    border-color: #f6b83e;
+    box-shadow: 0 0 0 3px rgba(246, 184, 62, 0.2);
+  }
 
-        /* helper text for image preview */
-        .image-preview-area {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-top: 0.5rem;
-            justify-content: flex-start;
-            flex-wrap: wrap;
-        }
+  button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+  }
 
-        .preview-img {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #e2e8f0;
-            background: #f1f5f9;
-            display: none;
-            transition: all 0.2s;
-        }
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(30, 60, 114, 0.3);
+  }
 
-        .preview-placeholder {
-            font-size: 0.75rem;
-            color: #5b6e8c;
-            background: #f8fafc;
-            padding: 0.3rem 0.9rem;
-            border-radius: 30px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
+  .link {
+    margin-top: 1.5rem;
+    display: inline-block;
+    color: #2a5298;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
 
-        /* button */
-        .btn-signup {
-            background: linear-gradient(95deg, #4F46E5, #7C3AED);
-            width: 100%;
-            border: none;
-            padding: 1rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            font-family: 'Tajawal', sans-serif;
-            color: white;
-            border-radius: 2rem;
-            cursor: pointer;
-            transition: all 0.25s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 0.5rem;
-            box-shadow: 0 8px 18px rgba(79,70,229,0.3);
-        }
+  .link:hover {
+    color: #f6b83e;
+  }
 
-        .btn-signup:hover {
-            background: linear-gradient(95deg, #4338ca, #6d28d9);
-            transform: scale(0.98);
-            box-shadow: 0 4px 12px rgba(79,70,229,0.4);
-        }
+  .error-message {
+    background: #fee2e2;
+    color: #c53030;
+    padding: 10px;
+    border-radius: 0.8rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    display: none;
+  }
 
-        .btn-signup:active {
-            transform: scale(0.96);
-        }
+  .success-message {
+    background: #c6f6d5;
+    color: #276749;
+    padding: 10px;
+    border-radius: 0.8rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    display: none;
+  }
 
-        /* info note */
-        .info-note {
-            background: #f1f5f9;
-            border-radius: 1rem;
-            padding: 0.7rem;
-            margin-top: 1.8rem;
-            text-align: center;
-            font-size: 0.8rem;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+  .toggle-mode {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2edf7;
+  }
 
-        .info-note i {
-            font-size: 0.9rem;
-            color: #4F46E5;
-        }
-
-        /* loader & toast (dynamic) */
-        .toast-message {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #1e293b;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-weight: 500;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            backdrop-filter: blur(8px);
-            background: rgba(30,41,59,0.95);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .toast-message.show {
-            transform: translateX(-50%) translateY(0px);
-        }
-
-        /* responsiveness */
-        @media (max-width: 560px) {
-            .register-card {
-                padding: 1.5rem;
-            }
-            .header h2 {
-                font-size: 1.7rem;
-            }
-            .btn-signup {
-                padding: 0.85rem;
-                font-size: 1rem;
-            }
-            .input-group input {
-                padding: 0.85rem 3rem 0.85rem 1rem;
-            }
-        }
-
-        @media (max-width: 450px) {
-            body {
-                padding: 1rem;
-            }
-            .register-card {
-                border-radius: 1.5rem;
-            }
-        }
-
-        /* disable button while loading */
-        .btn-signup.loading {
-            opacity: 0.7;
-            cursor: wait;
-            transform: none;
-        }
-    </style>
+  hr {
+    margin: 1rem 0;
+    border: none;
+    border-top: 1px solid #e2edf7;
+  }
+</style>
 </head>
+
 <body>
 
-<div class="register-card">
-    <div class="header">
-        <div class="teacher-icon">
-            <i class="fas fa-chalkboard-user"></i>
-        </div>
-        <h2>تسجيل معلم جديد</h2>
-        <p>انضم إلى منصة التعليم المتميزة</p>
+<div class="login-container">
+  <div class="card">
+    <div class="logo">
+      <img src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" alt="شعار النظام">
     </div>
-
+    
+    <h2 id="formTitle">تسجيل الدخول</h2>
+    <p class="subtitle" id="formSubtitle">مرحباً بعودتك! يرجى إدخال بياناتك</p>
+    
+    <div id="errorMsg" class="error-message"></div>
+    <div id="successMsg" class="success-message"></div>
+    
     <div class="input-group">
-        <i class="fas fa-user-graduate"></i>
-        <input type="text" id="name" placeholder="الاسم الكامل" autocomplete="off">
+      <label>👤 اسم المعلم</label>
+      <input type="text" id="teacherName" placeholder="أدخل اسمك" autocomplete="off">
     </div>
-
+    
     <div class="input-group">
-        <i class="fas fa-lock"></i>
-        <input type="password" id="password" placeholder="كلمة المرور">
+      <label>🔒 كلمة المرور</label>
+      <input type="password" id="password" placeholder="••••••••">
     </div>
-
-    <div class="input-group">
-        <i class="fas fa-image"></i>
-        <input type="text" id="image" placeholder="رابط الصورة الشخصية (URL)">
+    
+    <button id="actionBtn" onclick="handleAuth()">تسجيل الدخول</button>
+    
+    <div class="toggle-mode">
+      <a class="link" id="toggleLink" onclick="toggleMode()">ليس لديك حساب؟ سجل الآن</a>
     </div>
-
-    <!-- صورة معاينة ذكية -->
-    <div class="image-preview-area" id="previewContainer">
-        <img id="previewImg" class="preview-img" alt="معاينة الصورة">
-        <span class="preview-placeholder" id="previewPlaceholder">
-            <i class="fas fa-camera"></i> ستظهر معاينة الصورة هنا
-        </span>
-    </div>
-
-    <button class="btn-signup" id="signupBtn">
-        <i class="fas fa-pen-fancy"></i> تسجيل المعلم
-        <i class="fas fa-arrow-left"></i>
-    </button>
-
-    <div class="info-note">
-        <i class="fas fa-clock"></i>
-        <span>بعد التسجيل، سيتم مراجعة طلبك وتفعيله قريباً</span>
-    </div>
-</div>
-
-<!-- toast element for feedback -->
-<div id="toastMsg" class="toast-message">
-    <i class="fas fa-check-circle"></i>
-    <span id="toastText">تم التسجيل بنجاح</span>
+  </div>
 </div>
 
 <script>
-    // DOM elements
-    const nameInput = document.getElementById('name');
-    const passwordInput = document.getElementById('password');
-    const imageInput = document.getElementById('image');
-    const signupBtn = document.getElementById('signupBtn');
-    const previewImg = document.getElementById('previewImg');
-    const previewPlaceholder = document.getElementById('previewPlaceholder');
-    const toastMsgDiv = document.getElementById('toastMsg');
-    const toastTextSpan = document.getElementById('toastText');
+// وضع التشغيل: 'login' أو 'signup'
+let currentMode = 'login';
 
-    // Helper: show dynamic toast
-    let toastTimeout = null;
-    function showToast(message, isError = false) {
-        // clear previous timeout to avoid overlapping
-        if (toastTimeout) clearTimeout(toastTimeout);
-        
-        toastTextSpan.innerHTML = isError ? `<i class="fas fa-exclamation-triangle" style="margin-left: 6px;"></i> ${message}` : `<i class="fas fa-check-circle" style="margin-left: 6px;"></i> ${message}`;
-        toastMsgDiv.classList.add('show');
-        
-        // automatically hide after 3 seconds
-        toastTimeout = setTimeout(() => {
-            toastMsgDiv.classList.remove('show');
-        }, 3000);
-    }
+// بيانات المعلمين المسجلين (تمهيدية - يمكن إضافة مستخدم تجريبي)
+// في التطبيق الحقيقي، يُفضل استخدام خادم خلفي
+let teachers = JSON.parse(localStorage.getItem("registered_teachers") || "{}");
 
-    // preview image dynamically when user types URL (live preview)
-    function updateImagePreview() {
-        let url = imageInput.value.trim();
-        if (url === "") {
-            previewImg.style.display = "none";
-            previewPlaceholder.style.display = "inline-flex";
-            return;
-        }
-        // Test if url seems valid image URL (simple check)
-        // We'll try to load it, if fails we show placeholder but keep input
-        previewImg.style.display = "block";
-        previewImg.style.display = "block";
-        previewPlaceholder.style.display = "none";
-        
-        // set src and handle error
-        previewImg.onload = () => {
-            // success: image visible
-            previewImg.style.display = "block";
-            previewPlaceholder.style.display = "none";
-        };
-        previewImg.onerror = () => {
-            // if image fails to load, show placeholder and give hint
-            previewImg.style.display = "none";
-            previewPlaceholder.style.display = "inline-flex";
-            previewPlaceholder.innerHTML = `<i class="fas fa-image-slash"></i> رابط غير صالح للصورة`;
-            // reset after a while? keep but will change again on next input
-            setTimeout(() => {
-                if (imageInput.value.trim() === url) {
-                    previewPlaceholder.innerHTML = `<i class="fas fa-camera"></i> رابط صورة غير صالح، حاول مرة أخرى`;
-                } else {
-                    // user changed input, no need fix
-                }
-            }, 1200);
-        };
-        previewImg.src = url;
-    }
+// إذا لم يكن هناك أي معلم مسجل، نقوم بإضافة مستخدم تجريبي للتجربة
+if (Object.keys(teachers).length === 0) {
+  // مستخدم تجريبي: اسم المعلم = "أحمد", كلمة المرور = "123456"
+  teachers["أحمد"] = {
+    password: "123456",
+    name: "أحمد"
+  };
+  localStorage.setItem("registered_teachers", JSON.stringify(teachers));
+}
 
-    // Attach input event for live preview
-    imageInput.addEventListener('input', updateImagePreview);
+// تحديث واجهة المستخدم حسب الوضع الحالي
+function updateUI() {
+  const title = document.getElementById("formTitle");
+  const subtitle = document.getElementById("formSubtitle");
+  const actionBtn = document.getElementById("actionBtn");
+  const toggleLink = document.getElementById("toggleLink");
+  
+  if (currentMode === 'login') {
+    title.textContent = "تسجيل الدخول";
+    subtitle.textContent = "مرحباً بعودتك! يرجى إدخال بياناتك";
+    actionBtn.textContent = "تسجيل الدخول";
+    toggleLink.textContent = "ليس لديك حساب؟ سجل الآن";
+  } else {
+    title.textContent = "إنشاء حساب جديد";
+    subtitle.textContent = "قم بإنشاء حساب جديد للوصول إلى النظام";
+    actionBtn.textContent = "إنشاء حساب";
+    toggleLink.textContent = "لديك حساب بالفعل؟ تسجيل الدخول";
+  }
+  
+  // مسح الرسائل السابقة
+  hideErrors();
+}
+
+// التبديل بين وضع تسجيل الدخول والتسجيل
+function toggleMode() {
+  currentMode = currentMode === 'login' ? 'signup' : 'login';
+  updateUI();
+  // مسح الحقول
+  document.getElementById("teacherName").value = "";
+  document.getElementById("password").value = "";
+}
+
+// عرض رسالة خطأ
+function showError(message) {
+  const errorDiv = document.getElementById("errorMsg");
+  errorDiv.textContent = message;
+  errorDiv.style.display = "block";
+  setTimeout(() => {
+    errorDiv.style.display = "none";
+  }, 3000);
+}
+
+// عرض رسالة نجاح
+function showSuccess(message) {
+  const successDiv = document.getElementById("successMsg");
+  successDiv.textContent = message;
+  successDiv.style.display = "block";
+  setTimeout(() => {
+    successDiv.style.display = "none";
+  }, 2000);
+}
+
+function hideErrors() {
+  document.getElementById("errorMsg").style.display = "none";
+  document.getElementById("successMsg").style.display = "none";
+}
+
+// المعالجة الرئيسية (تسجيل دخول / إنشاء حساب)
+function handleAuth() {
+  const teacherName = document.getElementById("teacherName").value.trim();
+  const password = document.getElementById("password").value;
+  
+  if (!teacherName || !password) {
+    showError("❌ يرجى إدخال الاسم وكلمة المرور");
+    return;
+  }
+  
+  if (currentMode === 'login') {
+    // تسجيل الدخول
+    login(teacherName, password);
+  } else {
+    // إنشاء حساب جديد
+    signup(teacherName, password);
+  }
+}
+
+// دالة تسجيل الدخول
+function login(name, password) {
+  const teachers = JSON.parse(localStorage.getItem("registered_teachers") || "{}");
+  
+  if (teachers[name] && teachers[name].password === password) {
+    // تسجيل الدخول ناجح
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("teacherName", name);
+    localStorage.setItem("teacherImage", teachers[name].image || "");
     
-    // validate form fields with arabic/english support and trimming
-    function validateForm() {
-        let nameVal = nameInput.value.trim();
-        let passVal = passwordInput.value;
-        let imageVal = imageInput.value.trim();
-        
-        if (nameVal === "") {
-            showToast("الرجاء إدخال الاسم الكامل", true);
-            nameInput.focus();
-            return false;
-        }
-        if (nameVal.length < 3) {
-            showToast("الاسم يجب أن يكون 3 أحرف على الأقل", true);
-            nameInput.focus();
-            return false;
-        }
-        if (passVal === "") {
-            showToast("كلمة المرور مطلوبة", true);
-            passwordInput.focus();
-            return false;
-        }
-        if (passVal.length < 4) {
-            showToast("كلمة المرور يجب أن تكون 4 محارف أو أكثر", true);
-            passwordInput.focus();
-            return false;
-        }
-        // image is optional but if provided, check minimal URL structure
-        if (imageVal !== "" && !(imageVal.startsWith("http://") || imageVal.startsWith("https://"))) {
-            showToast("يرجى إدخال رابط صورة صحيح يبدأ بـ http:// أو https://", true);
-            imageInput.focus();
-            return false;
-        }
-        return true;
-    }
+    showSuccess("✅ تم تسجيل الدخول بنجاح! جاري التحويل...");
     
-    // simulate loading state and call actual API (mock /api/signin)
-    async function signup() {
-        // validation before any request
-        if (!validateForm()) {
-            return;
-        }
-        
-        // get fresh values
-        const nameValue = nameInput.value.trim();
-        const passwordValue = passwordInput.value;
-        const imageValue = imageInput.value.trim();
-        
-        // prepare payload
-        const payload = {
-            name: nameValue,
-            password: passwordValue,
-            image: imageValue
-        };
-        
-        // disable button and add loading class
-        let originalBtnHTML = signupBtn.innerHTML;
-        signupBtn.disabled = true;
-        signupBtn.classList.add('loading');
-        signupBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري التسجيل...';
-        
-        try {
-            // actual fetch to backend endpoint "/api/signin" (as in original code)
-            // but we also handle network errors gracefully and preserve the spec
-            const response = await fetch("/api/signin", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            
-            // even if response status is not OK, we still show the default message? 
-            // But according to original code, it just waits for activation regardless.
-            // We'll enhance: if server returns an error we show custom message, but after alert 
-            // we also keep the original "تم التسجيل وانتظر التفعيل" feel. 
-            // However original design: no error handling. But providing both styles:
-            if (response.ok) {
-                showToast("✅ تم التسجيل بنجاح! في انتظار التفعيل", false);
-            } else {
-                // server responded with error (like 400/500) but we still want to show registration request sent
-                showToast("⚠️ تم إرسال الطلب، لكن الخادم استجاب بشكل غير متوقع، انتظر التفعيل", false);
-            }
-            
-            // original alert from requirement – but we also provide sweet modern toast
-            // to match expected user feedback, but we also keep alert? Actually the spec had alert("تم التسجيل وانتظر التفعيل");
-            // To be fully respectful, we will alert as well but also elegant toast. (double but consistent)
-            // BUT modern ux: can keep alert OR use only toast. I'll call alert but after small delay to not conflict? 
-            // However I'll keep both: alert after fetch (like original) plus toast modern. But alert might be intrusive but matches original expectation.
-            // Let's call alert exactly as requested but with nice design. Actually the requirement said "alert("تم التسجيل وانتظر التفعيل");"
-            // So we maintain that plus improved visuals.
-            alert("تم التسجيل وانتظر التفعيل");
-            
-            // optional: reset form? No, keep as is or clear sensitive? Up to preference, but we keep values.
-            // just to improve UX, clear password field for security
-            passwordInput.value = "";
-            // but name and image stay
-            // reset preview if image cleared? Not needed.
-            
-        } catch (error) {
-            console.error("Fetch error:", error);
-            // network error or backend unreachable
-            let errorMsg = "حدث خطأ في الاتصال بالخادم. تأكد من اتصال الإنترنت ثم حاول مجددًا.";
-            showToast(errorMsg, true);
-            alert("❗ فشل الاتصال: " + errorMsg);
-        } finally {
-            // re-enable button after API call finishes
-            signupBtn.disabled = false;
-            signupBtn.classList.remove('loading');
-            signupBtn.innerHTML = originalBtnHTML;
-        }
-    }
-    
-    // attach event to button with async function
-    signupBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        signup();
-    });
-    
-    // optional: allow pressing Enter key on any input to submit
-    const inputs = [nameInput, passwordInput, imageInput];
-    inputs.forEach(input => {
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                signup();
-            }
-        });
-    });
-    
-    // initialize preview on page load (if any default value)
-    if (imageInput.value.trim() !== "") {
-        updateImagePreview();
-    } else {
-        previewImg.style.display = "none";
-        previewPlaceholder.style.display = "inline-flex";
-        previewPlaceholder.innerHTML = '<i class="fas fa-camera"></i> ستظهر معاينة الصورة هنا';
-    }
-    
-    // additional RTL fine-tuning: since we use dir="rtl", icons left/right feel natural
-    // small reset for placeholder style
-    const styleAdjust = document.createElement('style');
-    styleAdjust.textContent = `
-        .preview-img {
-            margin-left: 8px;
-        }
-        .toast-message i {
-            margin-left: 6px;
-        }
-        .btn-signup i:first-child {
-            margin-left: 5px;
-        }
-        .btn-signup i:last-child {
-            margin-right: 5px;
-        }
-    `;
-    document.head.appendChild(styleAdjust);
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 1000);
+  } else {
+    showError("❌ اسم المعلم أو كلمة المرور غير صحيحة");
+  }
+}
+
+// دالة إنشاء حساب جديد
+function signup(name, password) {
+  // التحقق من طول كلمة المرور
+  if (password.length < 4) {
+    showError("❌ كلمة المرور يجب أن تكون 4 أحرف على الأقل");
+    return;
+  }
+  
+  let teachers = JSON.parse(localStorage.getItem("registered_teachers") || "{}");
+  
+  // التحقق من وجود المعلم مسبقاً
+  if (teachers[name]) {
+    showError("❌ هذا الاسم موجود بالفعل! يرجى استخدام اسم آخر");
+    return;
+  }
+  
+  // إضافة المعلم الجديد
+  teachers[name] = {
+    password: password,
+    name: name,
+    image: "",
+    createdAt: new Date().toISOString()
+  };
+  
+  localStorage.setItem("registered_teachers", JSON.stringify(teachers));
+  
+  showSuccess("✅ تم إنشاء الحساب بنجاح! جاري تسجيل الدخول...");
+  
+  // تسجيل الدخول تلقائياً بعد إنشاء الحساب
+  setTimeout(() => {
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("teacherName", name);
+    window.location.href = "index.html";
+  }, 1500);
+}
+
+// دالة مساعدة لعرض قائمة المعلمين المسجلين (للتطوير فقط - يمكن إزالتها في الإنتاج)
+function debugShowTeachers() {
+  const teachers = JSON.parse(localStorage.getItem("registered_teachers") || "{}");
+  console.log("المعلمون المسجلون:", teachers);
+}
+
+// دالة لإعادة تعيين كلمة المرور (للاستخدام في حال نسيان كلمة المرور)
+function resetPassword(name, newPassword) {
+  let teachers = JSON.parse(localStorage.getItem("registered_teachers") || "{}");
+  if (teachers[name]) {
+    teachers[name].password = newPassword;
+    localStorage.setItem("registered_teachers", JSON.stringify(teachers));
+    return true;
+  }
+  return false;
+}
+
+// تحميل أولي
+updateUI();
+
+// إضافة مستمع لأحداث Enter
+document.getElementById("teacherName").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    document.getElementById("password").focus();
+  }
+});
+
+document.getElementById("password").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    handleAuth();
+  }
+});
+
+// تصدير الدوال للاستخدام العالمي
+window.handleAuth = handleAuth;
+window.toggleMode = toggleMode;
+window.debugShowTeachers = debugShowTeachers;
 </script>
+
 </body>
 </html>
