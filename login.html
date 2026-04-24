@@ -1,40 +1,33 @@
 <!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8">
-<title>تسجيل الدخول</title>
-</head>
-<body style="font-family:Arial; direction:rtl; padding:20px">
+<html>
+<body>
+<h2>تسجيل دخول</h2>
 
-<h2>🔐 تسجيل دخول المدرس</h2>
-
-<input id="name" placeholder="اسم المدرس"><br><br>
-<input id="password" type="password" placeholder="كلمة المرور"><br><br>
+<input id="name" placeholder="الاسم">
+<input id="password" type="password">
 
 <button onclick="login()">دخول</button>
 
 <script>
 async function login(){
-  const res = await fetch("/login", {
+  const res = await fetch("/api/login",{
     method:"POST",
     headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({
-      name: document.getElementById("name").value,
-      password: document.getElementById("password").value
+      name:name.value,
+      password:password.value
     })
   });
 
-  const data = await res.text();
+  const data = await res.json();
 
-  try {
-    const json = JSON.parse(data);
-    localStorage.setItem("token", json.token);
-    location.href = "index.html";
-  } catch {
-    alert(data);
+  if(data.token){
+    localStorage.setItem("token",data.token);
+    location.href="index.html";
+  } else {
+    alert(data.msg);
   }
 }
 </script>
-
 </body>
 </html>
