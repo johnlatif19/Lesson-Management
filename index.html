@@ -3,702 +3,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>نظام إدارة الدروس | معلم الصف الثاني الثانوي</title>
-<link rel="icon" href="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg">
+<title>نظام إدارة الدروس</title>
 
-<!-- jsPDF & html2canvas Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
   body {
-    font-family: 'Segoe UI', 'Tajawal', 'Cairo', 'Arial', system-ui, -apple-system, sans-serif;
+    font-family: 'Segoe UI', Arial;
     direction: rtl;
-    background: linear-gradient(135deg, #eef2f7 0%, #d9e2ec 100%);
-    padding: 2rem 1.5rem;
-    min-height: 100vh;
+    background: #eef2f7;
+    margin: 0;
+    padding: 20px;
   }
 
-  .master-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    background: rgba(255,255,255,0.97);
-    border-radius: 2rem;
-    box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 4px 14px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-  }
-
-  .hero-section {
-    background: linear-gradient(105deg, #1e3c72 0%, #2a5298 100%);
-    padding: 1.6rem 2rem;
-    color: white;
-    border-bottom: 5px solid #f6b83e;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-  }
-
-  .hero-title h1 {
-    font-size: 1.9rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .hero-title h1::before {
-    content: "📖";
-    font-size: 2rem;
-  }
-
-  .hero-title p {
-    font-size: 0.95rem;
-    opacity: 0.92;
-    margin-top: 8px;
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-
-  .logout-btn {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255,255,255,0.4);
-    color: white;
-    padding: 8px 20px;
-    border-radius: 40px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .logout-btn:hover {
-    background: #c53030;
-    border-color: #c53030;
-    transform: translateY(-2px);
-  }
-
-  .teacher-avatar {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #f6b83e;
+  .container {
+    max-width: 1200px;
+    margin: auto;
     background: white;
+    padding: 20px;
+    border-radius: 20px;
   }
 
-  .card-inner {
-    padding: 2rem;
-  }
-
-  .form-elegant {
-    background: #ffffff;
-    border-radius: 1.5rem;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    border: 1px solid #eef2f8;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
-  }
-
-  .form-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #1e3c72;
-    margin-bottom: 1.2rem;
-    border-right: 5px solid #f6b83e;
-    padding-right: 1rem;
-  }
-
-  .input-flex {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: flex-end;
-  }
-
-  .input-group {
-    flex: 1 1 170px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .input-group label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #4a627a;
-    letter-spacing: 0.4px;
-  }
-
-  .input-group input, .input-group select {
-    padding: 10px 12px;
-    border-radius: 1rem;
-    border: 1.5px solid #e2edf7;
-    background: #fff;
-    font-family: inherit;
-    font-size: 0.9rem;
-    transition: 0.2s;
-    outline: none;
-  }
-
-  .input-group input:focus, .input-group select:focus {
-    border-color: #f6b83e;
-    box-shadow: 0 0 0 3px rgba(246, 184, 62, 0.2);
-  }
-
-  .btn {
-    border: none;
-    padding: 10px 20px;
-    border-radius: 2rem;
-    font-weight: 600;
-    font-family: inherit;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+  .header {
     background: #1e3c72;
     color: white;
-  }
-
-  .btn-primary {
-    background: #1e3c72;
-  }
-
-  .btn-primary:hover {
-    background: #0f2b4f;
-    transform: translateY(-2px);
-  }
-
-  .btn-secondary {
-    background: #f6b83e;
-    color: #2d3748;
-  }
-
-  .btn-secondary:hover {
-    background: #e5a72a;
-    transform: translateY(-2px);
-  }
-
-  .btn-outline {
-    background: #eff3f8;
-    color: #1e3c72;
-    border: 1px solid #cbdde9;
-  }
-
-  .btn-outline:hover {
-    background: #e2edf7;
-  }
-
-  .action-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 12px;
-    margin-bottom: 1.8rem;
-    align-items: center;
-  }
-
-  .stats-modern {
-    display: flex;
-    gap: 1.2rem;
-    background: #f8fafd;
-    border-radius: 1.5rem;
-    padding: 0.8rem 2rem;
-    margin-bottom: 2rem;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    border: 1px solid #eef2f6;
-  }
-
-  .stat-card {
-    background: white;
-    border-radius: 1.3rem;
-    padding: 0.6rem 1.6rem;
+    padding: 15px;
+    border-radius: 15px;
     text-align: center;
-    min-width: 130px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.02);
   }
 
-  .stat-card span:first-child {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #5a7188;
-    display: block;
+  .panel {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
   }
 
-  .stat-number {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #1e3c72;
-    line-height: 1.2;
+  input, select {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    flex: 1;
   }
 
-  .table-wrapper {
-    overflow-x: auto;
-    border-radius: 1.2rem;
-    background: white;
-    border: 1px solid #edf2f7;
+  button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #1e3c72;
+    color: white;
   }
 
   table {
     width: 100%;
+    margin-top: 20px;
     border-collapse: collapse;
-    font-size: 0.9rem;
   }
 
-  th {
-    background: #f1f6fc;
-    color: #1e2f44;
-    padding: 1rem 0.8rem;
-    font-weight: 700;
-    border-bottom: 2px solid #e2edf7;
-  }
-
-  td {
-    padding: 0.9rem 0.7rem;
-    border-bottom: 1px solid #ecf3f9;
-    color: #253746;
-    vertical-align: middle;
-  }
-
-  tr:hover td {
-    background-color: #fef9ef;
-  }
-
-  .action-btns {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-  }
-
-  .icon-btn {
-    background: none;
-    border: none;
-    font-size: 1.1rem;
-    cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 2rem;
-    transition: 0.2s;
-    font-weight: 600;
-  }
-
-  .edit-icon {
-    background: #eef2ff;
-    color: #2b6cb0;
-  }
-
-  .edit-icon:hover {
-    background: #d9e6ff;
-  }
-
-  .delete-icon {
-    background: #ffe8e6;
-    color: #c53030;
-  }
-
-  .delete-icon:hover {
-    background: #ffd6d1;
-  }
-
-  .pdf-report-container {
-    position: fixed;
-    top: -9999px;
-    left: -9999px;
-    width: 800px;
-    background: white;
-    padding: 20px;
-    direction: rtl;
-    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Arial, sans-serif;
-    z-index: -1;
-  }
-
-  @media print {
-    .no-print, .action-bar, .form-elegant, .stats-modern, .action-btns, .icon-btn, .btn, th:last-child, td:last-child, .hero-actions {
-      display: none !important;
-    }
-    body {
-      background: white;
-      padding: 0;
-    }
-    .master-container {
-      box-shadow: none;
-      background: white;
-    }
-    th {
-      background: #f0f0f0;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-  }
-
-  @media (max-width: 700px) {
-    body {
-      padding: 1rem;
-    }
-    .card-inner {
-      padding: 1rem;
-    }
-    .input-group {
-      flex: 1 1 100%;
-    }
-    .hero-section {
-      flex-direction: column;
-      text-align: center;
-    }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
   }
 </style>
 </head>
+
 <body>
 
-<div class="master-container">
-  <div class="hero-section">
-    <div class="hero-title">
-      <h1>📘 نظام إدارة الدروس</h1>
-      <p id="teacherNameDisplay">الأستاذ /</p>
-    </div>
-    <div class="hero-actions">
-      <img id="headerAvatar" class="teacher-avatar" src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" alt="معلم">
-      <button class="logout-btn" id="logoutBtn">🚪 تسجيل خروج</button>
-    </div>
+<script>
+  // 🔴 تحويل تلقائي من الرابط الأساسي إلى صفحة تسجيل الدخول
+  if (location.pathname === "/" || location.pathname === "/index.html") {
+    location.replace("/signin.html");
+  }
+</script>
+
+<div class="container">
+
+  <div class="header">
+    <h2>نظام إدارة الدروس</h2>
+    <p id="teacherNameDisplay">الأستاذ /</p>
   </div>
-  
-  <div class="card-inner">
-    <div class="form-elegant no-print">
-      <div class="form-title">➕ إضافة طالب جديد</div>
-      <div class="input-flex">
-        <div class="input-group"><label>👤 الاسم الكامل</label><input type="text" id="name" placeholder="الاسم كامل"></div>
-        <div class="input-group"><label>📚 الفصل</label><input type="text" id="class" placeholder="الفصل"></div>
-        <div class="input-group"><label>💳 نوع الدفع</label><select id="paymentType"><option value="كامل">✅ دفع كامل</option><option value="جزء">🔄 دفع جزء</option></select></div>
-        <div class="input-group"><label>💰 المبلغ (ج.م)</label><input type="number" id="amount" placeholder="المبلغ"></div>
-        <div class="input-group"><label>💵 طريقة الدفع</label><select id="method"><option value="نقدي">💰 نقدي</option><option value="تحويل">🏦 تحويل بنكي</option></select></div>
-        <div class="input-group"><button class="btn btn-primary" onclick="addStudent()">➕ إضافة الطالب</button></div>
-      </div>
-    </div>
 
-    <div class="action-bar no-print">
-      <button class="btn btn-secondary" onclick="printPage()">🖨️ طباعة القائمة</button>
-      <button class="btn btn-outline" onclick="downloadPDF()">📄 تحميل PDF</button>
-    </div>
-
-    <div class="stats-modern no-print">
-      <div class="stat-card"><span>👨‍🎓 إجمالي الطلاب</span><div class="stat-number" id="count">0</div></div>
-      <div class="stat-card"><span>💰 إجمالي المدفوعات</span><div class="stat-number" id="total">0</div><span style="font-size:0.7rem;">جنيه</span></div>
-    </div>
-
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>الاسم</th><th>الفصل</th><th>نوع الدفع</th><th>المبلغ (ج.م)</th><th>طريقة الدفع</th>
-            <th class="no-print">الإجراءات</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-      </table>
-    </div>
+  <div class="panel">
+    <input id="name" placeholder="اسم الطالب">
+    <input id="class" placeholder="الفصل">
+    <input id="amount" placeholder="المبلغ">
+    <button onclick="addStudent()">إضافة</button>
   </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>الاسم</th>
+        <th>الفصل</th>
+        <th>المبلغ</th>
+        <th>حذف</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
 </div>
 
-<div id="pdfContainer" class="pdf-report-container"></div>
-
 <script>
-// ===================== نظام تسجيل الدخول =====================
-// التحقق من حالة تسجيل الدخول عند تحميل الصفحة
-(function checkAuth() {
-  const isLoggedIn = localStorage.getItem("isLoggedIn");
-  const currentPage = window.location.pathname.split("/").pop() || "index.html";
-  
-  // إذا لم يتم تسجيل الدخول ولسنا في صفحة login
-  if (isLoggedIn !== "true" && currentPage !== "login.html" && currentPage !== "signin.html") {
-    window.location.href = "login.html";
-  }
-})();
+let students = JSON.parse(localStorage.getItem("students") || "[]");
 
-// ===================== بيانات الطلاب =====================
-let students = JSON.parse(localStorage.getItem("students_management") || "[]");
+function render() {
+  const body = document.getElementById("tableBody");
+  body.innerHTML = "";
 
-// بيانات المعلم
-let teacherName = localStorage.getItem("teacherName") || "";
-let teacherImageBase64 = localStorage.getItem("teacherImage") || "";
-
-// تحديث عرض اسم المعلم
-function updateTeacherDisplay() {
-  const displayElem = document.getElementById("teacherNameDisplay");
-  if (displayElem) {
-    displayElem.innerText = teacherName ? `الأستاذ / ${teacherName}` : "الأستاذ /";
-  }
-  const avatar = document.getElementById("headerAvatar");
-  if (avatar && teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
-    avatar.src = teacherImageBase64;
-  }
-}
-
-updateTeacherDisplay();
-
-// عرض الجدول
-function renderTable() {
-  const tbody = document.getElementById("tableBody");
-  if (!tbody) return;
-  tbody.innerHTML = "";
-  let totalSum = 0;
-  
-  students.forEach((student, idx) => {
-    totalSum += (student.amount || 0);
-    const row = tbody.insertRow();
-    row.insertCell(0).textContent = student.name || "-";
-    row.insertCell(1).textContent = student.class || "-";
-    row.insertCell(2).textContent = student.paymentType === "كامل" ? "دفع كامل" : (student.paymentType === "جزء" ? "دفع جزء" : "-");
-    row.insertCell(3).textContent = student.amount || 0;
-    row.insertCell(4).textContent = student.method === "نقدي" ? "نقدي" : (student.method === "تحويل" ? "تحويل بنكي" : "-");
-    
-    const actionCell = row.insertCell(5);
-    actionCell.className = "no-print";
-    const divActions = document.createElement("div");
-    divActions.className = "action-btns";
-    
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "✏️ تعديل";
-    editBtn.className = "icon-btn edit-icon";
-    editBtn.onclick = () => openEditModal(idx);
-    
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "🗑️ حذف";
-    deleteBtn.className = "icon-btn delete-icon";
-    deleteBtn.onclick = () => {
-      if(confirm(`هل تريد حذف الطالب "${student.name}" نهائياً؟`)) {
-        students.splice(idx, 1);
-        renderTable();
-        saveToLocal();
-        showMessage("🗑️ تم حذف الطالب", "#c53030");
-      }
-    };
-    
-    divActions.appendChild(editBtn);
-    divActions.appendChild(deleteBtn);
-    actionCell.appendChild(divActions);
-  });
-  
-  document.getElementById("count").innerText = students.length;
-  document.getElementById("total").innerText = totalSum;
-  saveToLocal();
-}
-
-function saveToLocal() {
-  localStorage.setItem("students_management", JSON.stringify(students));
-}
-
-function addStudent() {
-  const name = document.getElementById("name").value.trim();
-  const className = document.getElementById("class").value.trim();
-  const paymentType = document.getElementById("paymentType").value;
-  const amount = Number(document.getElementById("amount").value);
-  const method = document.getElementById("method").value;
-  
-  if (!name) {
-    alert("❌ الرجاء إدخال اسم الطالب");
-    return;
-  }
-  if (isNaN(amount) || amount <= 0) {
-    alert("❌ المبلغ يجب أن يكون رقماً موجباً");
-    return;
-  }
-  
-  students.push({ name, class: className, paymentType, amount, method });
-  
-  document.getElementById("name").value = "";
-  document.getElementById("class").value = "";
-  document.getElementById("amount").value = "";
-  
-  renderTable();
-  showMessage("✅ تم إضافة الطالب بنجاح", "#1e3c72");
-}
-
-function openEditModal(index) {
-  const student = students[index];
-  if (!student) return;
-  
-  const overlay = document.createElement("div");
-  overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:2000;";
-  
-  const card = document.createElement("div");
-  card.style.cssText = "background:white;border-radius:2rem;width:90%;max-width:520px;padding:1.8rem;direction:rtl;box-shadow:0 30px 40px rgba(0,0,0,0.3);";
-  
-  card.innerHTML = `
-    <h3 style="color:#1e3c72;margin-bottom:1.2rem;border-right:4px solid #f6b83e;padding-right:1rem;">✏️ تعديل بيانات الطالب</h3>
-    <div style="display:flex;flex-direction:column;gap:1rem;">
-      <div><label style="font-weight:600;">الاسم الكامل</label><input id="editName" style="width:100%;padding:12px;border-radius:1rem;border:1px solid #ccc;" value="${escapeHtml(student.name)}"></div>
-      <div><label style="font-weight:600;">الفصل</label><input id="editClass" style="width:100%;padding:12px;border-radius:1rem;border:1px solid #ccc;" value="${escapeHtml(student.class)}"></div>
-      <div><label style="font-weight:600;">نوع الدفع</label><select id="editPayment" style="width:100%;padding:12px;border-radius:1rem;"><option value="كامل" ${student.paymentType === "كامل" ? "selected" : ""}>دفع كامل</option><option value="جزء" ${student.paymentType === "جزء" ? "selected" : ""}>دفع جزء</option></select></div>
-      <div><label style="font-weight:600;">المبلغ (ج.م)</label><input id="editAmount" type="number" style="width:100%;padding:12px;border-radius:1rem;" value="${student.amount}"></div>
-      <div><label style="font-weight:600;">طريقة الدفع</label><select id="editMethod" style="width:100%;padding:12px;border-radius:1rem;"><option value="نقدي" ${student.method === "نقدي" ? "selected" : ""}>نقدي</option><option value="تحويل" ${student.method === "تحويل" ? "selected" : ""}>تحويل بنكي</option></select></div>
-      <div style="display:flex;gap:12px;margin-top:12px;"><button id="saveEdit" style="background:#1e3c72;border:none;padding:10px 22px;border-radius:2rem;color:white;font-weight:bold;">💾 حفظ</button><button id="cancelEdit" style="background:#e2e8f0;border:none;padding:10px 22px;border-radius:2rem;">إلغاء</button></div>
-    </div>
-  `;
-  
-  overlay.appendChild(card);
-  document.body.appendChild(overlay);
-  
-  const saveBtn = card.querySelector("#saveEdit");
-  const cancelBtn = card.querySelector("#cancelEdit");
-  
-  const closeModal = () => overlay.remove();
-  
-  saveBtn.onclick = () => {
-    const newName = card.querySelector("#editName").value.trim();
-    const newClass = card.querySelector("#editClass").value.trim();
-    const newPayment = card.querySelector("#editPayment").value;
-    const newAmount = Number(card.querySelector("#editAmount").value);
-    const newMethod = card.querySelector("#editMethod").value;
-    
-    if (!newName) { alert("الاسم مطلوب"); return; }
-    if (isNaN(newAmount) || newAmount <= 0) { alert("أدخل مبلغ صحيح"); return; }
-    
-    students[index] = { name: newName, class: newClass, paymentType: newPayment, amount: newAmount, method: newMethod };
-    renderTable();
-    closeModal();
-    showMessage("✨ تم التعديل بنجاح", "#2b6e4f");
-  };
-  
-  cancelBtn.onclick = closeModal;
-  overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
-}
-
-function printPage() {
-  if (students.length === 0) {
-    alert("⚠️ لا يوجد طلاب للطباعة!");
-    return;
-  }
-  window.print();
-}
-
-async function downloadPDF() {
-  if (students.length === 0) {
-    alert("⚠️ لا يوجد طلاب لإنشاء التقرير!");
-    return;
-  }
-  
-  showMessage("⏳ جاري إنشاء ملف PDF...", "#f6b83e");
-  
-  const teacher = teacherName || "المعلم";
-  const totalMoney = students.reduce((sum, s) => sum + (s.amount || 0), 0);
-  const currentDate = new Date().toLocaleDateString('ar-EG');
-  const container = document.getElementById("pdfContainer");
-  
-  let tableRows = "";
-  students.forEach(s => {
-    tableRows += `
+  students.forEach((s, i) => {
+    body.innerHTML += `
       <tr>
-        <td style="border:1px solid #ddd;padding:8px;">${s.name || "-"}</td>
-        <td style="border:1px solid #ddd;padding:8px;">${s.class || "-"}</td>
-        <td style="border:1px solid #ddd;padding:8px;">${s.paymentType === "كامل" ? "دفع كامل" : "دفع جزء"}</td>
-        <td style="border:1px solid #ddd;padding:8px;">${s.amount} ج.م</td>
-        <td style="border:1px solid #ddd;padding:8px;">${s.method === "نقدي" ? "نقدي" : "تحويل بنكي"}</td>
+        <td>${s.name}</td>
+        <td>${s.class}</td>
+        <td>${s.amount}</td>
+        <td><button onclick="del(${i})">حذف</button></td>
       </tr>
     `;
   });
-  
-  let teacherImgHtml = `<img src="${teacherImageBase64 && teacherImageBase64.startsWith('data:image') ? teacherImageBase64 : 'https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg'}" style="width:70px;height:70px;border-radius:50%;">`;
-  
-  container.innerHTML = `
-    <div style="font-family:'Cairo','Segoe UI',Arial;padding:30px;">
-      <div style="text-align:center;margin-bottom:20px;">
-        ${teacherImgHtml}
-        <h2 style="color:#1e3c72;">نظام إدارة الدروس</h2>
-        <h3 style="color:#2a5298;">تقرير الطلاب</h3>
-      </div>
-      <div style="display:flex;justify-content:space-between;background:#f8fafd;padding:12px;border-radius:12px;margin-bottom:20px;">
-        <div><strong>👨‍🏫 المعلم:</strong> ${teacher}</div>
-        <div><strong>📅 التاريخ:</strong> ${currentDate}</div>
-      </div>
-      <div style="background:#eef2f7;padding:12px;border-radius:12px;text-align:center;margin-bottom:25px;">
-        <strong>📊 الإحصائيات:</strong><br>
-        عدد الطلاب: ${students.length} | إجمالي المدفوعات: ${totalMoney} ج.م
-      </div>
-      <table style="width:100%;border-collapse:collapse;border:1px solid #ccc;">
-        <thead>
-          <tr style="background:#1e3c72;color:white;">
-            <th style="padding:10px;border:1px solid #2a5298;">الاسم</th>
-            <th style="padding:10px;border:1px solid #2a5298;">الفصل</th>
-            <th style="padding:10px;border:1px solid #2a5298;">نوع الدفع</th>
-            <th style="padding:10px;border:1px solid #2a5298;">المبلغ</th>
-            <th style="padding:10px;border:1px solid #2a5298;">طريقة الدفع</th>
-          </tr>
-        </thead>
-        <tbody>${tableRows}</tbody>
-      </table>
-      <div style="margin-top:20px;text-align:center;font-size:11px;color:#888;">تم الإنشاء بواسطة نظام إدارة الدروس</div>
-    </div>
-  `;
-  
-  setTimeout(async () => {
-    try {
-      const canvas = await html2canvas(container, { scale: 2.5, backgroundColor: '#ffffff', useCORS: true });
-      const imgData = canvas.toDataURL('image/png');
-      const { jsPDF } = window.jspdf;
-      const imgWidth = 210;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      doc.save(`تقرير_الطلاب_${currentDate.replace(/\//g, '-')}.pdf`);
-      showMessage("✅ تم إنشاء PDF بنجاح!", "#1e3c72");
-      container.innerHTML = "";
-    } catch(err) {
-      showMessage("❌ خطأ في إنشاء PDF", "#c53030");
-      container.innerHTML = "";
-    }
-  }, 150);
+
+  localStorage.setItem("students", JSON.stringify(students));
 }
 
-function showMessage(msg, bgColor) {
-  const toast = document.createElement("div");
-  toast.innerText = msg;
-  toast.style.cssText = `position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:${bgColor};color:white;padding:10px 24px;border-radius:40px;font-weight:bold;z-index:2100;direction:rtl;`;
-  document.body.appendChild(toast);
-  setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 400); }, 2000);
-}
-
-function escapeHtml(str) {
-  if (!str) return "";
-  return str.replace(/[&<>]/g, function(m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    return m;
+function addStudent() {
+  students.push({
+    name: name.value,
+    class: class.value,
+    amount: amount.value
   });
+  render();
 }
 
-// تسجيل الخروج
-function logout() {
-  localStorage.removeItem("isLoggedIn");
-  window.location.href = "login.html";
+function del(i) {
+  students.splice(i, 1);
+  render();
 }
 
-// ربط الأحداث
-document.getElementById("logoutBtn")?.addEventListener("click", logout);
-window.addStudent = addStudent;
-window.printPage = printPage;
-window.downloadPDF = downloadPDF;
-
-// تحميل البيانات الأولية
-renderTable();
+render();
 </script>
 
 </body>
