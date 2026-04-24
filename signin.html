@@ -322,19 +322,6 @@
         <input type="password" id="password" placeholder="كلمة المرور">
     </div>
 
-    <div class="input-group">
-        <i class="fas fa-image"></i>
-        <input type="text" id="image" placeholder="رابط الصورة الشخصية (URL)">
-    </div>
-
-    <!-- صورة معاينة ذكية -->
-    <div class="image-preview-area" id="previewContainer">
-        <img id="previewImg" class="preview-img" alt="معاينة الصورة">
-        <span class="preview-placeholder" id="previewPlaceholder">
-            <i class="fas fa-camera"></i> ستظهر معاينة الصورة هنا
-        </span>
-    </div>
-
     <button class="btn-signup" id="signupBtn">
         <i class="fas fa-pen-fancy"></i> تسجيل المعلم
         <i class="fas fa-arrow-left"></i>
@@ -356,7 +343,6 @@
     // DOM elements
     const nameInput = document.getElementById('name');
     const passwordInput = document.getElementById('password');
-    const imageInput = document.getElementById('image');
     const signupBtn = document.getElementById('signupBtn');
     const previewImg = document.getElementById('previewImg');
     const previewPlaceholder = document.getElementById('previewPlaceholder');
@@ -378,51 +364,10 @@
         }, 3000);
     }
 
-    // preview image dynamically when user types URL (live preview)
-    function updateImagePreview() {
-        let url = imageInput.value.trim();
-        if (url === "") {
-            previewImg.style.display = "none";
-            previewPlaceholder.style.display = "inline-flex";
-            return;
-        }
-        // Test if url seems valid image URL (simple check)
-        // We'll try to load it, if fails we show placeholder but keep input
-        previewImg.style.display = "block";
-        previewImg.style.display = "block";
-        previewPlaceholder.style.display = "none";
-        
-        // set src and handle error
-        previewImg.onload = () => {
-            // success: image visible
-            previewImg.style.display = "block";
-            previewPlaceholder.style.display = "none";
-        };
-        previewImg.onerror = () => {
-            // if image fails to load, show placeholder and give hint
-            previewImg.style.display = "none";
-            previewPlaceholder.style.display = "inline-flex";
-            previewPlaceholder.innerHTML = `<i class="fas fa-image-slash"></i> رابط غير صالح للصورة`;
-            // reset after a while? keep but will change again on next input
-            setTimeout(() => {
-                if (imageInput.value.trim() === url) {
-                    previewPlaceholder.innerHTML = `<i class="fas fa-camera"></i> رابط صورة غير صالح، حاول مرة أخرى`;
-                } else {
-                    // user changed input, no need fix
-                }
-            }, 1200);
-        };
-        previewImg.src = url;
-    }
-
-    // Attach input event for live preview
-    imageInput.addEventListener('input', updateImagePreview);
-    
     // validate form fields with arabic/english support and trimming
     function validateForm() {
         let nameVal = nameInput.value.trim();
         let passVal = passwordInput.value;
-        let imageVal = imageInput.value.trim();
         
         if (nameVal === "") {
             showToast("الرجاء إدخال الاسم الكامل", true);
@@ -444,12 +389,6 @@
             passwordInput.focus();
             return false;
         }
-        // image is optional but if provided, check minimal URL structure
-        if (imageVal !== "" && !(imageVal.startsWith("http://") || imageVal.startsWith("https://"))) {
-            showToast("يرجى إدخال رابط صورة صحيح يبدأ بـ http:// أو https://", true);
-            imageInput.focus();
-            return false;
-        }
         return true;
     }
     
@@ -463,13 +402,11 @@
         // get fresh values
         const nameValue = nameInput.value.trim();
         const passwordValue = passwordInput.value;
-        const imageValue = imageInput.value.trim();
         
         // prepare payload
         const payload = {
             name: nameValue,
             password: passwordValue,
-            image: imageValue
         };
         
         // disable button and add loading class
@@ -535,7 +472,7 @@
     });
     
     // optional: allow pressing Enter key on any input to submit
-    const inputs = [nameInput, passwordInput, imageInput];
+    const inputs = [nameInput, passwordInput];
     inputs.forEach(input => {
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -544,34 +481,6 @@
             }
         });
     });
-    
-    // initialize preview on page load (if any default value)
-    if (imageInput.value.trim() !== "") {
-        updateImagePreview();
-    } else {
-        previewImg.style.display = "none";
-        previewPlaceholder.style.display = "inline-flex";
-        previewPlaceholder.innerHTML = '<i class="fas fa-camera"></i> ستظهر معاينة الصورة هنا';
-    }
-    
-    // additional RTL fine-tuning: since we use dir="rtl", icons left/right feel natural
-    // small reset for placeholder style
-    const styleAdjust = document.createElement('style');
-    styleAdjust.textContent = `
-        .preview-img {
-            margin-left: 8px;
-        }
-        .toast-message i {
-            margin-left: 6px;
-        }
-        .btn-signup i:first-child {
-            margin-left: 5px;
-        }
-        .btn-signup i:last-child {
-            margin-right: 5px;
-        }
-    `;
-    document.head.appendChild(styleAdjust);
 </script>
 </body>
 </html>
