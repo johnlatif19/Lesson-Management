@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام إدارة الدروس</title>
+
+<link rel="icon" href="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+body{
+  font-family: Arial;
+  direction: rtl;
+  margin:0;
+  background:#eef2f7;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  background:white;
+  padding:20px;
+}
+
+header{
+  background:#1e3c72;
+  color:white;
+  padding:20px;
+  text-align:center;
+}
+
+input,select{
+  padding:10px;
+  margin:5px;
+  width:180px;
+}
+
+button{
+  padding:10px 15px;
+  cursor:pointer;
+  border:0;
+  border-radius:6px;
+}
+
+.btn-add{background:#1e3c72;color:white}
+.btn-del{background:#c53030;color:white}
+.btn-edit{background:#f6b83e}
+
+table{
+  width:100%;
+  margin-top:20px;
+  border-collapse:collapse;
+}
+
+th,td{
+  border:1px solid #ddd;
+  padding:10px;
+  text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>📘 نظام إدارة الدروس</h2>
+</header>
+
+<div class="container">
+
+  <h3>➕ إضافة طالب</h3>
+
+  <input id="name" placeholder="الاسم">
+  <input id="className" placeholder="الفصل">
+  <input id="amount" type="number" placeholder="المبلغ">
+
+  <select id="paymentType">
+    <option value="كامل">كامل</option>
+    <option value="جزء">جزء</option>
+  </select>
+
+  <select id="method">
+    <option value="نقدي">نقدي</option>
+    <option value="تحويل">تحويل</option>
+  </select>
+
+  <button class="btn-add" onclick="addStudent()">إضافة</button>
+
+  <h3>📋 الطلاب</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>الاسم</th>
+        <th>الفصل</th>
+        <th>الدفع</th>
+        <th>المبلغ</th>
+        <th>الطريقة</th>
+        <th>حذف</th>
+      </tr>
+    </thead>
+    <tbody id="table"></tbody>
+  </table>
+
+</div>
+
+<script>
+let students = JSON.parse(localStorage.getItem("students") || "[]");
+
+function save(){
+  localStorage.setItem("students", JSON.stringify(students));
+  render();
+}
+
+function addStudent(){
+  let name = document.getElementById("name").value;
+  let className = document.getElementById("className").value;
+  let amount = document.getElementById("amount").value;
+  let paymentType = document.getElementById("paymentType").value;
+  let method = document.getElementById("method").value;
+
+  if(!name || !amount) return alert("املأ البيانات");
+
+  students.push({name,className,amount,paymentType,method});
+  save();
+
+  document.getElementById("name").value="";
+  document.getElementById("className").value="";
+  document.getElementById("amount").value="";
+}
+
+function deleteStudent(i){
+  students.splice(i,1);
+  save();
+}
+
+function render(){
+  let table = document.getElementById("table");
+  table.innerHTML="";
+
+  students.forEach((s,i)=>{
+    table.innerHTML += `
+      <tr>
+        <td>${s.name}</td>
+        <td>${s.className}</td>
+        <td>${s.paymentType}</td>
+        <td>${s.amount}</td>
+        <td>${s.method}</td>
+        <td><button class="btn-del" onclick="deleteStudent(${i})">حذف</button></td>
+      </tr>
+    `;
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>
