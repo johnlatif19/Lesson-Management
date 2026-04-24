@@ -35,14 +35,13 @@ function auth(req, res, next) {
 
 // SIGNIN
 app.post("/api/signin", async (req, res) => {
-  const { name, password, image } = req.body;
+  const { name, password } = req.body;
 
   const hashed = await bcrypt.hash(password, 10);
 
   await db.collection("teachers").add({
     name,
     password: hashed,
-    image,
     status: "pending",
     paid: false,
     createdAt: Date.now()
