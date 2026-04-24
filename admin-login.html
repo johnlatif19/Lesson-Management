@@ -6,34 +6,24 @@
 </head>
 <body style="font-family:Arial; direction:rtl; padding:20px">
 
-<h2>⚙️ لوحة تحكم الأدمن</h2>
+<h2>Admin Login</h2>
 
-<input id="user" placeholder="اسم الأدمن"><br><br>
-<input id="pass" type="password" placeholder="كلمة المرور"><br><br>
-
-<button onclick="adminLogin()">دخول</button>
+<input id="pass" type="password">
+<button onclick="login()">دخول</button>
 
 <script>
-async function adminLogin(){
-  const res = await fetch("/admin-login", {
+async function login(){
+  const res = await fetch("/api/admin/login",{
     method:"POST",
     headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({
-      username: document.getElementById("user").value,
-      password: document.getElementById("pass").value
-    })
+    body: JSON.stringify({ password: pass.value })
   });
 
   const data = await res.json();
+  localStorage.setItem("adminToken", data.token);
 
-  if(data.token){
-    localStorage.setItem("adminToken", data.token);
-    location.href = "dashboard.html";
-  } else {
-    alert("بيانات غير صحيحة");
-  }
+  location.href = "dashboard.html";
 }
 </script>
-
 </body>
 </html>
