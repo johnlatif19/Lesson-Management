@@ -715,8 +715,8 @@
     // إظهار مؤشر التحميل
     showFloatingMessage("⏳ جاري إنشاء ملف PDF...", "#f6b83e");
     
-    const teacher = teacherNameInput?.value || "غير محدد";
-    const totalMoney = students.reduce((sum, s) => sum + s.amount, 0);
+const teacher = "أ. محمد صلاح";
+   const totalMoney = students.reduce((sum, s) => sum + s.amount, 0);
     const currentDate = new Date().toLocaleDateString('ar-EG');
     
     // إنشاء محتوى التقرير في العنصر المخفي
@@ -738,7 +738,7 @@
     
     // صورة المعلم
     let teacherImageHtml = "";
-    if(teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
+   let teacherImageHtml = `<img src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" style="width:80px;height:80px;border-radius:50%;">`;
       teacherImageHtml = `<img src="${teacherImageBase64}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">`;
     }
     
