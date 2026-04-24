@@ -2,411 +2,76 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>تسجيل الدخول - نظام إدارة الدروس</title>
-<link rel="icon" href="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل معلم</title>
 
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
   body {
-    font-family: 'Segoe UI', 'Tajawal', 'Cairo', 'Arial', system-ui, sans-serif;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* خلفية متحركة جميلة */
-  body::before {
-    content: '';
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: moveBackground 20s linear infinite;
-    opacity: 0.3;
-  }
-
-  @keyframes moveBackground {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(40px, 40px); }
-  }
-
-  .login-container {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 400px;
+    font-family: Arial;
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
   }
 
   .card {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    padding: 2.5rem;
-    border-radius: 2rem;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: transform 0.3s ease;
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    width:320px;
+    text-align:center;
   }
 
-  .card:hover {
-    transform: translateY(-5px);
-  }
-
-  .logo {
-    margin-bottom: 1.5rem;
-  }
-
-  .logo img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #f6b83e;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  }
-
-  h2 {
-    color: #1e3c72;
-    margin-bottom: 0.5rem;
-    font-size: 1.8rem;
-    font-weight: 700;
-  }
-
-  .subtitle {
-    color: #5a7188;
-    margin-bottom: 1.8rem;
-    font-size: 0.9rem;
-  }
-
-  .input-group {
-    margin-bottom: 1.2rem;
-    text-align: right;
-  }
-
-  .input-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #4a627a;
-    font-weight: 600;
-    font-size: 0.85rem;
-  }
-
-  .input-group input {
-    width: 100%;
-    padding: 12px 15px;
-    border-radius: 1rem;
-    border: 1.5px solid #e2edf7;
-    background: #fff;
-    font-family: inherit;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    outline: none;
-  }
-
-  .input-group input:focus {
-    border-color: #f6b83e;
-    box-shadow: 0 0 0 3px rgba(246, 184, 62, 0.2);
+  input {
+    width:100%;
+    padding:10px;
+    margin:8px 0;
+    border-radius:10px;
+    border:1px solid #ccc;
   }
 
   button {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-    color: white;
-    border: none;
-    border-radius: 1rem;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    font-family: inherit;
-    transition: all 0.3s ease;
-    margin-top: 0.5rem;
-  }
-
-  button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(30, 60, 114, 0.3);
+    width:100%;
+    padding:10px;
+    background:#4f46e5;
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    margin-top:10px;
   }
 
   .link {
-    margin-top: 1.5rem;
-    display: inline-block;
-    color: #2a5298;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.3s;
-  }
-
-  .link:hover {
-    color: #f6b83e;
-  }
-
-  .error-message {
-    background: #fee2e2;
-    color: #c53030;
-    padding: 10px;
-    border-radius: 0.8rem;
-    margin-bottom: 1rem;
-    font-size: 0.85rem;
-    display: none;
-  }
-
-  .success-message {
-    background: #c6f6d5;
-    color: #276749;
-    padding: 10px;
-    border-radius: 0.8rem;
-    margin-bottom: 1rem;
-    font-size: 0.85rem;
-    display: none;
-  }
-
-  .toggle-mode {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e2edf7;
-  }
-
-  hr {
-    margin: 1rem 0;
-    border: none;
-    border-top: 1px solid #e2edf7;
+    margin-top:10px;
+    display:block;
+    color:#4f46e5;
+    cursor:pointer;
+    text-decoration:none;
   }
 </style>
 </head>
 
 <body>
 
-<div class="login-container">
-  <div class="card">
-    <div class="logo">
-      <img src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" alt="شعار النظام">
-    </div>
-    
-    <h2 id="formTitle">تسجيل الدخول</h2>
-    <p class="subtitle" id="formSubtitle">مرحباً بعودتك! يرجى إدخال بياناتك</p>
-    
-    <div id="errorMsg" class="error-message"></div>
-    <div id="successMsg" class="success-message"></div>
-    
-    <div class="input-group">
-      <label>👤 اسم المعلم</label>
-      <input type="text" id="teacherName" placeholder="أدخل اسمك" autocomplete="off">
-    </div>
-    
-    <div class="input-group">
-      <label>🔒 كلمة المرور</label>
-      <input type="password" id="password" placeholder="••••••••">
-    </div>
-    
-    <button id="actionBtn" onclick="handleAuth()">تسجيل الدخول</button>
-    
-    <div class="toggle-mode">
-      <a class="link" id="toggleLink" onclick="toggleMode()">ليس لديك حساب؟ سجل الآن</a>
-    </div>
-  </div>
+<div class="card">
+  <h2>تسجيل معلم</h2>
+
+  <input id="name" placeholder="الاسم">
+  <input id="password" type="password" placeholder="كلمة المرور">
+
+  <button onclick="signup()">تسجيل</button>
+
+  <!-- زر التحويل -->
+  <a class="link" href="login.html">هل لديك حساب؟ تسجيل الدخول</a>
 </div>
 
 <script>
-// وضع التشغيل: 'login' أو 'signup'
-let currentMode = 'login';
-
-// بيانات المعلمين المسجلين (تمهيدية - يمكن إضافة مستخدم تجريبي)
-// في التطبيق الحقيقي، يُفضل استخدام خادم خلفي
-let teachers = JSON.parse(localStorage.getItem("registered_teachers") || "{}");
-
-// إذا لم يكن هناك أي معلم مسجل، نقوم بإضافة مستخدم تجريبي للتجربة
-if (Object.keys(teachers).length === 0) {
-  // مستخدم تجريبي: اسم المعلم = "أحمد", كلمة المرور = "123456"
-  teachers["أحمد"] = {
-    password: "123456",
-    name: "أحمد"
-  };
-  localStorage.setItem("registered_teachers", JSON.stringify(teachers));
+function signup() {
+  localStorage.setItem("teacher", document.getElementById("name").value);
+  alert("تم التسجيل");
+  location.href = "index.html";
 }
-
-// تحديث واجهة المستخدم حسب الوضع الحالي
-function updateUI() {
-  const title = document.getElementById("formTitle");
-  const subtitle = document.getElementById("formSubtitle");
-  const actionBtn = document.getElementById("actionBtn");
-  const toggleLink = document.getElementById("toggleLink");
-  
-  if (currentMode === 'login') {
-    title.textContent = "تسجيل الدخول";
-    subtitle.textContent = "مرحباً بعودتك! يرجى إدخال بياناتك";
-    actionBtn.textContent = "تسجيل الدخول";
-    toggleLink.textContent = "ليس لديك حساب؟ سجل الآن";
-  } else {
-    title.textContent = "إنشاء حساب جديد";
-    subtitle.textContent = "قم بإنشاء حساب جديد للوصول إلى النظام";
-    actionBtn.textContent = "إنشاء حساب";
-    toggleLink.textContent = "لديك حساب بالفعل؟ تسجيل الدخول";
-  }
-  
-  // مسح الرسائل السابقة
-  hideErrors();
-}
-
-// التبديل بين وضع تسجيل الدخول والتسجيل
-function toggleMode() {
-  currentMode = currentMode === 'login' ? 'signup' : 'login';
-  updateUI();
-  // مسح الحقول
-  document.getElementById("teacherName").value = "";
-  document.getElementById("password").value = "";
-}
-
-// عرض رسالة خطأ
-function showError(message) {
-  const errorDiv = document.getElementById("errorMsg");
-  errorDiv.textContent = message;
-  errorDiv.style.display = "block";
-  setTimeout(() => {
-    errorDiv.style.display = "none";
-  }, 3000);
-}
-
-// عرض رسالة نجاح
-function showSuccess(message) {
-  const successDiv = document.getElementById("successMsg");
-  successDiv.textContent = message;
-  successDiv.style.display = "block";
-  setTimeout(() => {
-    successDiv.style.display = "none";
-  }, 2000);
-}
-
-function hideErrors() {
-  document.getElementById("errorMsg").style.display = "none";
-  document.getElementById("successMsg").style.display = "none";
-}
-
-// المعالجة الرئيسية (تسجيل دخول / إنشاء حساب)
-function handleAuth() {
-  const teacherName = document.getElementById("teacherName").value.trim();
-  const password = document.getElementById("password").value;
-  
-  if (!teacherName || !password) {
-    showError("❌ يرجى إدخال الاسم وكلمة المرور");
-    return;
-  }
-  
-  if (currentMode === 'login') {
-    // تسجيل الدخول
-    login(teacherName, password);
-  } else {
-    // إنشاء حساب جديد
-    signup(teacherName, password);
-  }
-}
-
-// دالة تسجيل الدخول
-function login(name, password) {
-  const teachers = JSON.parse(localStorage.getItem("registered_teachers") || "{}");
-  
-  if (teachers[name] && teachers[name].password === password) {
-    // تسجيل الدخول ناجح
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("teacherName", name);
-    localStorage.setItem("teacherImage", teachers[name].image || "");
-    
-    showSuccess("✅ تم تسجيل الدخول بنجاح! جاري التحويل...");
-    
-    setTimeout(() => {
-      window.location.href = "index.html";
-    }, 1000);
-  } else {
-    showError("❌ اسم المعلم أو كلمة المرور غير صحيحة");
-  }
-}
-
-// دالة إنشاء حساب جديد
-function signup(name, password) {
-  // التحقق من طول كلمة المرور
-  if (password.length < 4) {
-    showError("❌ كلمة المرور يجب أن تكون 4 أحرف على الأقل");
-    return;
-  }
-  
-  let teachers = JSON.parse(localStorage.getItem("registered_teachers") || "{}");
-  
-  // التحقق من وجود المعلم مسبقاً
-  if (teachers[name]) {
-    showError("❌ هذا الاسم موجود بالفعل! يرجى استخدام اسم آخر");
-    return;
-  }
-  
-  // إضافة المعلم الجديد
-  teachers[name] = {
-    password: password,
-    name: name,
-    image: "",
-    createdAt: new Date().toISOString()
-  };
-  
-  localStorage.setItem("registered_teachers", JSON.stringify(teachers));
-  
-  showSuccess("✅ تم إنشاء الحساب بنجاح! جاري تسجيل الدخول...");
-  
-  // تسجيل الدخول تلقائياً بعد إنشاء الحساب
-  setTimeout(() => {
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("teacherName", name);
-    window.location.href = "index.html";
-  }, 1500);
-}
-
-// دالة مساعدة لعرض قائمة المعلمين المسجلين (للتطوير فقط - يمكن إزالتها في الإنتاج)
-function debugShowTeachers() {
-  const teachers = JSON.parse(localStorage.getItem("registered_teachers") || "{}");
-  console.log("المعلمون المسجلون:", teachers);
-}
-
-// دالة لإعادة تعيين كلمة المرور (للاستخدام في حال نسيان كلمة المرور)
-function resetPassword(name, newPassword) {
-  let teachers = JSON.parse(localStorage.getItem("registered_teachers") || "{}");
-  if (teachers[name]) {
-    teachers[name].password = newPassword;
-    localStorage.setItem("registered_teachers", JSON.stringify(teachers));
-    return true;
-  }
-  return false;
-}
-
-// تحميل أولي
-updateUI();
-
-// إضافة مستمع لأحداث Enter
-document.getElementById("teacherName").addEventListener("keypress", function(e) {
-  if (e.key === "Enter") {
-    document.getElementById("password").focus();
-  }
-});
-
-document.getElementById("password").addEventListener("keypress", function(e) {
-  if (e.key === "Enter") {
-    handleAuth();
-  }
-});
-
-// تصدير الدوال للاستخدام العالمي
-window.handleAuth = handleAuth;
-window.toggleMode = toggleMode;
-window.debugShowTeachers = debugShowTeachers;
 </script>
 
 </body>
