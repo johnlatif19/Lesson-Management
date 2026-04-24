@@ -1,0 +1,17 @@
+{
+  "name": "teachers-system",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "firebase-admin": "^12.0.0",
+    "cors": "^2.8.5",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.0"
+  }
+}
