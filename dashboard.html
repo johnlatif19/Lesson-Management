@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+</head>
+<body style="font-family:Arial; direction:rtl; padding:20px">
+
+<h2>📊 لوحة تحكم المدرسين</h2>
+
+<div id="list">جاري التحميل...</div>
+
+<script>
+
+async function loadTeachers(){
+  const res = await fetch("/teachers");
+  const data = await res.json();
+
+  document.getElementById("list").innerHTML = data.map(t => `
+    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+      👨‍🏫 ${t.name} <br>
+      💰 مدفوع: ${t.paid} <br>
+      🔒 مفعل: ${t.active} <br><br>
+
+      <button onclick="activate('${t.id}')">تفعيل الحساب</button>
+    </div>
+  `).join("");
+}
+
+async function activate(id){
+  const res = await fetch("/activate/" + id, {
+    method:"POST"
+  });
+
+  const text = await res.text();
+  alert(text);
+  loadTeachers();
+}
+
+loadTeachers();
+
+</script>
+
+</body>
+</html>
