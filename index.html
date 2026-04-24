@@ -515,7 +515,10 @@
   const teacherNameInput = document.getElementById("teacherName");
   const teacherImageInput = document.getElementById("teacherImage");
 
-  if(teacherNameInput) teacherNameInput.value = teacherName;
+  window.onload = () => {
+  loadStudentsData();
+  renderTable();
+};
 
   teacherNameInput?.addEventListener("input", function(e) {
     teacherName = e.target.value;
@@ -737,10 +740,13 @@ const teacher = "أ. محمد صلاح";
     });
     
     // صورة المعلم
-    let teacherImageHtml = "";
-   let teacherImageHtml = `<img src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" style="width:80px;height:80px;border-radius:50%;">`;
-      teacherImageHtml = `<img src="${teacherImageBase64}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">`;
-    }
+let teacherImageHtml = "";
+
+if (teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
+  teacherImageHtml = `<img src="${teacherImageBase64}" style="width:80px;height:80px;border-radius:50%;">`;
+} else {
+  teacherImageHtml = `<img src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" style="width:80px;height:80px;border-radius:50%;">`;
+}
     
     pdfContainer.innerHTML = `
       <div style="font-family: 'Cairo', 'Tajawal', 'Segoe UI', Arial, sans-serif; padding: 20px;">
