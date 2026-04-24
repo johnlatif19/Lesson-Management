@@ -1,78 +1,1395 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تسجيل معلم</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>نظام إدارة الدروس | معلم الصف الثاني الثانوي</title>
+<link rel="icon" href="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg">
+
+<!-- jsPDF & html2canvas Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   body {
-    font-family: Arial;
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+    font-family: 'Segoe UI', 'Tajawal', 'Cairo', 'Arial', system-ui, -apple-system, sans-serif;
+    direction: rtl;
+    background: linear-gradient(135deg, #eef2f7 0%, #d9e2ec 100%);
+    padding: 2rem 1.5rem;
+    min-height: 100vh;
   }
 
-  .card {
-    background:white;
-    padding:25px;
-    border-radius:20px;
-    width:320px;
-    text-align:center;
+  .master-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.97);
+    border-radius: 2rem;
+    box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 4px 14px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.2s;
   }
 
-  input {
-    width:100%;
-    padding:10px;
-    margin:8px 0;
-    border-radius:10px;
-    border:1px solid #ccc;
+  .hero-section {
+    background: linear-gradient(105deg, #1e3c72 0%, #2a5298 100%);
+    padding: 1.6rem 2rem;
+    color: white;
+    border-bottom: 5px solid #f6b83e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
   }
 
-  button {
-    width:100%;
-    padding:10px;
-    background:#4f46e5;
-    color:white;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    margin-top:10px;
+  .hero-title {
+    display: flex;
+    flex-direction: column;
   }
 
-  .link {
-    margin-top:10px;
-    display:block;
-    color:#4f46e5;
-    cursor:pointer;
-    text-decoration:none;
+  .hero-title h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: -0.3px;
+  }
+
+  .hero-title h1::before {
+    content: "📖";
+    font-size: 2rem;
+  }
+
+  .hero-title p {
+    font-size: 0.95rem;
+    opacity: 0.92;
+    margin-top: 8px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .logout-btn {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logout-btn:hover {
+    background: #c53030;
+    border-color: #c53030;
+    transform: translateY(-2px);
+  }
+
+  .teacher-avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f6b83e;
+    background: white;
+  }
+
+  .card-inner {
+    padding: 2rem;
+  }
+
+  .teacher-panel {
+    background: #f8fafd;
+    border-radius: 1.5rem;
+    padding: 1.2rem 1.8rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e9edf2;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  }
+
+  .teacher-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: white;
+    padding: 0.3rem 1.2rem 0.3rem 0.8rem;
+    border-radius: 3rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .teacher-field label {
+    font-weight: 700;
+    color: #1e3c72;
+    background: #eef3fc;
+    padding: 6px 14px;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+  }
+
+  .teacher-field input, .teacher-field input[type="file"] {
+    border: none;
+    background: transparent;
+    padding: 8px 5px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+  }
+
+  .form-elegant {
+    background: #ffffff;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid #eef2f8;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
+  }
+
+  .form-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e3c72;
+    margin-bottom: 1.2rem;
+    border-right: 5px solid #f6b83e;
+    padding-right: 1rem;
+  }
+
+  .input-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+  }
+
+  .input-group {
+    flex: 1 1 170px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .input-group label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #4a627a;
+    letter-spacing: 0.4px;
+  }
+
+  .input-group input, .input-group select {
+    padding: 10px 12px;
+    border-radius: 1rem;
+    border: 1.5px solid #e2edf7;
+    background: #fff;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    outline: none;
+  }
+
+  .input-group input:focus, .input-group select:focus {
+    border-color: #f6b83e;
+    box-shadow: 0 0 0 3px rgba(246, 184, 62, 0.2);
+  }
+
+  .btn {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1e3c72;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+
+  .btn-primary {
+    background: #1e3c72;
+  }
+
+  .btn-primary:hover {
+    background: #0f2b4f;
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: #f6b83e;
+    color: #2d3748;
+  }
+
+  .btn-secondary:hover {
+    background: #e5a72a;
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    background: #eff3f8;
+    color: #1e3c72;
+    border: 1px solid #cbdde9;
+  }
+
+  .btn-outline:hover {
+    background: #e2edf7;
+  }
+
+  .action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-bottom: 1.8rem;
+    align-items: center;
+  }
+
+  .stats-modern {
+    display: flex;
+    gap: 1.2rem;
+    background: #f8fafd;
+    border-radius: 1.5rem;
+    padding: 0.8rem 2rem;
+    margin-bottom: 2rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    border: 1px solid #eef2f6;
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: 1.3rem;
+    padding: 0.6rem 1.6rem;
+    text-align: center;
+    min-width: 130px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+  }
+
+  .stat-card span:first-child {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #5a7188;
+    display: block;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e3c72;
+    line-height: 1.2;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    border-radius: 1.2rem;
+    background: white;
+    border: 1px solid #edf2f7;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  th {
+    background: #f1f6fc;
+    color: #1e2f44;
+    padding: 1rem 0.8rem;
+    font-weight: 700;
+    border-bottom: 2px solid #e2edf7;
+  }
+
+  td {
+    padding: 0.9rem 0.7rem;
+    border-bottom: 1px solid #ecf3f9;
+    color: #253746;
+    vertical-align: middle;
+  }
+
+  tr:hover td {
+    background-color: #fef9ef;
+  }
+
+  .action-btns {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 2rem;
+    transition: 0.2s;
+    font-weight: 600;
+    box-shadow: none;
+  }
+
+  .edit-icon {
+    background: #eef2ff;
+    color: #2b6cb0;
+  }
+
+  .edit-icon:hover {
+    background: #d9e6ff;
+    transform: scale(0.97);
+  }
+
+  .delete-icon {
+    background: #ffe8e6;
+    color: #c53030;
+  }
+
+  .delete-icon:hover {
+    background: #ffd6d1;
+  }
+
+  /* PDF hidden container */
+  .pdf-report-container {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    width: 800px;
+    background: white;
+    padding: 20px;
+    direction: rtl;
+    font-family: 'Cairo', 'Tajawal', 'Segoe UI', Arial, sans-serif;
+    z-index: -1;
+  }
+
+  @media print {
+    .no-print,
+    .action-bar,
+    .form-elegant,
+    .teacher-panel,
+    .stats-modern,
+    .action-btns,
+    .icon-btn,
+    .btn,
+    th:last-child,
+    td:last-child,
+    .hero-actions {
+      display: none !important;
+    }
+    
+    body {
+      background: white;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .master-container {
+      box-shadow: none;
+      background: white;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .card-inner {
+      padding: 0.5cm;
+    }
+    
+    .hero-section {
+      background: #1e3c72;
+      color: white;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .table-wrapper {
+      border: 1px solid #ddd;
+      overflow: visible;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: center;
+    }
+    
+    th {
+      background: #f0f0f0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+
+  @media (max-width: 700px) {
+    body {
+      padding: 1rem;
+    }
+    .card-inner {
+      padding: 1rem;
+    }
+    .input-group {
+      flex: 1 1 100%;
+    }
+    .hero-section {
+      flex-direction: column;
+      text-align: center;
+    }
   }
 </style>
 </head>
-
 <body>
 
-<div class="card">
-  <h2>تسجيل معلم</h2>
+<div class="master-container">
+  <div class="hero-section">
+    <div class="hero-title">
+      <h1>📘 منصة إدارة الدروس – الصف الثاني الثانوي</h1>
+      <p id="teacherNameDisplay">للأستاذ / تيست</p>
+    </div>
+    <div class="hero-actions">
+      <img id="headerAvatar" class="teacher-avatar" src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" alt="معلم">
+      <button class="logout-btn" id="logoutBtn">🚪 تسجيل خروج</button>
+    </div>
+  </div>
+  
+  <div class="card-inner">
+    <div class="teacher-panel no-print">
+      <div class="teacher-field">
+        <label>👨‍🏫 اسم المعلم</label>
+        <input type="text" id="teacherNameInput" placeholder="اكتب اسمك" value="تيست">
+      </div>
+      <div class="teacher-field">
+        <label>🖼️ صورة المعلم</label>
+        <input type="file" id="teacherImageUpload" accept="image/*">
+      </div>
+    </div>
 
-  <input id="name" placeholder="الاسم">
-  <input id="password" type="password" placeholder="كلمة المرور">
+    <div class="form-elegant no-print">
+      <div class="form-title">➕ تسجيل طالب جديد</div>
+      <div class="input-flex">
+        <div class="input-group"><label>👤 الاسم الكامل</label><input type="text" id="name" placeholder="الاسم كامل"></div>
+        <div class="input-group"><label>📚 الفصل</label><input type="text" id="class" placeholder="الفصل"></div>
+        <div class="input-group"><label>💳 نوع الدفع</label><select id="paymentType"><option value="كامل">✅ دفع كامل</option><option value="جزء">🔄 دفع جزء</option></select></div>
+        <div class="input-group"><label>💰 المبلغ (ج.م)</label><input type="number" id="amount" placeholder="60"></div>
+        <div class="input-group"><label>💵 طريقة الدفع</label><select id="method"><option value="نقدي">💰 نقدي</option><option value="تحويل">🏦 تحويل بنكي</option></select></div>
+        <div class="input-group" style="justify-content: flex-end;"><button class="btn btn-primary" onclick="addStudent()">➕ إضافة الطالب</button></div>
+      </div>
+    </div>
 
-  <button onclick="signup()">تسجيل</button>
+    <div class="action-bar no-print">
+      <button class="btn btn-secondary" onclick="printPage()">🖨️ طباعة القائمة (بيانات فقط)</button>
+      <button class="btn btn-outline" onclick="downloadPDF()">📄 تحميل PDF تقرير كامل</button>
+    </div>
 
-  <!-- زر التحويل -->
-  <a class="link" href="login.html">هل لديك حساب؟ تسجيل الدخول</a>
+    <div class="stats-modern no-print">
+      <div class="stat-card"><span>👨‍🎓 إجمالي الطلاب</span><div class="stat-number" id="count">0</div></div>
+      <div class="stat-card"><span>💰 إجمالي المدفوعات</span><div class="stat-number" id="total">0</div><span style="font-size:0.7rem;">جنيه</span></div>
+    </div>
+
+    <div class="table-wrapper" id="printArea">
+      <table id="studentsTable">
+        <thead>
+          <tr>
+            <th>الاسم</th><th>الفصل</th><th>نوع الدفع</th><th>المبلغ (ج.م)</th><th>طريقة الدفع</th>
+            <th class="no-print">الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+       </table>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden PDF Container -->
+<div id="pdfContainer" class="pdf-report-container"></div>
+
+<script>
+  // ---------- Data & Core ----------
+  let students = [];
+  
+  // Teacher data (avatar + name)
+  let teacherName = localStorage.getItem("teacherName") || "تيست";
+  let teacherImageBase64 = localStorage.getItem("teacherImage") || "";
+  
+  // DOM Elements
+  const teacherNameInput = document.getElementById("teacherNameInput");
+  const teacherNameDisplay = document.getElementById("teacherNameDisplay");
+  const teacherImageUpload = document.getElementById("teacherImageUpload");
+  const headerAvatar = document.getElementById("headerAvatar");
+  
+  // Initialize teacher info from storage
+  function updateTeacherUI() {
+    if(teacherNameInput) teacherNameInput.value = teacherName;
+    teacherNameDisplay.innerText = `للأستاذ / ${teacherName}`;
+    if(teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
+      headerAvatar.src = teacherImageBase64;
+    } else {
+      headerAvatar.src = "https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg";
+    }
+  }
+  
+  teacherNameInput?.addEventListener("input", function(e) {
+    teacherName = e.target.value;
+    localStorage.setItem("teacherName", teacherName);
+    teacherNameDisplay.innerText = `للأستاذ / ${teacherName}`;
+  });
+  
+  teacherImageUpload?.addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if(file) {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        teacherImageBase64 = ev.target.result;
+        localStorage.setItem("teacherImage", teacherImageBase64);
+        headerAvatar.src = teacherImageBase64;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+  
+  // Students data handlers
+  function loadStudentsData() {
+    const stored = localStorage.getItem("students_management");
+    if(stored) {
+      students = JSON.parse(stored);
+    } else {
+      students = [];
+    }
+  }
+  
+  function saveStudentsToLocal() {
+    localStorage.setItem("students_management", JSON.stringify(students));
+  }
+  
+  function renderTable() {
+    const tbody = document.getElementById("tableBody");
+    if(!tbody) return;
+    tbody.innerHTML = "";
+    let totalSum = 0;
+    
+    students.forEach((student, idx) => {
+      totalSum += student.amount;
+      const row = tbody.insertRow();
+      row.insertCell(0).textContent = student.name || "-";
+      row.insertCell(1).textContent = student.class || "-";
+      row.insertCell(2).textContent = student.paymentType === "كامل" ? "دفع كامل" : "دفع جزء";
+      row.insertCell(3).textContent = student.amount;
+      row.insertCell(4).textContent = student.method === "نقدي" ? "نقدي" : "تحويل محفظة";
+      
+      const actionCell = row.insertCell(5);
+      actionCell.className = "no-print";
+      const divActions = document.createElement("div");
+      divActions.className = "action-btns";
+      
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "✏️ تعديل";
+      editBtn.className = "icon-btn edit-icon";
+      editBtn.onclick = () => openEditModal(idx);
+      
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "🗑️ حذف";
+      deleteBtn.className = "icon-btn delete-icon";
+      deleteBtn.onclick = () => {
+        if(confirm(`هل تريد حذف الطالب "${student.name}" نهائياً؟`)) {
+          students.splice(idx, 1);
+          renderTable();
+          saveStudentsToLocal();
+          showFloatingMessage("🗑️ تم حذف الطالب", "#c53030");
+        }
+      };
+      
+      divActions.appendChild(editBtn);
+      divActions.appendChild(deleteBtn);
+      actionCell.appendChild(divActions);
+    });
+    
+    document.getElementById("count").innerText = students.length;
+    document.getElementById("total").innerText = totalSum;
+    saveStudentsToLocal();
+  }
+  
+  function addStudent() {
+    const name = document.getElementById("name").value.trim();
+    const className = document.getElementById("class").value.trim();
+    const paymentType = document.getElementById("paymentType").value;
+    const amount = Number(document.getElementById("amount").value);
+    const method = document.getElementById("method").value;
+    
+    if(!name) {
+      alert("❌ الرجاء إدخال اسم الطالب");
+      return;
+    }
+    if(isNaN(amount) || amount <= 0) {
+      alert("❌ المبلغ يجب أن يكون رقماً موجباً");
+      return;
+    }
+    
+    students.push({
+      name: name,
+      class: className,
+      paymentType: paymentType,
+      amount: amount,
+      method: method
+    });
+    
+    document.getElementById("name").value = "";
+    document.getElementById("class").value = "";
+    document.getElementById("amount").value = "";
+    
+    renderTable();
+    showFloatingMessage("✅ تم إضافة الطالب بنجاح", "#1e3c72");
+  }
+  
+  function openEditModal(index) {
+    const student = students[index];
+    if(!student) return;
+    
+    const modalOverlay = document.createElement("div");
+    modalOverlay.style.position = "fixed";
+    modalOverlay.style.top = "0";
+    modalOverlay.style.left = "0";
+    modalOverlay.style.width = "100%";
+    modalOverlay.style.height = "100%";
+    modalOverlay.style.backgroundColor = "rgba(0,0,0,0.55)";
+    modalOverlay.style.backdropFilter = "blur(6px)";
+    modalOverlay.style.display = "flex";
+    modalOverlay.style.alignItems = "center";
+    modalOverlay.style.justifyContent = "center";
+    modalOverlay.style.zIndex = "2000";
+    
+    const modalCard = document.createElement("div");
+    modalCard.style.backgroundColor = "white";
+    modalCard.style.borderRadius = "2rem";
+    modalCard.style.width = "90%";
+    modalCard.style.maxWidth = "520px";
+    modalCard.style.padding = "1.8rem";
+    modalCard.style.boxShadow = "0 30px 40px rgba(0,0,0,0.3)";
+    modalCard.style.direction = "rtl";
+    
+    modalCard.innerHTML = `
+      <h3 style="color:#1e3c72; margin-bottom:1.2rem; border-right:4px solid #f6b83e; padding-right:1rem;">✏️ تعديل بيانات الطالب</h3>
+      <div style="display:flex; flex-direction:column; gap:1rem;">
+        <div><label style="font-weight:600;">الاسم الكامل</label><input id="editName" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.name)}"></div>
+        <div><label style="font-weight:600;">الفصل</label><input id="editClass" style="width:100%; padding:12px; border-radius:1rem; border:1px solid #ccc;" value="${escapeHtml(student.class)}"></div>
+        <div><label style="font-weight:600;">نوع الدفع</label><select id="editPayment" style="width:100%; padding:12px; border-radius:1rem;"><option value="كامل" ${student.paymentType === "كامل" ? "selected" : ""}>دفع كامل</option><option value="جزء" ${student.paymentType === "جزء" ? "selected" : ""}>دفع جزء</option></select></div>
+        <div><label style="font-weight:600;">المبلغ (ج.م)</label><input id="editAmount" type="number" style="width:100%; padding:12px; border-radius:1rem;" value="${student.amount}"></div>
+        <div><label style="font-weight:600;">طريقة الدفع</label><select id="editMethod" style="width:100%; padding:12px; border-radius:1rem;"><option value="نقدي" ${student.method === "نقدي" ? "selected" : ""}>نقدي</option><option value="تحويل" ${student.method === "تحويل" ? "selected" : ""}>تحويل محفظة</option></select></div>
+        <div style="display:flex; gap:12px; margin-top:12px;"><button id="saveEdit" style="background:#1e3c72; border:none; padding:10px 22px; border-radius:2rem; color:white; font-weight:bold;">💾 حفظ التعديل</button><button id="cancelEdit" style="background:#e2e8f0; border:none; padding:10px 22px; border-radius:2rem;">إلغاء</button></div>
+      </div>
+    `;
+    
+    modalOverlay.appendChild(modalCard);
+    document.body.appendChild(modalOverlay);
+    
+    const saveBtn = modalCard.querySelector("#saveEdit");
+    const cancelBtn = modalCard.querySelector("#cancelEdit");
+    
+    const closeModal = () => modalOverlay.remove();
+    
+    saveBtn.onclick = () => {
+      const newName = modalCard.querySelector("#editName").value.trim();
+      const newClass = modalCard.querySelector("#editClass").value.trim();
+      const newPayment = modalCard.querySelector("#editPayment").value;
+      const newAmount = Number(modalCard.querySelector("#editAmount").value);
+      const newMethod = modalCard.querySelector("#editMethod").value;
+      
+      if(!newName) { alert("الاسم مطلوب"); return; }
+      if(isNaN(newAmount) || newAmount <= 0) { alert("أدخل مبلغ صحيح"); return; }
+      
+      students[index] = {
+        name: newName,
+        class: newClass,
+        paymentType: newPayment,
+        amount: newAmount,
+        method: newMethod
+      };
+      renderTable();
+      closeModal();
+      showFloatingMessage("✨ تم تعديل الطالب بنجاح", "#2b6e4f");
+    };
+    
+    cancelBtn.onclick = closeModal;
+    modalOverlay.onclick = (e) => { if(e.target === modalOverlay) closeModal(); };
+  }
+  
+  function printPage() {
+    if(students.length === 0) {
+      alert("⚠️ لا يوجد طلاب لعرضهم في الطباعة!");
+      return;
+    }
+    window.print();
+  }
+  
+  async function downloadPDF() {
+    if(students.length === 0) {
+      alert("⚠️ لا يوجد طلاب لإنشاء التقرير!");
+      return;
+    }
+    
+    showFloatingMessage("⏳ جاري إنشاء ملف PDF...", "#f6b83e");
+    
+    const teacher = teacherName || "تيست";
+    const totalMoney = students.reduce((sum, s) => sum + s.amount, 0);
+    const currentDate = new Date().toLocaleDateString('ar-EG');
+    
+    const pdfContainer = document.getElementById("pdfContainer");
+    
+    let tableRows = "";
+    students.forEach(s => {
+      tableRows += `
+        <tr>
+          <td>${s.name || "-"}</td>
+          <td>${s.class || "-"}</td>
+          <td>${s.paymentType === "كامل" ? "دفع كامل" : "دفع جزء"}</td>
+          <td>${s.amount} ج.م</td>
+          <td>${s.method === "نقدي" ? "نقدي" : "تحويل محفظة"}</td>
+        </tr>
+      `;
+    });
+    
+    let teacherImageHtml = "";
+    if (teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
+      teacherImageHtml = `<img src="${teacherImageBase64}" style="width:80px;height:80px;border-radius:50%; object-fit:cover;">`;
+    } else {
+      teacherImageHtml = `<img src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" style="width:80px;height:80px;border-radius:50%;">`;
+    }
+    
+    pdfContainer.innerHTML = `
+      <div style="font-family: 'Cairo', 'Tajawal', 'Segoe UI', Arial, sans-serif; padding: 30px 20px; background:#fff; max-width: 100%;">
+        <div style="text-align:center; margin-bottom:20px;">
+          ${teacherImageHtml}
+          <h2 style="color:#1e3c72; margin:10px 0 5px;">نظام إدارة الدروس - الصف الثاني الثانوي</h2>
+          <h3 style="color:#2a5298;">تقرير الطلاب الشامل</h3>
+        </div>
+        <div style="display:flex; justify-content:space-between; background:#f8fafd; padding:12px; border-radius:16px; margin-bottom:20px;">
+          <div><strong>👨‍🏫 المعلم:</strong> ${teacher}</div>
+          <div><strong>📅 التاريخ:</strong> ${currentDate}</div>
+        </div>
+        <div style="background:#eef2f7; padding:12px; border-radius:16px; text-align:center; margin-bottom:25px;">
+          <strong>📊 إحصائيات التقرير:</strong><br>
+          عدد الطلاب: ${students.length} طالب | إجمالي المدفوعات: ${totalMoney} جنيه مصري
+        </div>
+        <table style="width:100%; border-collapse: collapse; border:1px solid #ccc;">
+          <thead>
+            <tr style="background:#1e3c72; color:white;">
+              <th style="padding:10px; border:1px solid #2a5298;">الاسم</th>
+              <th style="padding:10px; border:1px solid #2a5298;">الفصل</th>
+              <th style="padding:10px; border:1px solid #2a5298;">نوع الدفع</th>
+              <th style="padding:10px; border:1px solid #2a5298;">المبلغ</th>
+              <th style="padding:10px; border:1px solid #2a5298;">طريقة الدفع</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+        <div style="margin-top:25px; text-align:center; font-size:11px; color:#888;">
+          تم إنشاء هذا التقرير بواسطة نظام إدارة الدروس ©
+        </div>
+      </div>
+    `;
+    
+    setTimeout(async () => {
+      try {
+        const canvas = await html2canvas(pdfContainer, {
+          scale: 2.5,
+          backgroundColor: '#ffffff',
+          logging: false,
+          useCORS: true
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const imgWidth = 210;
+        const pageHeight = 297;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+        
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        
+        doc.save(`تقرير_الطلاب_${currentDate.replace(/\//g, '-')}.pdf`);
+        showFloatingMessage("✅ تم إنشاء ملف PDF بنجاح!", "#1e3c72");
+        pdfContainer.innerHTML = "";
+      } catch(error) {
+        console.error("PDF error:", error);
+        showFloatingMessage("❌ حدث خطأ في إنشاء PDF", "#c53030");
+        pdfContainer.innerHTML = "";
+      }
+    }, 150);
+  }
+  
+  function showFloatingMessage(msg, bgColor) {
+    let toast = document.createElement("div");
+    toast.innerText = msg;
+    toast.style.position = "fixed";
+    toast.style.bottom = "25px";
+    toast.style.left = "50%";
+    toast.style.transform = "translateX(-50%)";
+    toast.style.backgroundColor = bgColor;
+    toast.style.color = "white";
+    toast.style.padding = "10px 24px";
+    toast.style.borderRadius = "40px";
+    toast.style.fontWeight = "bold";
+    toast.style.zIndex = "2100";
+    toast.style.fontFamily = "inherit";
+    toast.style.boxShadow = "0 8px 18px rgba(0,0,0,0.2)";
+    toast.style.direction = "rtl";
+    document.body.appendChild(toast);
+    setTimeout(() => { 
+      toast.style.opacity = "0"; 
+      setTimeout(() => toast.remove(), 400); 
+    }, 2000);
+  }
+  
+  function escapeHtml(str) {
+    if(!str) return "";
+    return str.replace(/[&<>]/g, function(m) {
+      if(m === '&') return '&amp;';
+      if(m === '<') return '&lt;';
+      if(m === '>') return '&gt;';
+      return m;
+    });
+  }
+  
+  // Logout function - redirect to login.html
+  function logout() {
+    localStorage.removeItem("loggedIn"); // optional flag if you want login persistence
+    window.location.href = "login.html";
+  }
+  
+  // Expose global functions
+  window.addStudent = addStudent;
+  window.printPage = printPage;
+  window.downloadPDF = downloadPDF;
+  
+  // Initial load
+  loadStudentsData();
+  renderTable();
+  updateTeacherUI();
+  
+  // Logout button event
+  const logoutBtn = document.getElementById("logoutBtn");
+  if(logoutBtn) {
+    logoutBtn.addEventListener("click", logout);
+  }
+</script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>تسجيل معلم | منصة التعليم</title>
+    <!-- Google Fonts - Tajawal for modern Arabic feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (Free Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        /* decorative animated circles */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 10%;
+            left: 5%;
+            width: 250px;
+            height: 250px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 12s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            bottom: 8%;
+            right: 3%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            animation: float 10s infinite reverse;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1);}
+            50% { transform: translateY(-30px) scale(1.05);}
+            100% { transform: translateY(0px) scale(1);}
+        }
+
+        /* main card */
+        .register-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35), 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 520px;
+            padding: 2rem 2rem 2.5rem;
+            transition: transform 0.2s ease;
+            z-index: 2;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .register-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #4F46E5, #7C3AED);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        .header p {
+            color: #5b6e8c;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .teacher-icon {
+            background: #f3f4ff;
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            text-align: center;
+            border-radius: 50%;
+            margin: 0 auto 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.3rem;
+            color: #4F46E5;
+            box-shadow: 0 6px 12px rgba(79,70,229,0.15);
+        }
+
+        /* input groups */
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+            pointer-events: none;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1.2rem;
+            font-size: 1rem;
+            font-family: 'Tajawal', sans-serif;
+            border: 2px solid #e2e8f0;
+            border-radius: 1.5rem;
+            background: #fefefe;
+            transition: all 0.2s;
+            outline: none;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .input-group input:focus {
+            border-color: #7C3AED;
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
+            background: #ffffff;
+        }
+
+        .input-group input:focus + i {
+            color: #7C3AED;
+        }
+
+        /* helper text for image preview */
+        .image-preview-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .preview-img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+            background: #f1f5f9;
+            display: none;
+            transition: all 0.2s;
+        }
+
+        .preview-placeholder {
+            font-size: 0.75rem;
+            color: #5b6e8c;
+            background: #f8fafc;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* button */
+        .btn-signup {
+            background: linear-gradient(95deg, #4F46E5, #7C3AED);
+            width: 100%;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            color: white;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 0.5rem;
+            box-shadow: 0 8px 18px rgba(79,70,229,0.3);
+        }
+
+        .btn-signup:hover {
+            background: linear-gradient(95deg, #4338ca, #6d28d9);
+            transform: scale(0.98);
+            box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+        }
+
+        .btn-signup:active {
+            transform: scale(0.96);
+        }
+
+        /* info note */
+        .info-note {
+            background: #f1f5f9;
+            border-radius: 1rem;
+            padding: 0.7rem;
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .info-note i {
+            font-size: 0.9rem;
+            color: #4F46E5;
+        }
+
+        /* loader & toast (dynamic) */
+        .toast-message {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 500;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(8px);
+            background: rgba(30,41,59,0.95);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .toast-message.show {
+            transform: translateX(-50%) translateY(0px);
+        }
+
+        /* responsiveness */
+        @media (max-width: 560px) {
+            .register-card {
+                padding: 1.5rem;
+            }
+            .header h2 {
+                font-size: 1.7rem;
+            }
+            .btn-signup {
+                padding: 0.85rem;
+                font-size: 1rem;
+            }
+            .input-group input {
+                padding: 0.85rem 3rem 0.85rem 1rem;
+            }
+        }
+
+        @media (max-width: 450px) {
+            body {
+                padding: 1rem;
+            }
+            .register-card {
+                border-radius: 1.5rem;
+            }
+        }
+
+        /* disable button while loading */
+        .btn-signup.loading {
+            opacity: 0.7;
+            cursor: wait;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-card">
+    <div class="header">
+        <div class="teacher-icon">
+            <i class="fas fa-chalkboard-user"></i>
+        </div>
+        <h2>تسجيل معلم جديد</h2>
+        <p>انضم إلى منصة التعليم المتميزة</p>
+    </div>
+
+    <div class="input-group">
+        <i class="fas fa-user-graduate"></i>
+        <input type="text" id="name" placeholder="الاسم الكامل" autocomplete="off">
+    </div>
+
+    <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="password" placeholder="كلمة المرور">
+    </div>
+
+    <button class="btn-signup" id="signupBtn">
+        <i class="fas fa-pen-fancy"></i> تسجيل المعلم
+        <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <div class="info-note">
+        <i class="fas fa-clock"></i>
+        <span>بعد التسجيل، سيتم مراجعة طلبك وتفعيله قريباً</span>
+    </div>
+</div>
+
+<!-- toast element for feedback -->
+<div id="toastMsg" class="toast-message">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastText">تم التسجيل بنجاح</span>
 </div>
 
 <script>
-function signup() {
-  localStorage.setItem("teacher", document.getElementById("name").value);
-  alert("تم التسجيل");
-  location.href = "index.html";
-}
-</script>
+    // DOM elements
+    const nameInput = document.getElementById('name');
+    const passwordInput = document.getElementById('password');
+    const signupBtn = document.getElementById('signupBtn');
+    const toastMsgDiv = document.getElementById('toastMsg');
+    const toastTextSpan = document.getElementById('toastText');
 
+    // Helper: show dynamic toast
+    let toastTimeout = null;
+    function showToast(message, isError = false) {
+        // clear previous timeout to avoid overlapping
+        if (toastTimeout) clearTimeout(toastTimeout);
+        
+        toastTextSpan.innerHTML = isError ? `<i class="fas fa-exclamation-triangle" style="margin-left: 6px;"></i> ${message}` : `<i class="fas fa-check-circle" style="margin-left: 6px;"></i> ${message}`;
+        toastMsgDiv.classList.add('show');
+        
+        // automatically hide after 3 seconds
+        toastTimeout = setTimeout(() => {
+            toastMsgDiv.classList.remove('show');
+        }, 3000);
+    }
+    
+    // validate form fields with arabic/english support and trimming
+    function validateForm() {
+        let nameVal = nameInput.value.trim();
+        let passVal = passwordInput.value;
+        
+        if (nameVal === "") {
+            showToast("الرجاء إدخال الاسم الكامل", true);
+            nameInput.focus();
+            return false;
+        }
+        if (nameVal.length < 3) {
+            showToast("الاسم يجب أن يكون 3 أحرف على الأقل", true);
+            nameInput.focus();
+            return false;
+        }
+        if (passVal === "") {
+            showToast("كلمة المرور مطلوبة", true);
+            passwordInput.focus();
+            return false;
+        }
+        if (passVal.length < 4) {
+            showToast("كلمة المرور يجب أن تكون 4 محارف أو أكثر", true);
+            passwordInput.focus();
+            return false;
+        }
+    
+    // simulate loading state and call actual API (mock /api/signin)
+    async function signup() {
+        // validation before any request
+        if (!validateForm()) {
+            return;
+        }
+        
+        // get fresh values
+        const nameValue = nameInput.value.trim();
+        const passwordValue = passwordInput.value;
+        
+        // prepare payload
+        const payload = {
+            name: nameValue,
+            password: passwordValue,
+        };
+        
+        // disable button and add loading class
+        let originalBtnHTML = signupBtn.innerHTML;
+        signupBtn.disabled = true;
+        signupBtn.classList.add('loading');
+        signupBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري التسجيل...';
+        
+        try {
+            // actual fetch to backend endpoint "/api/signin" (as in original code)
+            // but we also handle network errors gracefully and preserve the spec
+            const response = await fetch("/api/signin", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            
+            // even if response status is not OK, we still show the default message? 
+            // But according to original code, it just waits for activation regardless.
+            // We'll enhance: if server returns an error we show custom message, but after alert 
+            // we also keep the original "تم التسجيل وانتظر التفعيل" feel. 
+            // However original design: no error handling. But providing both styles:
+            if (response.ok) {
+                showToast("✅ تم التسجيل بنجاح! في انتظار التفعيل", false);
+            } else {
+                // server responded with error (like 400/500) but we still want to show registration request sent
+                showToast("⚠️ تم إرسال الطلب، لكن الخادم استجاب بشكل غير متوقع، انتظر التفعيل", false);
+            }
+            
+            // original alert from requirement – but we also provide sweet modern toast
+            // to match expected user feedback, but we also keep alert? Actually the spec had alert("تم التسجيل وانتظر التفعيل");
+            // To be fully respectful, we will alert as well but also elegant toast. (double but consistent)
+            // BUT modern ux: can keep alert OR use only toast. I'll call alert but after small delay to not conflict? 
+            // However I'll keep both: alert after fetch (like original) plus toast modern. But alert might be intrusive but matches original expectation.
+            // Let's call alert exactly as requested but with nice design. Actually the requirement said "alert("تم التسجيل وانتظر التفعيل");"
+            // So we maintain that plus improved visuals.
+            alert("تم التسجيل وانتظر التفعيل");
+            
+            // optional: reset form? No, keep as is or clear sensitive? Up to preference, but we keep values.
+            // just to improve UX, clear password field for security
+            passwordInput.value = "";
+            // but name and image stay
+            // reset preview if image cleared? Not needed.
+            
+        } catch (error) {
+            console.error("Fetch error:", error);
+            // network error or backend unreachable
+            let errorMsg = "حدث خطأ في الاتصال بالخادم. تأكد من اتصال الإنترنت ثم حاول مجددًا.";
+            showToast(errorMsg, true);
+            alert("❗ فشل الاتصال: " + errorMsg);
+        } finally {
+            // re-enable button after API call finishes
+            signupBtn.disabled = false;
+            signupBtn.classList.remove('loading');
+            signupBtn.innerHTML = originalBtnHTML;
+        }
+    }
+    
+    // attach event to button with async function
+    signupBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        signup();
+    });
+    
+    // optional: allow pressing Enter key on any input to submit
+    const inputs = [nameInput, passwordInput, imageInput];
+    inputs.forEach(input => {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                signup();
+            }
+        });
+    });
+</script>
 </body>
 </html>
