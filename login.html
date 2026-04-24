@@ -299,6 +299,49 @@
             animation: shake 0.3s ease-in-out 0s 2;
         }
     </style>
+    <style>
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 320px;
+    margin: 20px auto;
+}
+
+.btn {
+    text-decoration: none;
+    text-align: center;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 700;
+    transition: 0.3s;
+    display: block;
+}
+
+.btn-login {
+    background: white;
+    color: #4F46E5;
+    border: 2px solid #4F46E5;
+}
+
+.btn-login:hover {
+    background: #4F46E5;
+    color: white;
+}
+
+.btn-signup {
+    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    color: white;
+    border: none;
+}
+
+.btn-signup:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+</style>
 </head>
 <body>
 
@@ -327,6 +370,12 @@
         <i class="fas fa-arrow-left"></i>
     </button>
 
+<div class="buttons-container">
+    <a href="signin.html" class="btn btn-signup">
+        إنشاء حساب جديد
+    </a>
+</div>
+    
     <div class="info-footer">
         <i class="fas fa-shield-alt"></i>
         <span>بياناتك آمنة ومشفرة</span>
