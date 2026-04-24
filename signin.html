@@ -363,30 +363,36 @@
     }
     
     // validate form fields with arabic/english support and trimming
-    function validateForm() {
-        let nameVal = nameInput.value.trim();
-        let passVal = passwordInput.value;
-        
-        if (nameVal === "") {
-            showToast("الرجاء إدخال الاسم الكامل", true);
-            nameInput.focus();
-            return false;
-        }
-        if (nameVal.length < 3) {
-            showToast("الاسم يجب أن يكون 3 أحرف على الأقل", true);
-            nameInput.focus();
-            return false;
-        }
-        if (passVal === "") {
-            showToast("كلمة المرور مطلوبة", true);
-            passwordInput.focus();
-            return false;
-        }
-        if (passVal.length < 4) {
-            showToast("كلمة المرور يجب أن تكون 4 محارف أو أكثر", true);
-            passwordInput.focus();
-            return false;
-        }
+function validateForm() {
+    let nameVal = nameInput.value.trim();
+    let passVal = passwordInput.value;
+
+    if (nameVal === "") {
+        showToast("الرجاء إدخال الاسم الكامل", true);
+        nameInput.focus();
+        return false;
+    }
+
+    if (nameVal.length < 3) {
+        showToast("الاسم يجب أن يكون 3 أحرف على الأقل", true);
+        nameInput.focus();
+        return false;
+    }
+
+    if (passVal === "") {
+        showToast("كلمة المرور مطلوبة", true);
+        passwordInput.focus();
+        return false;
+    }
+
+    if (passVal.length < 4) {
+        showToast("كلمة المرور يجب أن تكون 4 محارف أو أكثر", true);
+        passwordInput.focus();
+        return false;
+    }
+
+    return true;
+}
     
     // simulate loading state and call actual API (mock /api/signin)
     async function signup() {
@@ -468,7 +474,7 @@
     });
     
     // optional: allow pressing Enter key on any input to submit
-    const inputs = [nameInput, passwordInput, imageInput];
+    const inputs = [nameInput, passwordInput];
     inputs.forEach(input => {
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
