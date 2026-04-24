@@ -1,36 +1,28 @@
 <!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8">
-<title>تسجيل مدرس جديد</title>
-</head>
-<body style="font-family:Arial; direction:rtl; padding:20px">
+<html>
+<body>
+<h2>تسجيل معلم</h2>
 
-<h2>📝 إنشاء حساب مدرس</h2>
-
-<input id="name" placeholder="اسم المدرس"><br><br>
-<input id="password" type="password" placeholder="كلمة المرور"><br><br>
-<input id="image" placeholder="رابط الصورة"><br><br>
+<input id="name" placeholder="الاسم">
+<input id="password" placeholder="الباسورد" type="password">
+<input id="image" placeholder="رابط الصورة">
 
 <button onclick="signup()">تسجيل</button>
 
 <script>
 async function signup(){
-  const res = await fetch("/signup", {
+  await fetch("/api/signin",{
     method:"POST",
     headers:{ "Content-Type":"application/json" },
     body: JSON.stringify({
-      name: document.getElementById("name").value,
-      password: document.getElementById("password").value,
-      image: document.getElementById("image").value
+      name: name.value,
+      password: password.value,
+      image: image.value
     })
   });
 
-  const text = await res.text();
-  alert(text);
-  location.href = "login.html";
+  alert("تم التسجيل وانتظر التفعيل");
 }
 </script>
-
 </body>
 </html>
