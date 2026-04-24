@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>دخول الأدمن</title>
+</head>
+<body style="font-family:Arial; direction:rtl; padding:20px">
+
+<h2>⚙️ لوحة تحكم الأدمن</h2>
+
+<input id="user" placeholder="اسم الأدمن"><br><br>
+<input id="pass" type="password" placeholder="كلمة المرور"><br><br>
+
+<button onclick="adminLogin()">دخول</button>
+
+<script>
+async function adminLogin(){
+  const res = await fetch("/admin-login", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      username: document.getElementById("user").value,
+      password: document.getElementById("pass").value
+    })
+  });
+
+  const data = await res.json();
+
+  if(data.token){
+    localStorage.setItem("adminToken", data.token);
+    location.href = "dashboard.html";
+  } else {
+    alert("بيانات غير صحيحة");
+  }
+}
+</script>
+
+</body>
+</html>
