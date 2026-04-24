@@ -157,6 +157,38 @@
             color: #7C3AED;
         }
 
+        /* helper text for image preview */
+        .image-preview-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .preview-img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+            background: #f1f5f9;
+            display: none;
+            transition: all 0.2s;
+        }
+
+        .preview-placeholder {
+            font-size: 0.75rem;
+            color: #5b6e8c;
+            background: #f8fafc;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         /* button */
         .btn-signup {
             background: linear-gradient(95deg, #4F46E5, #7C3AED);
@@ -267,17 +299,6 @@
             cursor: wait;
             transform: none;
         }
-        
-        /* RTL fine tuning */
-        .btn-signup i:first-child {
-            margin-left: 5px;
-        }
-        .btn-signup i:last-child {
-            margin-right: 5px;
-        }
-        .toast-message i {
-            margin-left: 6px;
-        }
     </style>
 </head>
 <body>
@@ -300,9 +321,7 @@
         <i class="fas fa-lock"></i>
         <input type="password" id="password" placeholder="كلمة المرور">
     </div>
-
-    <!-- تم إزالة حقل الصورة URL وكافة عناصر المعاينة المرتبطة به -->
-
+    
     <button class="btn-signup" id="signupBtn">
         <i class="fas fa-pen-fancy"></i> تسجيل المعلم
         <i class="fas fa-arrow-left"></i>
@@ -321,10 +340,13 @@
 </div>
 
 <script>
-    // DOM elements (تمت إزالة جميع عناصر الصورة URL والمعاينة)
+    // DOM elements
     const nameInput = document.getElementById('name');
     const passwordInput = document.getElementById('password');
+    const imageInput = document.getElementById('image');
     const signupBtn = document.getElementById('signupBtn');
+    const previewImg = document.getElementById('previewImg');
+    const previewPlaceholder = document.getElementById('previewPlaceholder');
     const toastMsgDiv = document.getElementById('toastMsg');
     const toastTextSpan = document.getElementById('toastText');
 
@@ -342,11 +364,52 @@
             toastMsgDiv.classList.remove('show');
         }, 3000);
     }
+
+    // preview image dynamically when user types URL (live preview)
+    function updateImagePreview() {
+        let url = imageInput.value.trim();
+        if (url === "") {
+            previewImg.style.display = "none";
+            previewPlaceholder.style.display = "inline-flex";
+            return;
+        }
+        // Test if url seems valid image URL (simple check)
+        // We'll try to load it, if fails we show placeholder but keep input
+        previewImg.style.display = "block";
+        previewImg.style.display = "block";
+        previewPlaceholder.style.display = "none";
+        
+        // set src and handle error
+        previewImg.onload = () => {
+            // success: image visible
+            previewImg.style.display = "block";
+            previewPlaceholder.style.display = "none";
+        };
+        previewImg.onerror = () => {
+            // if image fails to load, show placeholder and give hint
+            previewImg.style.display = "none";
+            previewPlaceholder.style.display = "inline-flex";
+            previewPlaceholder.innerHTML = `<i class="fas fa-image-slash"></i> رابط غير صالح للصورة`;
+            // reset after a while? keep but will change again on next input
+            setTimeout(() => {
+                if (imageInput.value.trim() === url) {
+                    previewPlaceholder.innerHTML = `<i class="fas fa-camera"></i> رابط صورة غير صالح، حاول مرة أخرى`;
+                } else {
+                    // user changed input, no need fix
+                }
+            }, 1200);
+        };
+        previewImg.src = url;
+    }
+
+    // Attach input event for live preview
+    imageInput.addEventListener('input', updateImagePreview);
     
-    // validate form fields - فقط الاسم وكلمة المرور (لا يوجد صورة)
+    // validate form fields with arabic/english support and trimming
     function validateForm() {
         let nameVal = nameInput.value.trim();
         let passVal = passwordInput.value;
+        let imageVal = imageInput.value.trim();
         
         if (nameVal === "") {
             showToast("الرجاء إدخال الاسم الكامل", true);
@@ -368,10 +431,16 @@
             passwordInput.focus();
             return false;
         }
+        // image is optional but if provided, check minimal URL structure
+        if (imageVal !== "" && !(imageVal.startsWith("http://") || imageVal.startsWith("https://"))) {
+            showToast("يرجى إدخال رابط صورة صحيح يبدأ بـ http:// أو https://", true);
+            imageInput.focus();
+            return false;
+        }
         return true;
     }
     
-    // simulate loading state and call actual API (mock /api/signin) - بدون حقل الصورة
+    // simulate loading state and call actual API (mock /api/signin)
     async function signup() {
         // validation before any request
         if (!validateForm()) {
@@ -381,11 +450,13 @@
         // get fresh values
         const nameValue = nameInput.value.trim();
         const passwordValue = passwordInput.value;
+        const imageValue = imageInput.value.trim();
         
-        // prepare payload without image field
+        // prepare payload
         const payload = {
             name: nameValue,
-            password: passwordValue
+            password: passwordValue,
+            image: imageValue
         };
         
         // disable button and add loading class
@@ -395,50 +466,63 @@
         signupBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري التسجيل...';
         
         try {
-            // actual fetch to backend endpoint "/api/signin" (مطابق للمتطلبات)
+            // actual fetch to backend endpoint "/api/signin" (as in original code)
+            // but we also handle network errors gracefully and preserve the spec
             const response = await fetch("/api/signin", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
             
-            // معالجة الاستجابة: إذا نجح الطلب أو حدث خطأ، نظهر رسالة فعالة
+            // even if response status is not OK, we still show the default message? 
+            // But according to original code, it just waits for activation regardless.
+            // We'll enhance: if server returns an error we show custom message, but after alert 
+            // we also keep the original "تم التسجيل وانتظر التفعيل" feel. 
+            // However original design: no error handling. But providing both styles:
             if (response.ok) {
                 showToast("✅ تم التسجيل بنجاح! في انتظار التفعيل", false);
             } else {
-                // server responded with error but registration request was sent
+                // server responded with error (like 400/500) but we still want to show registration request sent
                 showToast("⚠️ تم إرسال الطلب، لكن الخادم استجاب بشكل غير متوقع، انتظر التفعيل", false);
             }
             
-            // تنبيه أصلي كما هو مطلوب في المواصفات
+            // original alert from requirement – but we also provide sweet modern toast
+            // to match expected user feedback, but we also keep alert? Actually the spec had alert("تم التسجيل وانتظر التفعيل");
+            // To be fully respectful, we will alert as well but also elegant toast. (double but consistent)
+            // BUT modern ux: can keep alert OR use only toast. I'll call alert but after small delay to not conflict? 
+            // However I'll keep both: alert after fetch (like original) plus toast modern. But alert might be intrusive but matches original expectation.
+            // Let's call alert exactly as requested but with nice design. Actually the requirement said "alert("تم التسجيل وانتظر التفعيل");"
+            // So we maintain that plus improved visuals.
             alert("تم التسجيل وانتظر التفعيل");
             
-            // إعادة تعيين حقل كلمة المرور لأمان المستخدم
+            // optional: reset form? No, keep as is or clear sensitive? Up to preference, but we keep values.
+            // just to improve UX, clear password field for security
             passwordInput.value = "";
-            // يمكن ترك الاسم كما هو أو إعادة تعيينه حسب الرغبة - نتركه لتجربة أفضل
+            // but name and image stay
+            // reset preview if image cleared? Not needed.
             
         } catch (error) {
             console.error("Fetch error:", error);
-            // خطأ في الشبكة أو عدم توفر الخادم
+            // network error or backend unreachable
             let errorMsg = "حدث خطأ في الاتصال بالخادم. تأكد من اتصال الإنترنت ثم حاول مجددًا.";
             showToast(errorMsg, true);
             alert("❗ فشل الاتصال: " + errorMsg);
         } finally {
-            // إعادة تمكين الزر بعد انتهاء الطلب
+            // re-enable button after API call finishes
             signupBtn.disabled = false;
             signupBtn.classList.remove('loading');
             signupBtn.innerHTML = originalBtnHTML;
         }
     }
     
-    // attach event to button
+    // attach event to button with async function
     signupBtn.addEventListener('click', (e) => {
         e.preventDefault();
         signup();
     });
     
-    // السماح بإرسال النموذج بالضغط على زر Enter في أي حقل إدخال
-    const inputs = [nameInput, passwordInput];
+    // optional: allow pressing Enter key on any input to submit
+    const inputs = [nameInput, passwordInput, imageInput];
     inputs.forEach(input => {
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -448,8 +532,33 @@
         });
     });
     
-    // (تم إزالة أي كود متعلق بمعاينة الصورة أو حقل الرابط)
-    // تأكيد عدم وجود أي عناصر صور متبقية
+    // initialize preview on page load (if any default value)
+    if (imageInput.value.trim() !== "") {
+        updateImagePreview();
+    } else {
+        previewImg.style.display = "none";
+        previewPlaceholder.style.display = "inline-flex";
+        previewPlaceholder.innerHTML = '<i class="fas fa-camera"></i> ستظهر معاينة الصورة هنا';
+    }
+    
+    // additional RTL fine-tuning: since we use dir="rtl", icons left/right feel natural
+    // small reset for placeholder style
+    const styleAdjust = document.createElement('style');
+    styleAdjust.textContent = `
+        .preview-img {
+            margin-left: 8px;
+        }
+        .toast-message i {
+            margin-left: 6px;
+        }
+        .btn-signup i:first-child {
+            margin-left: 5px;
+        }
+        .btn-signup i:last-child {
+            margin-right: 5px;
+        }
+    `;
+    document.head.appendChild(styleAdjust);
 </script>
 </body>
 </html>
