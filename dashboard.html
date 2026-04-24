@@ -1,63 +1,677 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>لوحة التحكم - إدارة المعلمين</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* animated background */
+        body::before {
+            content: "";
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(139,92,246,0.2) 0%, rgba(6,182,212,0.05) 70%);
+            top: -150px;
+            left: -150px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(236,72,153,0.15) 0%, rgba(79,70,229,0.05) 80%);
+            bottom: -200px;
+            right: -150px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* main container */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* header card */
+        .dashboard-header {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            border-radius: 2rem;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .title-section h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #FDE68A, #FBBF24);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-section p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(0,0,0,0.4);
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(251,191,36,0.3);
+        }
+
+        .admin-info i {
+            font-size: 1.3rem;
+            color: #fbbf24;
+        }
+
+        .admin-info span {
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(239,68,68,0.2);
+            border: 1px solid rgba(239,68,68,0.5);
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            color: #f87171;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239,68,68,0.4);
+            transform: scale(0.97);
+        }
+
+        /* stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(251,191,36,0.3);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .stat-header i {
+            font-size: 1.8rem;
+            color: #fbbf24;
+        }
+
+        .stat-header h3 {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #f1f5f9;
+            margin-right: 2rem;
+        }
+
+        /* users grid */
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .user-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 1.5rem;
+            padding: 1.3rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(251,191,36,0.4);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4F46E5, #7C3AED);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info h3 {
+            color: #f1f5f9;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.9rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(245,158,11,0.4);
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34,197,94,0.4);
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239,68,68,0.4);
+        }
+
+        .user-details {
+            margin: 1rem 0;
+            padding: 0.8rem 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .detail-item i {
+            width: 24px;
+            color: #fbbf24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .btn-activate {
+            flex: 1;
+            background: linear-gradient(95deg, #10b981, #059669);
+            border: none;
+            padding: 0.7rem;
+            border-radius: 1rem;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Tajawal', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-activate:hover {
+            transform: scale(0.97);
+            background: linear-gradient(95deg, #059669, #047857);
+        }
+
+        .btn-reject {
+            flex: 1;
+            background: linear-gradient(95deg, #ef4444, #dc2626);
+            border: none;
+            padding: 0.7rem;
+            border-radius: 1rem;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Tajawal', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-reject:hover {
+            transform: scale(0.97);
+            background: linear-gradient(95deg, #dc2626, #b91c1c);
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(15,23,42,0.5);
+            border-radius: 2rem;
+            color: #94a3b8;
+        }
+
+        /* toast */
+        .toast-notify {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            z-index: 1000;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(12px);
+            background: rgba(15,23,42,0.95);
+            border-right: 4px solid #fbbf24;
+            font-size: 0.9rem;
+        }
+
+        .toast-notify.show {
+            transform: translateX(-50%) translateY(0px);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .users-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body style="font-family:Arial; direction:rtl; padding:20px">
+<body>
 
-<h2>Dashboard</h2>
+<div class="dashboard-container">
+    <!-- header -->
+    <div class="dashboard-header">
+        <div class="title-section">
+            <h1>
+                <i class="fas fa-chalkboard-user"></i>
+                لوحة تحكم الأدمن
+            </h1>
+            <p><i class="fas fa-users"></i> إدارة طلبات تسجيل المعلمين والموافقة عليها</p>
+        </div>
+        <div class="admin-info">
+            <i class="fas fa-shield-alt"></i>
+            <span>المدير العام</span>
+            <div class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> خروج
+            </div>
+        </div>
+    </div>
 
-<div id="users"></div>
+    <!-- stats cards -->
+    <div class="stats-grid" id="statsContainer">
+        <div class="stat-card">
+            <div class="stat-header">
+                <i class="fas fa-clock"></i>
+                <h3>قيد الانتظار</h3>
+            </div>
+            <div class="stat-number" id="pendingCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header">
+                <i class="fas fa-check-circle"></i>
+                <h3>المفعلين</h3>
+            </div>
+            <div class="stat-number" id="activeCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header">
+                <i class="fas fa-times-circle"></i>
+                <h3>المرفوضين</h3>
+            </div>
+            <div class="stat-number" id="rejectedCount">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header">
+                <i class="fas fa-users"></i>
+                <h3>إجمالي المعلمين</h3>
+            </div>
+            <div class="stat-number" id="totalCount">0</div>
+        </div>
+    </div>
+
+    <!-- users grid -->
+    <div id="usersContainer" class="users-grid">
+        <div class="loading-state">
+            <i class="fas fa-spinner fa-pulse"></i> جاري تحميل البيانات...
+        </div>
+    </div>
+</div>
+
+<!-- toast -->
+<div id="toastMsg" class="toast-notify">
+    <i class="fas fa-info-circle"></i>
+    <span id="toastText">مرحباً أيها المدير</span>
+</div>
 
 <script>
-const token = localStorage.getItem("adminToken");
+    // Get token from localStorage (exactly as original)
+    const token = localStorage.getItem("adminToken");
+    const usersContainer = document.getElementById("usersContainer");
+    const pendingCountSpan = document.getElementById("pendingCount");
+    const activeCountSpan = document.getElementById("activeCount");
+    const rejectedCountSpan = document.getElementById("rejectedCount");
+    const totalCountSpan = document.getElementById("totalCount");
 
-async function load(){
-  const res = await fetch("/api/admin/users",{
-    headers:{ Authorization:"Bearer "+token }
-  });
+    // Toast helper
+    let toastTimer = null;
+    function showToast(message, isError = false) {
+        if (toastTimer) clearTimeout(toastTimer);
+        const toastDiv = document.getElementById("toastMsg");
+        const toastTextSpan = document.getElementById("toastText");
+        const icon = isError ? '<i class="fas fa-exclamation-triangle"></i>' : '<i class="fas fa-check-circle"></i>';
+        toastTextSpan.innerHTML = `${icon} ${message}`;
+        toastDiv.classList.add("show");
+        toastTimer = setTimeout(() => {
+            toastDiv.classList.remove("show");
+        }, 2800);
+    }
 
-  const data = await res.json();
+    // Check token on load, if no token redirect to admin login
+    if (!token || token === "null" || token === "undefined") {
+        showToast("⚠️ جلسة غير مصرح بها، يرجى تسجيل الدخول", true);
+        setTimeout(() => {
+            location.href = "admin.html";
+        }, 1500);
+    }
 
-  users.innerHTML = data.map(u => `
-    <div>
-      <p>${u.name}</p>
-      <p>${u.status}</p>
+    // Function to update statistics based on users array
+    function updateStats(users) {
+        const pending = users.filter(u => u.status === "pending" || u.status === "pending_review").length;
+        const active = users.filter(u => u.status === "active" || u.status === "مفعل").length;
+        const rejected = users.filter(u => u.status === "rejected" || u.status === "مرفوض").length;
+        pendingCountSpan.innerText = pending;
+        activeCountSpan.innerText = active;
+        rejectedCountSpan.innerText = rejected;
+        totalCountSpan.innerText = users.length;
+    }
 
-      <button onclick="activate('${u.id}')">تفعيل</button>
-      <button onclick="reject('${u.id}')">رفض</button>
-    </div>
-  `).join("");
-}
+    // Helper to get status badge class and arabic text
+    function getStatusInfo(status) {
+        if (status === "active" || status === "مفعل") {
+            return { class: "status-active", text: "✅ مفعل" };
+        } else if (status === "rejected" || status === "مرفوض") {
+            return { class: "status-rejected", text: "❌ مرفوض" };
+        } else {
+            return { class: "status-pending", text: "⏳ قيد الانتظار" };
+        }
+    }
 
-async function activate(id){
-  await fetch("/api/admin/activate",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
-    },
-    body: JSON.stringify({id})
-  });
+    // Render users function
+    function renderUsers(users) {
+        if (!users || users.length === 0) {
+            usersContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                    <p>لا يوجد معلمون مسجلون حتى الآن</p>
+                    <p style="font-size: 0.8rem; margin-top: 0.5rem;">سيظهر المعلمون الجدد هنا بعد تسجيلهم</p>
+                </div>
+            `;
+            updateStats([]);
+            return;
+        }
 
-  load();
-}
+        updateStats(users);
+        
+        const usersHTML = users.map(user => {
+            const statusInfo = getStatusInfo(user.status);
+            // Handle image placeholder if image_url exists
+            const avatarHTML = user.image && user.image.startsWith("http") 
+                ? `<img src="${user.image}" alt="${user.name}" onerror="this.src='https://ui-avatars.com/api/?background=4F46E5&color=fff&name=${encodeURIComponent(user.name)}'">`
+                : `<div style="font-size: 2rem;"><i class="fas fa-user-graduate"></i></div>`;
+            
+            return `
+                <div class="user-card" data-user-id="${user.id}">
+                    <div class="user-header">
+                        <div class="user-avatar">
+                            ${avatarHTML}
+                        </div>
+                        <div class="user-info">
+                            <h3>${escapeHtml(user.name)}</h3>
+                            <span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <div class="detail-item">
+                            <i class="fas fa-id-card"></i>
+                            <span>المعرف: ${user.id || 'غير متوفر'}</span>
+                        </div>
+                        ${user.image ? `<div class="detail-item"><i class="fas fa-image"></i><span>صورة شخصية</span></div>` : ''}
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn-activate" onclick="activateUser('${user.id}')">
+                            <i class="fas fa-user-check"></i> تفعيل
+                        </button>
+                        <button class="btn-reject" onclick="rejectUser('${user.id}')">
+                            <i class="fas fa-user-slash"></i> رفض
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+        
+        usersContainer.innerHTML = usersHTML;
+    }
 
-async function reject(id){
-  await fetch("/api/admin/reject",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
-    },
-    body: JSON.stringify({id})
-  });
+    // Simple escape to prevent XSS
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
 
-  load();
-}
+    // Load users from API (exactly as original but with error handling)
+    async function loadUsers() {
+        if (!token) return;
+        
+        try {
+            usersContainer.innerHTML = `<div class="loading-state"><i class="fas fa-spinner fa-pulse"></i> جاري تحميل المعلمين...</div>`;
+            
+            // Original endpoint: /api/admin/users
+            const res = await fetch("/api/admin/users", {
+                headers: { Authorization: "Bearer " + token }
+            });
+            
+            if (!res.ok) {
+                if (res.status === 401) {
+                    showToast("انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى", true);
+                    localStorage.removeItem("adminToken");
+                    setTimeout(() => { location.href = "admin-login.html"; }, 1500);
+                    return;
+                }
+                throw new Error(`HTTP ${res.status}`);
+            }
+            
+            const data = await res.json();
+            // data expected to be array of users with fields: id, name, status, image, etc.
+            const usersArray = Array.isArray(data) ? data : (data.users || []);
+            renderUsers(usersArray);
+        } catch (error) {
+            console.error("Failed to load users:", error);
+            usersContainer.innerHTML = `<div class="empty-state"><i class="fas fa-database"></i><p>فشل تحميل البيانات، تأكد من الاتصال بالخادم</p><button onclick="loadUsers()" style="margin-top:1rem; background:#4F46E5; border:none; padding:0.5rem 1rem; border-radius:1rem; color:white; cursor:pointer;">إعادة المحاولة</button></div>`;
+            showToast("حدث خطأ في تحميل قائمة المعلمين", true);
+        }
+    }
 
-load();
+    // Activate user function (original activate endpoint)
+    window.activateUser = async function(id) {
+        if (!token) return;
+        try {
+            const res = await fetch("/api/admin/activate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token
+                },
+                body: JSON.stringify({ id: id })
+            });
+            
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                showToast(errData.msg || "فشل تفعيل المستخدم", true);
+                return;
+            }
+            
+            showToast(`✅ تم تفعيل المستخدم بنجاح`);
+            loadUsers(); // refresh list
+        } catch (error) {
+            showToast("خطأ في الاتصال أثناء التفعيل", true);
+        }
+    };
+
+    // Reject user function (original reject endpoint)
+    window.rejectUser = async function(id) {
+        if (!token) return;
+        try {
+            const res = await fetch("/api/admin/reject", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token
+                },
+                body: JSON.stringify({ id: id })
+            });
+            
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                showToast(errData.msg || "فشل رفض المستخدم", true);
+                return;
+            }
+            
+            showToast(`⚠️ تم رفض المستخدم`);
+            loadUsers();
+        } catch (error) {
+            showToast("خطأ في الاتصال أثناء الرفض", true);
+        }
+    };
+
+    // Logout functionality
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("adminToken");
+        showToast("تم تسجيل الخروج بنجاح");
+        setTimeout(() => {
+            location.href = "admin-login.html";
+        }, 800);
+    });
+
+    // Initial load
+    if (token && token !== "null") {
+        loadUsers();
+    } else {
+        usersContainer.innerHTML = `<div class="empty-state"><i class="fas fa-lock"></i><p>الرجاء تسجيل الدخول أولاً</p><button onclick="location.href='admin.html'" style="margin-top:1rem; background:#fbbf24; border:none; padding:0.5rem 1rem; border-radius:1rem; color:#0f172a; cursor:pointer;">تسجيل الدخول</button></div>`;
+    }
 </script>
 </body>
 </html>
