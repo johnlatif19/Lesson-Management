@@ -1,33 +1,521 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>دخول المعلمين | منصة التعليم</title>
+    <!-- Google Fonts - Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        /* decorative animated elements */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 12%;
+            left: 3%;
+            width: 260px;
+            height: 260px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            animation: float 14s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            bottom: 5%;
+            right: 2%;
+            width: 220px;
+            height: 220px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            animation: float 11s infinite reverse;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1);}
+            50% { transform: translateY(-25px) scale(1.04);}
+            100% { transform: translateY(0px) scale(1);}
+        }
+
+        /* main login card */
+        .login-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.35), 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem 2rem 2.5rem;
+            transition: transform 0.25s ease, box-shadow 0.3s;
+            z-index: 2;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .login-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 50px -15px rgba(0,0,0,0.4);
+        }
+
+        /* header styling */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #4F46E5, #7C3AED);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        .header p {
+            color: #5b6e8c;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .login-icon {
+            background: #f3f4ff;
+            width: 75px;
+            height: 75px;
+            line-height: 75px;
+            text-align: center;
+            border-radius: 50%;
+            margin: 0 auto 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            color: #4F46E5;
+            box-shadow: 0 8px 16px rgba(79,70,229,0.15);
+            transition: all 0.2s;
+        }
+
+        /* modern input groups */
+        .input-group {
+            margin-bottom: 1.6rem;
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+            pointer-events: none;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1.2rem;
+            font-size: 1rem;
+            font-family: 'Tajawal', sans-serif;
+            border: 2px solid #e2e8f0;
+            border-radius: 1.5rem;
+            background: #fefefe;
+            transition: all 0.25s;
+            outline: none;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .input-group input:focus {
+            border-color: #7C3AED;
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
+            background: #ffffff;
+        }
+
+        .input-group input:focus + i {
+            color: #7C3AED;
+        }
+
+        /* extra features: show/hide password toggle */
+        .toggle-password {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+            z-index: 2;
+        }
+        .toggle-password:hover {
+            color: #4F46E5;
+        }
+
+        /* login button */
+        .btn-login {
+            background: linear-gradient(95deg, #4F46E5, #7C3AED);
+            width: 100%;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            color: white;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 0.8rem;
+            box-shadow: 0 8px 18px rgba(79,70,229,0.3);
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(95deg, #4338ca, #6d28d9);
+            transform: scale(0.98);
+            box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+        }
+
+        .btn-login:active {
+            transform: scale(0.96);
+        }
+
+        /* loading state */
+        .btn-login.loading {
+            opacity: 0.7;
+            cursor: wait;
+            transform: none;
+        }
+
+        /* info footer */
+        .info-footer {
+            background: #f1f5f9;
+            border-radius: 1rem;
+            padding: 0.7rem;
+            margin-top: 1.8rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .info-footer i {
+            font-size: 0.9rem;
+            color: #4F46E5;
+        }
+
+        /* toast message (modern feedback) */
+        .toast-message {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 500;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(8px);
+            background: rgba(30,41,59,0.95);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .toast-message.show {
+            transform: translateX(-50%) translateY(0px);
+        }
+
+        /* responsive adjustments */
+        @media (max-width: 560px) {
+            .login-card {
+                padding: 1.5rem;
+            }
+            .header h2 {
+                font-size: 1.7rem;
+            }
+            .btn-login {
+                padding: 0.85rem;
+                font-size: 1rem;
+            }
+            .input-group input {
+                padding: 0.85rem 3rem 0.85rem 2.5rem;
+            }
+            .toggle-password {
+                left: 14px;
+            }
+        }
+
+        @media (max-width: 450px) {
+            body {
+                padding: 1rem;
+            }
+            .login-card {
+                border-radius: 1.5rem;
+            }
+        }
+
+        /* small animation for shake on error */
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .shake-effect {
+            animation: shake 0.3s ease-in-out 0s 2;
+        }
+    </style>
+</head>
 <body>
-<h2>تسجيل دخول</h2>
 
-<input id="name" placeholder="الاسم">
-<input id="password" type="password">
+<div class="login-card">
+    <div class="header">
+        <div class="login-icon">
+            <i class="fas fa-chalkboard-user"></i>
+        </div>
+        <h2>تسجيل دخول المعلمين</h2>
+        <p>مرحباً بعودتك! يرجى إدخال بياناتك</p>
+    </div>
 
-<button onclick="login()">دخول</button>
+    <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" id="name" placeholder="اسم المستخدم أو البريد الإلكتروني" autocomplete="username">
+    </div>
+
+    <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="password" placeholder="كلمة المرور" autocomplete="current-password">
+        <i class="fas fa-eye toggle-password" id="togglePasswordIcon"></i>
+    </div>
+
+    <button class="btn-login" id="loginBtn">
+        <i class="fas fa-sign-in-alt"></i> دخول
+        <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <div class="info-footer">
+        <i class="fas fa-shield-alt"></i>
+        <span>بياناتك آمنة ومشفرة</span>
+    </div>
+</div>
+
+<!-- toast notification -->
+<div id="toastMsg" class="toast-message">
+    <i class="fas fa-circle-info"></i>
+    <span id="toastText">مرحباً بك</span>
+</div>
 
 <script>
-async function login(){
-  const res = await fetch("/api/login",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({
-      name:name.value,
-      password:password.value
-    })
-  });
+    // DOM elements
+    const nameInput = document.getElementById('name');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const toastMsgDiv = document.getElementById('toastMsg');
+    const toastTextSpan = document.getElementById('toastText');
+    const togglePasswordIcon = document.getElementById('togglePasswordIcon');
 
-  const data = await res.json();
+    // Toast helper (modern)
+    let toastTimeout = null;
+    function showToast(message, isError = false, duration = 3000) {
+        if (toastTimeout) clearTimeout(toastTimeout);
+        const iconType = isError ? '<i class="fas fa-exclamation-triangle" style="margin-left: 6px;"></i>' : '<i class="fas fa-check-circle" style="margin-left: 6px;"></i>';
+        toastTextSpan.innerHTML = `${iconType} ${message}`;
+        toastMsgDiv.classList.add('show');
+        toastTimeout = setTimeout(() => {
+            toastMsgDiv.classList.remove('show');
+        }, duration);
+    }
 
-  if(data.token){
-    localStorage.setItem("token",data.token);
-    location.href="index.html";
-  } else {
-    alert(data.msg);
-  }
-}
+    // Shake animation for card on auth error
+    function shakeCard() {
+        const card = document.querySelector('.login-card');
+        card.classList.add('shake-effect');
+        setTimeout(() => {
+            card.classList.remove('shake-effect');
+        }, 500);
+    }
+
+    // Toggle password visibility
+    let isPasswordVisible = false;
+    togglePasswordIcon.addEventListener('click', () => {
+        isPasswordVisible = !isPasswordVisible;
+        const type = isPasswordVisible ? 'text' : 'password';
+        passwordInput.type = type;
+        togglePasswordIcon.classList.toggle('fa-eye');
+        togglePasswordIcon.classList.toggle('fa-eye-slash');
+    });
+
+    // Helper: validate form before sending
+    function validateLoginForm() {
+        const nameVal = nameInput.value.trim();
+        const passVal = passwordInput.value;
+
+        if (nameVal === "") {
+            showToast("الرجاء إدخال اسم المستخدم", true);
+            nameInput.focus();
+            shakeCard();
+            return false;
+        }
+        if (nameVal.length < 2) {
+            showToast("اسم المستخدم يجب أن يحتوي على حرفين على الأقل", true);
+            nameInput.focus();
+            shakeCard();
+            return false;
+        }
+        if (passVal === "") {
+            showToast("كلمة المرور مطلوبة", true);
+            passwordInput.focus();
+            shakeCard();
+            return false;
+        }
+        if (passVal.length < 3) {
+            showToast("كلمة المرور قصيرة جداً", true);
+            passwordInput.focus();
+            shakeCard();
+            return false;
+        }
+        return true;
+    }
+
+    // Main login function identical to original logic but with enhanced UI
+    async function login() {
+        // Validate inputs first
+        if (!validateLoginForm()) {
+            return;
+        }
+
+        const nameValue = nameInput.value.trim();
+        const passwordValue = passwordInput.value;
+
+        // Prepare payload exactly as original spec
+        const payload = {
+            name: nameValue,
+            password: passwordValue
+        };
+
+        // Disable button with loading state
+        const originalBtnHTML = loginBtn.innerHTML;
+        loginBtn.disabled = true;
+        loginBtn.classList.add('loading');
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> جاري التحقق...';
+
+        try {
+            // Call the exact endpoint as in original code: "/api/login"
+            const res = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            // Parse JSON response (original expects res.json())
+            let data;
+            try {
+                data = await res.json();
+            } catch (e) {
+                // If response is not valid JSON, simulate structure for safety
+                data = { token: null, msg: "استجابة غير صالحة من الخادم" };
+            }
+
+            // Original login logic: if(data.token) store token and redirect to index.html
+            if (data && data.token) {
+                localStorage.setItem("token", data.token);
+                showToast("✅ تسجيل الدخول ناجح! جاري التوجيه...", false, 1500);
+                // slight delay to show success toast before redirect
+                setTimeout(() => {
+                    location.href = "index.html";
+                }, 600);
+            } else {
+                // show error message from server (data.msg) or generic message
+                const errorMsg = data && data.msg ? data.msg : "بيانات الدخول غير صحيحة. حاول مرة أخرى";
+                showToast(errorMsg, true);
+                // original alert behavior: alert(data.msg);
+                alert(errorMsg);
+                shakeCard();
+                // clear password field for security (optional but good UX)
+                passwordInput.value = "";
+                // focus on name input
+                nameInput.focus();
+            }
+        } catch (error) {
+            console.error("Login network error:", error);
+            const networkMsg = "حدث خطأ في الاتصال بالخادم. تأكد من اتصال الإنترنت.";
+            showToast(networkMsg, true);
+            alert(networkMsg);
+            shakeCard();
+        } finally {
+            // Re-enable button
+            loginBtn.disabled = false;
+            loginBtn.classList.remove('loading');
+            loginBtn.innerHTML = originalBtnHTML;
+        }
+    }
+
+    // attach login function to button click
+    loginBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        login();
+    });
+
+    // allow pressing Enter key on either input to trigger login
+    const inputs = [nameInput, passwordInput];
+    inputs.forEach(input => {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                login();
+            }
+        });
+    });
+
+    // Optional: little helper to display if there is any saved token message (just for user info)
+    // Not mandatory, but adds a friendly note if token exists? but no interference.
+    window.addEventListener('load', () => {
+        // any prefill? no, but ensure password toggle starts correct
+        if (passwordInput.type === 'password') {
+            togglePasswordIcon.classList.add('fa-eye');
+            togglePasswordIcon.classList.remove('fa-eye-slash');
+        }
+        // tiny extra: if there is a token but user on login page, we don't auto redirect, but we can show a hint
+        const existingToken = localStorage.getItem("token");
+        if (existingToken) {
+            // optional gentle invitation: but not intrusive, just small console, no alert
+            console.log("⚠️ يوجد رمز دخول سابق، سيتم توجيهك بعد تسجيل دخول جديد");
+        }
+    });
 </script>
 </body>
 </html>
