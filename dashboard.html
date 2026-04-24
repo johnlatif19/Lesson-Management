@@ -6,40 +6,58 @@
 </head>
 <body style="font-family:Arial; direction:rtl; padding:20px">
 
-<h2>📊 لوحة تحكم المدرسين</h2>
+<h2>Dashboard</h2>
 
-<div id="list">جاري التحميل...</div>
+<div id="users"></div>
 
 <script>
+const token = localStorage.getItem("adminToken");
 
-async function loadTeachers(){
-  const res = await fetch("/teachers");
+async function load(){
+  const res = await fetch("/api/admin/users",{
+    headers:{ Authorization:"Bearer "+token }
+  });
+
   const data = await res.json();
 
-  document.getElementById("list").innerHTML = data.map(t => `
-    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
-      👨‍🏫 ${t.name} <br>
-      💰 مدفوع: ${t.paid} <br>
-      🔒 مفعل: ${t.active} <br><br>
+  users.innerHTML = data.map(u => `
+    <div>
+      <p>${u.name}</p>
+      <p>${u.status}</p>
 
-      <button onclick="activate('${t.id}')">تفعيل الحساب</button>
+      <button onclick="activate('${u.id}')">تفعيل</button>
+      <button onclick="reject('${u.id}')">رفض</button>
     </div>
   `).join("");
 }
 
 async function activate(id){
-  const res = await fetch("/activate/" + id, {
-    method:"POST"
+  await fetch("/api/admin/activate",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body: JSON.stringify({id})
   });
 
-  const text = await res.text();
-  alert(text);
-  loadTeachers();
+  load();
 }
 
-loadTeachers();
+async function reject(id){
+  await fetch("/api/admin/reject",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body: JSON.stringify({id})
+  });
 
+  load();
+}
+
+load();
 </script>
-
 </body>
 </html>
