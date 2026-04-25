@@ -501,12 +501,16 @@
 
             // Original login logic: if(data.token) store token and redirect to index.html
             if (data && data.token) {
-                localStorage.setItem("token", data.token);
-                showToast("✅ تسجيل الدخول ناجح! جاري التوجيه...", false, 1500);
-                // slight delay to show success toast before redirect
-                setTimeout(() => {
-                    location.href = "index.html";
-                }, 600);
+    localStorage.setItem("token", data.token);
+
+    // ✅ خزّن اسم المدرس
+    localStorage.setItem("teacherName", data.user.name);
+
+    showToast("✅ تسجيل الدخول ناجح! جاري التوجيه...", false, 1500);
+
+    setTimeout(() => {
+        location.href = "index.html";
+    }, 600);
             } else {
                 // show error message from server (data.msg) or generic message
                 const errorMsg = data && data.msg ? data.msg : "بيانات الدخول غير صحيحة. حاول مرة أخرى";
