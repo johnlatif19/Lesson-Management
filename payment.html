@@ -3,106 +3,206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الفاتورة</title>
+<title>الفاتورة | منصة التعليم</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box}
+
 body{
-    font-family:tajawal;
-    background:#f5f7ff;
+    font-family:'Tajawal',sans-serif;
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
-    min-height:100vh;
+    padding:15px;
 }
 
+/* CARD */
 .card{
-    background:white;
+    background:#fff;
+    border-radius:25px;
     padding:25px;
-    border-radius:20px;
-    width:90%;
+    width:100%;
     max-width:420px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.1);
-}
-
-h2{text-align:center;color:#4f46e5}
-
-.row{margin:12px 0;font-size:15px}
-
-.status{
-    padding:10px;
-    border-radius:10px;
+    box-shadow:0 25px 50px rgba(0,0,0,0.25);
     text-align:center;
-    font-weight:bold;
 }
 
-.pending{background:#fff3cd;color:#856404}
-.active{background:#d1e7dd;color:#0f5132}
+/* HEADER */
+.title{
+    font-size:22px;
+    font-weight:800;
+    color:#4F46E5;
+    margin-bottom:10px;
+}
 
+.subtitle{
+    font-size:13px;
+    color:#64748b;
+    margin-bottom:20px;
+}
+
+/* USER */
+.user-box{
+    background:#f1f5ff;
+    padding:12px;
+    border-radius:15px;
+    margin-bottom:20px;
+    font-weight:600;
+}
+
+/* ROW */
+.row{
+    background:#f8fafc;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:10px;
+    font-size:14px;
+}
+
+/* STATUS */
+.status{
+    padding:12px;
+    border-radius:12px;
+    font-weight:700;
+    margin:15px 0;
+}
+
+.pending{
+    background:#fff3cd;
+    color:#856404;
+}
+
+.active{
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+/* BUTTON */
 .btn{
     display:block;
-    text-align:center;
-    padding:12px;
-    margin-top:10px;
-    border-radius:10px;
     text-decoration:none;
-    font-weight:bold;
+    padding:12px;
+    border-radius:12px;
+    margin-top:10px;
+    font-weight:700;
+    transition:0.3s;
 }
 
-.whatsapp{background:#25D366;color:white}
-.login{background:#4f46e5;color:white}
+.whatsapp{
+    background:#25D366;
+    color:white;
+}
+
+.login{
+    background:#4F46E5;
+    color:white;
+}
+
+.btn:hover{
+    transform:scale(1.03);
+}
+
+/* LOADER */
+.loader{
+    margin-top:10px;
+    font-size:13px;
+    color:#64748b;
+}
+
+@media(max-width:480px){
+    .card{padding:18px}
+}
 </style>
 </head>
 
 <body>
 
 <div class="card">
-    <h2>فاتورة التسجيل</h2>
 
-    <div class="row">💰 المبلغ: 150 جنيه</div>
-    <div class="row">📱 رقم التحويل: 01274445091</div>
+    <div class="title">فاتورة التسجيل</div>
+    <div class="subtitle">يرجى إتمام الدفع لتفعيل الحساب</div>
 
-    <div id="status" class="status pending">⏳ جاري المراجعة</div>
+    <div class="user-box">
+        👤 الاسم: <span id="userName">...</span>
+    </div>
+
+    <div class="row">💰 المبلغ: <b>150 جنيه</b></div>
+    <div class="row">📲 رقم التحويل: <b>01274445091</b></div>
+
+    <div id="statusBox" class="status pending">
+        ⏳ جاري المراجعة
+    </div>
 
     <a class="btn whatsapp" 
        href="https://wa.me/201274445091" target="_blank">
-       تواصل واتساب
+       تواصل عبر واتساب
     </a>
 
     <div id="loginBtn"></div>
+
+    <div class="loader" id="loader">جاري تحديث الحالة...</div>
+
 </div>
 
 <script>
 const token = localStorage.getItem("token");
 
-async function loadStatus(){
-    const res = await fetch("/api/me", {
-        headers: { Authorization: "Bearer " + token }
-    });
+// لو مفيش توكن يرجعه لوجين
+if(!token){
+    window.location.href = "/login";
+}
 
-    const data = await res.json();
+// تحميل بيانات المستخدم
+async function loadUser(){
 
-    const statusDiv = document.getElementById("status");
-    const loginBtn = document.getElementById("loginBtn");
+    try{
+        const res = await fetch("/api/me", {
+            headers:{
+                Authorization: "Bearer " + token
+            }
+        });
 
-    if(data.status === "active"){
-        statusDiv.className = "status active";
-        statusDiv.innerHTML = "✅ الحساب مفعل";
+        if(!res.ok){
+            return window.location.href = "/login";
+        }
 
-        loginBtn.innerHTML = `
-            <a class="btn login" href="/login">
-                تسجيل الدخول
-            </a>
-        `;
-    } else {
-        statusDiv.className = "status pending";
-        statusDiv.innerHTML = "⏳ الحساب قيد المراجعة";
+        const data = await res.json();
+
+        // الاسم
+        document.getElementById("userName").innerText = data.name;
+
+        const statusBox = document.getElementById("statusBox");
+        const loginBtn = document.getElementById("loginBtn");
+
+        // الحالة
+        if(data.status === "active"){
+            statusBox.className = "status active";
+            statusBox.innerHTML = "✅ الحساب مفعل";
+
+            loginBtn.innerHTML = `
+                <a href="/login.html" class="btn login">
+                    تسجيل الدخول
+                </a>
+            `;
+        }else{
+            statusBox.className = "status pending";
+            statusBox.innerHTML = "⏳ الحساب قيد المراجعة";
+        }
+
+    }catch(e){
+        console.log(e);
     }
 }
 
-loadStatus();
+// تحميل أول مرة
+loadUser();
 
-// متابعة لحظية كل 5 ثواني
-setInterval(loadStatus, 5000);
+// تحديث كل 5 ثواني (متابعة حقيقية)
+setInterval(loadUser, 5000);
 </script>
 
 </body>
