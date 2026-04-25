@@ -468,24 +468,23 @@
             // actual fetch to backend endpoint "/api/signin" (as in original code)
             // but we also handle network errors gracefully and preserve the spec
             const response = await fetch("/api/signin", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            
-            // even if response status is not OK, we still show the default message? 
-            // But according to original code, it just waits for activation regardless.
-            // We'll enhance: if server returns an error we show custom message, but after alert 
-            // we also keep the original "تم التسجيل وانتظر التفعيل" feel. 
-            // However original design: no error handling. But providing both styles:
-            if (response.ok) {
-    showToast("✅ تم التسجيل بنجاح! في انتظار التفعيل", false);
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+});
+
+const data = await response.json(); // ❗ مهم جداً
+
+if (response.ok) {
+
+    // ✅ هنا بقى هيشتغل
+    localStorage.setItem("token", data.token);
 
     localStorage.setItem("teacherName", nameValue);
     localStorage.setItem("accountStatus", "pending");
 
-                window.location.href = "/payment";
-    } else {
+    window.location.href = "/payment";
+} else {
                 // server responded with error (like 400/500) but we still want to show registration request sent
                 showToast("⚠️ تم إرسال الطلب، لكن الخادم استجاب بشكل غير متوقع، انتظر التفعيل", false);
             }
