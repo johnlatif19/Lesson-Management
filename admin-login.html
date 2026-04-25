@@ -478,7 +478,7 @@
                 showAdminToast("✅ تم التحقق، مرحباً أيها المدير! جاري التوجيه...", false);
                 // slight delay to let toast appear then redirect
                 setTimeout(() => {
-                    location.href = "dashboard.html";
+                    location.href = "dashboard";
                 }, 700);
             } else {
                 // If token missing: handle gracefully but this is not in original, however original would store undefined and redirect.
