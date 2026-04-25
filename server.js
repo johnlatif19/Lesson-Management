@@ -87,7 +87,9 @@ app.post("/api/signin", async (req, res) => {
 
   // 📩 Telegram Notification
   await sendTelegramMessage(
-    `🆕 <b>New Teacher Signup</b>\n👤 Name: ${name}\n🆔 ID: ${docRef.id}`
+  `🆕 <b>تسجيل معلم جديد</b>\n
+    👤 الاسم: ${name}\n
+    🆔 المعرف: ${docRef.id}`
   );
 
   res.json({ message: "Teacher created", token });
