@@ -479,7 +479,7 @@
     if (!token || token === "null" || token === "undefined") {
         showToast("⚠️ جلسة غير مصرح بها، يرجى تسجيل الدخول", true);
         setTimeout(() => {
-            location.href = "admin-login.html";
+            location.href = "admin-login";
         }, 1500);
     }
 
@@ -588,7 +588,7 @@
                 if (res.status === 401) {
                     showToast("انتهت صلاحية الجلسة، يرجى تسجيل الدخول مرة أخرى", true);
                     localStorage.removeItem("adminToken");
-                    setTimeout(() => { location.href = "admin-login.html"; }, 1500);
+                    setTimeout(() => { location.href = "admin-login"; }, 1500);
                     return;
                 }
                 throw new Error(`HTTP ${res.status}`);
@@ -662,7 +662,7 @@
         localStorage.removeItem("adminToken");
         showToast("تم تسجيل الخروج بنجاح");
         setTimeout(() => {
-            location.href = "admin-login.html";
+            location.href = "admin-login";
         }, 800);
     });
 
