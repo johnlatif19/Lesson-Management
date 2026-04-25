@@ -458,7 +458,7 @@
   <div class="hero-section">
     <div class="hero-title">
       <h1>📘 منصة إدارة الدروس – الصف الثاني الثانوي</h1>
-      <p id="teacherNameDisplay">للأستاذ / تيست</p>
+      <input id="teacherNameInput" placeholder="اكتب اسمك">
     </div>
     <div class="hero-actions">
      <button class="logout-btn" id="logoutBtn">🚪 تسجيل خروج</button>
@@ -469,7 +469,7 @@
     <div class="teacher-panel no-print">
       <div class="teacher-field">
         <label>👨‍🏫 اسم المعلم</label>
-        <input type="text" id="teacherNameInput" placeholder="اكتب اسمك" value="تيست">
+        <input id="teacherNameInput" placeholder="اكتب اسمك">
       </div>
     </div>
 
@@ -534,10 +534,11 @@ if (!token) {
  
   // Initialize teacher info from storage
   function updateTeacherUI() {
-    if(teacherNameInput) teacherNameInput.value = teacherName;
-    teacherNameDisplay.innerText = `للأستاذ / ${teacherName}`;
-    } else {
+  if (teacherNameInput) {
+    teacherNameInput.value = teacherName;
   }
+  teacherNameDisplay.innerText = `للأستاذ / ${teacherName}`;
+}
   
   teacherNameInput?.addEventListener("input", function(e) {
     teacherName = e.target.value;
@@ -726,7 +727,7 @@ if (!token) {
     
     showFloatingMessage("⏳ جاري إنشاء ملف PDF...", "#f6b83e");
     
-    const teacher = teacherName || "تيست";
+    const teacher = teacherName || "";
     const totalMoney = students.reduce((sum, s) => sum + s.amount, 0);
     const currentDate = new Date().toLocaleDateString('ar-EG');
     
@@ -876,32 +877,12 @@ if (!token) {
     logoutBtn.addEventListener("click", logout);
   }
 
-async function checkAuth() {
+function checkAuth() {
   const token = localStorage.getItem("token");
-
   if (!token) {
-    location.href = "login.html";
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/admin/users", {
-      headers: {
-        Authorization: "Bearer " + token
-      }
-    });
-
-    if (!res.ok) {
-      throw new Error();
-    }
-
-  } catch {
-    localStorage.clear();
     location.href = "login.html";
   }
 }
-
-checkAuth();
  
 </script>
 </body>
