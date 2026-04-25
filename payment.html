@@ -24,17 +24,15 @@ body {
     padding: 20px;
 }
 
-/* Invoice card */
 .card {
     width: 100%;
-    max-width: 500px;
-    background: #fff;
+    max-width: 520px;
+    background: white;
     border-radius: 22px;
     padding: 25px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
 
-/* header */
 h2 {
     text-align: center;
     color: #4F46E5;
@@ -47,7 +45,6 @@ h2 {
     margin-bottom: 20px;
 }
 
-/* invoice box */
 .box {
     background: #f8f9ff;
     padding: 15px;
@@ -59,11 +56,8 @@ h2 {
     display: flex;
     justify-content: space-between;
     margin: 10px 0;
-    font-size: 15px;
-    color: #333;
 }
 
-/* status badge */
 .badge {
     padding: 4px 10px;
     border-radius: 20px;
@@ -71,50 +65,48 @@ h2 {
     font-weight: bold;
 }
 
-.pending {
-    background: #fff3cd;
-    color: #856404;
+.pending { background: #fff3cd; color: #856404; }
+.active { background: #d4edda; color: #155724; }
+
+.amount {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 15px 0;
+    color: #111;
 }
 
-.active {
-    background: #d4edda;
-    color: #155724;
-}
-
-/* button */
+/* buttons */
 .btn {
     width: 100%;
-    padding: 13px;
-    border: none;
+    padding: 12px;
     border-radius: 12px;
-    font-size: 15px;
+    border: none;
     font-weight: bold;
     cursor: pointer;
     margin-top: 10px;
     transition: 0.3s;
 }
 
-/* login button */
+.whatsapp {
+    background: #25D366;
+    color: white;
+}
+
 .login {
     background: linear-gradient(135deg, #4F46E5, #7C3AED);
     color: white;
 }
 
-.login:hover {
+.btn:hover {
     transform: scale(1.02);
 }
 
-/* small note */
 .note {
     text-align: center;
-    margin-top: 10px;
     font-size: 13px;
+    margin-top: 10px;
     color: #666;
-}
-
-/* mobile */
-@media (max-width: 500px) {
-    .card { padding: 20px; }
 }
 </style>
 </head>
@@ -123,8 +115,8 @@ h2 {
 
 <div class="card">
 
-    <h2>📄 فاتورة الحساب</h2>
-    <p class="sub">بيانات المعلم وحالة الحساب</p>
+    <h2>📄 فاتورة الاشتراك</h2>
+    <p class="sub">تفاصيل الحساب والدفع</p>
 
     <div class="box">
         <div class="row">
@@ -133,51 +125,52 @@ h2 {
         </div>
 
         <div class="row">
-            <span>📌 حالة الحساب</span>
-            <span id="statusBadge" class="badge pending">غير مفعل</span>
+            <span>📌 الحالة</span>
+            <span id="status" class="badge pending">غير مفعل</span>
         </div>
     </div>
 
-    <div id="action"></div>
+    <div class="amount">💰 المبلغ: 150 جنيه مصري</div>
 
-    <p class="note">تم إنشاء الفاتورة تلقائيًا من النظام</p>
+    <div id="actions"></div>
+
+    <p class="note">رقم التحويل: 01274445091</p>
 
 </div>
 
 <script>
 
-// جلب البيانات
 const name = localStorage.getItem("teacherName");
 const status = localStorage.getItem("accountStatus");
 
-// حماية
 if (!name) {
     window.location.href = "/login.html";
 }
 
-// عرض الاسم
 document.getElementById("name").innerText = name;
 
-// الحالة
-const badge = document.getElementById("statusBadge");
-const action = document.getElementById("action");
+const statusEl = document.getElementById("status");
+const actions = document.getElementById("actions");
 
+// تحديث الحالة
 if (status === "active") {
-    badge.innerText = "مُفعل";
-    badge.classList.remove("pending");
-    badge.classList.add("active");
+    statusEl.innerText = "مُفعل";
+    statusEl.classList.remove("pending");
+    statusEl.classList.add("active");
 
-    // زر تسجيل الدخول
-    action.innerHTML = `
-        <button class="btn login" onclick="goLogin()">
-            تسجيل الدخول
-        </button>
+    actions.innerHTML = `
+        <button class="btn login" onclick="goLogin()">تسجيل الدخول</button>
     `;
 } else {
-    badge.innerText = "غير مفعل";
+    statusEl.innerText = "غير مفعل";
+
+    actions.innerHTML = `
+        <a href="https://wa.me/201274445091" target="_blank">
+            <button class="btn whatsapp">تواصل واتساب</button>
+        </a>
+    `;
 }
 
-// تحويل
 function goLogin() {
     window.location.href = "/login.html";
 }
