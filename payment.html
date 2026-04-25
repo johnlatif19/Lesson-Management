@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الدفع | منصة التعليم</title>
+<title>الفاتورة | منصة التعليم</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
 
@@ -17,28 +17,28 @@
 
 body {
     min-height: 100vh;
+    background: linear-gradient(135deg, #667eea, #764ba2);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea, #764ba2);
     padding: 20px;
 }
 
-/* Card */
+/* Invoice card */
 .card {
     width: 100%;
-    max-width: 480px;
-    background: white;
+    max-width: 500px;
+    background: #fff;
     border-radius: 22px;
     padding: 25px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
 
-/* Header */
+/* header */
 h2 {
-    color: #4F46E5;
     text-align: center;
-    margin-bottom: 10px;
+    color: #4F46E5;
+    margin-bottom: 5px;
 }
 
 .sub {
@@ -47,23 +47,24 @@ h2 {
     margin-bottom: 20px;
 }
 
-/* Info box */
-.info {
-    background: #f3f4ff;
+/* invoice box */
+.box {
+    background: #f8f9ff;
     padding: 15px;
     border-radius: 14px;
     margin-bottom: 15px;
 }
 
-.info p {
-    margin: 8px 0;
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
     font-size: 15px;
     color: #333;
 }
 
-/* badge */
+/* status badge */
 .badge {
-    display: inline-block;
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 12px;
@@ -80,38 +81,35 @@ h2 {
     color: #155724;
 }
 
-/* price */
-.price {
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    margin: 15px 0;
-}
-
 /* button */
-button {
+.btn {
     width: 100%;
-    padding: 14px;
+    padding: 13px;
     border: none;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     cursor: pointer;
-    background: linear-gradient(135deg, #4F46E5, #7C3AED);
-    color: white;
+    margin-top: 10px;
     transition: 0.3s;
 }
 
-button:hover {
+/* login button */
+.login {
+    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    color: white;
+}
+
+.login:hover {
     transform: scale(1.02);
 }
 
-/* status */
-.status {
+/* small note */
+.note {
     text-align: center;
-    margin-top: 12px;
-    color: #555;
-    font-size: 14px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #666;
 }
 
 /* mobile */
@@ -125,24 +123,29 @@ button:hover {
 
 <div class="card">
 
-    <h2>إتمام عملية الدفع</h2>
-    <p class="sub">استكمل الدفع لتفعيل حسابك</p>
+    <h2>📄 فاتورة الحساب</h2>
+    <p class="sub">بيانات المعلم وحالة الحساب</p>
 
-    <div class="info">
-        <p>👤 الاسم: <span id="name">...</span></p>
-        <p>📌 الحالة: 
-            <span id="statusBadge" class="badge pending">Pending</span>
-        </p>
+    <div class="box">
+        <div class="row">
+            <span>👤 الاسم</span>
+            <span id="name">...</span>
+        </div>
+
+        <div class="row">
+            <span>📌 حالة الحساب</span>
+            <span id="statusBadge" class="badge pending">غير مفعل</span>
+        </div>
     </div>
 
-    <div class="price">💰 150 جنيه مصري</div>
+    <div id="action"></div>
 
-    <button onclick="pay()">ادفع الآن</button>
+    <p class="note">تم إنشاء الفاتورة تلقائيًا من النظام</p>
 
-    <div class="status" id="msg"></div>
 </div>
 
 <script>
+
 // جلب البيانات
 const name = localStorage.getItem("teacherName");
 const status = localStorage.getItem("accountStatus");
@@ -152,38 +155,33 @@ if (!name) {
     window.location.href = "/login.html";
 }
 
-// عرض البيانات
-document.getElementById("name").innerText = name || "غير معروف";
+// عرض الاسم
+document.getElementById("name").innerText = name;
 
+// الحالة
 const badge = document.getElementById("statusBadge");
+const action = document.getElementById("action");
 
 if (status === "active") {
-    badge.innerText = "Active";
+    badge.innerText = "مُفعل";
     badge.classList.remove("pending");
     badge.classList.add("active");
+
+    // زر تسجيل الدخول
+    action.innerHTML = `
+        <button class="btn login" onclick="goLogin()">
+            تسجيل الدخول
+        </button>
+    `;
+} else {
+    badge.innerText = "غير مفعل";
 }
 
-// الدفع (محاكاة)
-function pay() {
-    const msg = document.getElementById("msg");
-
-    msg.innerHTML = "جاري معالجة الدفع... ⏳";
-
-    setTimeout(() => {
-        localStorage.setItem("accountStatus", "active");
-
-        msg.innerHTML = "تم الدفع بنجاح ✅";
-
-        badge.innerText = "Active";
-        badge.classList.remove("pending");
-        badge.classList.add("active");
-
-        setTimeout(() => {
-            window.location.href = "/login.html";
-        }, 1500);
-
-    }, 2000);
+// تحويل
+function goLogin() {
+    window.location.href = "/login.html";
 }
+
 </script>
 
 </body>
