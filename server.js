@@ -129,7 +129,7 @@ app.get("/index", (req, res) => {
 });
 
 // حماية index.html
-app.get("/index.html", (req, res) => {
+app.get("/index", (req, res) => {
   res.redirect("/login.html");
 });
 
