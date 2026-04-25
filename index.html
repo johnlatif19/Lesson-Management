@@ -469,7 +469,7 @@
     <div class="teacher-panel no-print">
       <div class="teacher-field">
         <label>👨‍🏫 اسم المعلم</label>
-        <input id="teacherNameInput" placeholder="اكتب اسمك">
+        <input type="text" id="teacherNameInput" disabled>
       </div>
     </div>
 
@@ -857,9 +857,12 @@ if (!token) {
   
   // Logout function - redirect to login.html
   function logout() {
-    localStorage.removeItem("loggedIn"); // optional flag if you want login persistence
-    window.location.href = "login.html";
-  }
+  localStorage.removeItem("token");
+  localStorage.removeItem("teacherName");
+  localStorage.removeItem("students_management");
+
+  window.location.href = "login.html";
+}
   
   // Expose global functions
   window.addStudent = addStudent;
