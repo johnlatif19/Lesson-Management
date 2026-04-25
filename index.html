@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>نظام إدارة الدروس | معلم الصف الثاني الثانوي</title>
-<link rel="icon" href="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg">
-
 <!-- jsPDF & html2canvas Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -98,15 +96,6 @@
     background: #c53030;
     border-color: #c53030;
     transform: translateY(-2px);
-  }
-
-  .teacher-avatar {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #f6b83e;
-    background: white;
   }
 
   .card-inner {
@@ -472,8 +461,7 @@
       <p id="teacherNameDisplay">للأستاذ / تيست</p>
     </div>
     <div class="hero-actions">
-      <img id="headerAvatar" class="teacher-avatar" src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" alt="معلم">
-      <button class="logout-btn" id="logoutBtn">🚪 تسجيل خروج</button>
+     <button class="logout-btn" id="logoutBtn">🚪 تسجيل خروج</button>
     </div>
   </div>
   
@@ -533,8 +521,10 @@
   let students = [];
   
   // Teacher data (avatar + name)
-  let teacherName = localStorage.getItem("teacherName") || "تيست";
-  let teacherImageBase64 = localStorage.getItem("teacherImage") || "";
+  let teacherName = localStorage.getItem("teacherName") || "";
+  if (!teacherName) {
+  window.location.href = "login.html";
+  }
   
   // DOM Elements
   const teacherNameInput = document.getElementById("teacherNameInput");
