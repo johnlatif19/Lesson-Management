@@ -22,6 +22,25 @@ function requirePaymentAccess(req, res, next) {
   }
 }
 
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
+async function sendTelegramMessage(message) {
+  try {
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: "HTML"
+      })
+    });
+  } catch (err) {
+    console.error("Telegram Error:", err.message);
+  }
+}
+
 // Firebase Init
 admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_CONFIG))
@@ -60,17 +79,18 @@ app.post("/api/signin", async (req, res) => {
     createdAt: Date.now()
   });
 
-  // ✅ نعمل توكن هنا
   const token = jwt.sign(
     { id: docRef.id, name },
     JWT_SECRET,
     { expiresIn: "7d" }
   );
 
-  res.json({ 
-    message: "Teacher created", 
-    token 
-  });
+  // 📩 Telegram Notification
+  await sendTelegramMessage(
+    `🆕 <b>New Teacher Signup</b>\n👤 Name: ${name}\n🆔 ID: ${docRef.id}`
+  );
+
+  res.json({ message: "Teacher created", token });
 });
 
 // LOGIN
