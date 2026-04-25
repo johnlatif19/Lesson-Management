@@ -2,45 +2,97 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>الدفع</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الدفع | منصة التعليم</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+
 <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Tajawal', sans-serif;
+}
+
 body {
-  font-family: 'Cairo', sans-serif;
-  background: #f3f6fb;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 20px;
 }
 
+/* Card */
 .card {
-  background:#fff;
-  padding:30px;
-  border-radius:20px;
-  width:350px;
-  text-align:center;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 450px;
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
 
-.status {
-  margin:15px 0;
-  font-weight:bold;
+/* Title */
+h2 {
+    margin-bottom: 10px;
+    color: #4F46E5;
+    font-size: 24px;
 }
 
-.pending { color:orange; }
-.active { color:green; }
-.rejected { color:red; }
+p {
+    color: #555;
+    margin-bottom: 20px;
+}
 
+/* Price box */
+.price-box {
+    background: #f3f4ff;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.price-box h3 {
+    color: #111;
+}
+
+/* Button */
 .btn {
-  display:block;
-  margin-top:20px;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:#25D366;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    color: white;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    transform: scale(1.02);
+}
+
+/* Status */
+.status {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Mobile */
+@media (max-width: 500px) {
+    .card {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
 }
 </style>
 </head>
@@ -48,58 +100,42 @@ body {
 <body>
 
 <div class="card">
-  <h2>💳 تفعيل الحساب</h2>
+    <h2>إتمام الدفع</h2>
+    <p>لاستكمال التسجيل يجب دفع رسوم الاشتراك</p>
 
-  <p id="teacher"></p>
+    <div class="price-box">
+        <h3>💰 150 جنيه مصري</h3>
+    </div>
 
-  <p>
-    برجاء تحويل مبلغ <b>150 جنيه</b><br>
-    إلى الرقم:<br>
-    <b>01274445091</b>
-  </p>
+    <button class="btn" onclick="pay()">ادفع الآن</button>
 
-  <div class="status pending" id="status">
-    ⏳ قيد الانتظار
-  </div>
-
-  <button class="btn" onclick="contact()">
-    💬 للتحدث عبر واتساب
-  </button>
+    <div class="status" id="status"></div>
 </div>
 
 <script>
-  const token = localStorage.getItem("token");
+// حماية بسيطة
+const user = localStorage.getItem("teacherName");
 
-if (!token) {
-  window.location.href = "/login.html";
-}
-const teacherName = localStorage.getItem("teacherName");
-
-if (!teacherName) {
-  location.href = "/login";
+if (!user) {
+    window.location.href = "/login.html";
 }
 
-document.getElementById("teacher").innerText =
-  "👨‍🏫 الأستاذ: " + teacherName;
+// محاكاة الدفع
+function pay() {
+    const status = document.getElementById("status");
 
-// حالة الحساب (مبدئياً pending)
-let status = localStorage.getItem("status") || "pending";
+    status.innerHTML = "جاري معالجة الدفع... ⏳";
 
-const statusDiv = document.getElementById("status");
+    setTimeout(() => {
+        localStorage.setItem("accountStatus", "active");
 
-if (status === "active") {
-  statusDiv.innerText = "✅ تم التفعيل";
-  statusDiv.className = "status active";
-} else if (status === "rejected") {
-  statusDiv.innerText = "❌ تم الرفض";
-  statusDiv.className = "status rejected";
-}
+        status.innerHTML = "تم الدفع بنجاح ✅ سيتم تحويلك";
 
-// واتساب
-function contact() {
-  const phone = "20127444509"; // غيره لرقمك
-  const msg = encodeURIComponent("مرحبا، أنا " + teacherName + " وأريد تفعيل حسابي");
-  window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+        setTimeout(() => {
+            window.location.href = "/login.html";
+        }, 1500);
+
+    }, 2000);
 }
 </script>
 
