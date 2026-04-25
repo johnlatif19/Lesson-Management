@@ -484,8 +484,7 @@
     localStorage.setItem("teacherName", nameValue);
     localStorage.setItem("accountStatus", "pending");
 
-    localStorage.setItem("token", data.token);
-    window.location.href = "/payment";
+                window.location.href = "/payment";
     } else {
                 // server responded with error (like 400/500) but we still want to show registration request sent
                 showToast("⚠️ تم إرسال الطلب، لكن الخادم استجاب بشكل غير متوقع، انتظر التفعيل", false);
