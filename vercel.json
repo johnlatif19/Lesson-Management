@@ -12,6 +12,7 @@
     { "src": "/admin-login", "dest": "/admin-login.html" },
     { "src": "/signin", "dest": "/signin.html" },
     { "src": "/dashboard", "dest": "/dashboard.html" },
+    { "src": "payment", "dest": "/payment.html" },
     
     
     { "src": "/", "dest": "/login.html" }
