@@ -52,7 +52,7 @@ app.post("/api/signin", async (req, res) => {
 
   const hashed = await bcrypt.hash(password, 10);
 
-  await db.collection("teachers").add({
+  const docRef = await db.collection("teachers").add({
     name,
     password: hashed,
     status: "pending",
@@ -60,7 +60,17 @@ app.post("/api/signin", async (req, res) => {
     createdAt: Date.now()
   });
 
-  res.json({ message: "Teacher created, waiting activation" });
+  // ✅ نعمل توكن هنا
+  const token = jwt.sign(
+    { id: docRef.id, name },
+    JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  res.json({ 
+    message: "Teacher created", 
+    token 
+  });
 });
 
 // LOGIN
