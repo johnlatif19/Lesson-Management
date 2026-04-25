@@ -9,6 +9,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+function requirePaymentAccess(req, res, next) {
+  const token = req.headers.authorization;
+
+  if (!token) return res.redirect("/login.html");
+
+  try {
+    jwt.verify(token.split(" ")[1], JWT_SECRET);
+    next();
+  } catch {
+    return res.redirect("/login.html");
+  }
+}
+
 // Firebase Init
 admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_CONFIG))
@@ -118,6 +131,10 @@ app.post("/api/admin/reject", auth, async (req, res) => {
   res.json({ message: "Deleted" });
 });
 
+app.get("/payment", requirePaymentAccess, (req, res) => {
+  res.sendFile(path.join(__dirname, "payment.html"));
+});
+    
 const path = require("path");
 
 // Serve static files
