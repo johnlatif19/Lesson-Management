@@ -118,4 +118,24 @@ app.post("/api/admin/reject", auth, async (req, res) => {
   res.json({ message: "Deleted" });
 });
 
+const path = require("path");
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
+
+// أي حد يدخل /index يتحول لـ login
+app.get("/index", (req, res) => {
+  res.redirect("/login.html");
+});
+
+// حماية index.html
+app.get("/index.html", (req, res) => {
+  res.redirect("/login.html");
+});
+
+// الصفحة الرئيسية = login
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "login.html"));
+});
+
 app.listen(3000, () => console.log("Server running"));
