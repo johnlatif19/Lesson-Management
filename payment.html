@@ -27,40 +27,69 @@ body {
 /* Card */
 .card {
     width: 100%;
-    max-width: 450px;
+    max-width: 480px;
     background: white;
-    border-radius: 20px;
+    border-radius: 22px;
     padding: 25px;
-    text-align: center;
     box-shadow: 0 20px 50px rgba(0,0,0,0.2);
 }
 
-/* Title */
+/* Header */
 h2 {
-    margin-bottom: 10px;
     color: #4F46E5;
-    font-size: 24px;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-p {
-    color: #555;
+.sub {
+    text-align: center;
+    color: #666;
     margin-bottom: 20px;
 }
 
-/* Price box */
-.price-box {
+/* Info box */
+.info {
     background: #f3f4ff;
     padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 20px;
+    border-radius: 14px;
+    margin-bottom: 15px;
 }
 
-.price-box h3 {
-    color: #111;
+.info p {
+    margin: 8px 0;
+    font-size: 15px;
+    color: #333;
 }
 
-/* Button */
-.btn {
+/* badge */
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.active {
+    background: #d4edda;
+    color: #155724;
+}
+
+/* price */
+.price {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+/* button */
+button {
     width: 100%;
     padding: 14px;
     border: none;
@@ -73,26 +102,21 @@ p {
     transition: 0.3s;
 }
 
-.btn:hover {
+button:hover {
     transform: scale(1.02);
 }
 
-/* Status */
+/* status */
 .status {
-    margin-top: 15px;
+    text-align: center;
+    margin-top: 12px;
+    color: #555;
     font-size: 14px;
-    color: #666;
 }
 
-/* Mobile */
+/* mobile */
 @media (max-width: 500px) {
-    .card {
-        padding: 20px;
-    }
-
-    h2 {
-        font-size: 20px;
-    }
+    .card { padding: 20px; }
 }
 </style>
 </head>
@@ -100,36 +124,59 @@ p {
 <body>
 
 <div class="card">
-    <h2>إتمام الدفع</h2>
-    <p>لاستكمال التسجيل يجب دفع رسوم الاشتراك</p>
 
-    <div class="price-box">
-        <h3>💰 150 جنيه مصري</h3>
+    <h2>إتمام عملية الدفع</h2>
+    <p class="sub">استكمل الدفع لتفعيل حسابك</p>
+
+    <div class="info">
+        <p>👤 الاسم: <span id="name">...</span></p>
+        <p>📌 الحالة: 
+            <span id="statusBadge" class="badge pending">Pending</span>
+        </p>
     </div>
 
-    <button class="btn" onclick="pay()">ادفع الآن</button>
+    <div class="price">💰 150 جنيه مصري</div>
 
-    <div class="status" id="status"></div>
+    <button onclick="pay()">ادفع الآن</button>
+
+    <div class="status" id="msg"></div>
 </div>
 
 <script>
-// حماية بسيطة
-const user = localStorage.getItem("teacherName");
+// جلب البيانات
+const name = localStorage.getItem("teacherName");
+const status = localStorage.getItem("accountStatus");
 
-if (!user) {
+// حماية
+if (!name) {
     window.location.href = "/login.html";
 }
 
-// محاكاة الدفع
-function pay() {
-    const status = document.getElementById("status");
+// عرض البيانات
+document.getElementById("name").innerText = name || "غير معروف";
 
-    status.innerHTML = "جاري معالجة الدفع... ⏳";
+const badge = document.getElementById("statusBadge");
+
+if (status === "active") {
+    badge.innerText = "Active";
+    badge.classList.remove("pending");
+    badge.classList.add("active");
+}
+
+// الدفع (محاكاة)
+function pay() {
+    const msg = document.getElementById("msg");
+
+    msg.innerHTML = "جاري معالجة الدفع... ⏳";
 
     setTimeout(() => {
         localStorage.setItem("accountStatus", "active");
 
-        status.innerHTML = "تم الدفع بنجاح ✅ سيتم تحويلك";
+        msg.innerHTML = "تم الدفع بنجاح ✅";
+
+        badge.innerText = "Active";
+        badge.classList.remove("pending");
+        badge.classList.add("active");
 
         setTimeout(() => {
             window.location.href = "/login.html";
