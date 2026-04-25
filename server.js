@@ -131,9 +131,28 @@ app.post("/api/admin/reject", auth, async (req, res) => {
   res.json({ message: "Deleted" });
 });
 
-app.get("/payment", requirePaymentAccess, (req, res) => {
+app.get("/payment", (req, res) => {
   res.sendFile(path.join(__dirname, "payment.html"));
 });
+
+app.get("/api/me", async (req, res) => {
+  const token = req.headers.authorization;
+
+  if (!token) return res.status(401).json({ msg: "No token" });
+
+  try {
+    const decoded = jwt.verify(token.split(" ")[1], JWT_SECRET);
+
+    const doc = await db.collection("teachers").doc(decoded.id).get();
+
+    if (!doc.exists) return res.status(404).json({ msg: "Not found" });
+
+    res.json({ id: doc.id, ...doc.data() });
+  } catch (e) {
+    res.status(401).json({ msg: "Invalid token" });
+  }
+});
+
     
 const path = require("path");
 
