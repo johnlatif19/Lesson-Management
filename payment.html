@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>الدفع</title>
+<style>
+body {
+  font-family: 'Cairo', sans-serif;
+  background: #f3f6fb;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.card {
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+  width:350px;
+  text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+.status {
+  margin:15px 0;
+  font-weight:bold;
+}
+
+.pending { color:orange; }
+.active { color:green; }
+.rejected { color:red; }
+
+.btn {
+  display:block;
+  margin-top:20px;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#25D366;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>💳 تفعيل الحساب</h2>
+
+  <p id="teacher"></p>
+
+  <p>
+    برجاء تحويل مبلغ <b>150 جنيه</b><br>
+    إلى الرقم:<br>
+    <b>01274445091</b>
+  </p>
+
+  <div class="status pending" id="status">
+    ⏳ قيد الانتظار
+  </div>
+
+  <button class="btn" onclick="contact()">
+    💬 للتحدث عبر واتساب
+  </button>
+</div>
+
+<script>
+const teacherName = localStorage.getItem("teacherName");
+
+if (!teacherName) {
+  location.href = "/login";
+}
+
+document.getElementById("teacher").innerText =
+  "👨‍🏫 الأستاذ: " + teacherName;
+
+// حالة الحساب (مبدئياً pending)
+let status = localStorage.getItem("status") || "pending";
+
+const statusDiv = document.getElementById("status");
+
+if (status === "active") {
+  statusDiv.innerText = "✅ تم التفعيل";
+  statusDiv.className = "status active";
+} else if (status === "rejected") {
+  statusDiv.innerText = "❌ تم الرفض";
+  statusDiv.className = "status rejected";
+}
+
+// واتساب
+function contact() {
+  const phone = "20127444509"; // غيره لرقمك
+  const msg = encodeURIComponent("مرحبا، أنا " + teacherName + " وأريد تفعيل حسابي");
+  window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+}
+</script>
+
+</body>
+</html>
