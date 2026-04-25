@@ -471,10 +471,6 @@
         <label>👨‍🏫 اسم المعلم</label>
         <input type="text" id="teacherNameInput" placeholder="اكتب اسمك" value="تيست">
       </div>
-      <div class="teacher-field">
-        <label>🖼️ صورة المعلم</label>
-        <input type="file" id="teacherImageUpload" accept="image/*">
-      </div>
     </div>
 
     <div class="form-elegant no-print">
@@ -525,41 +521,28 @@
   if (!teacherName) {
   window.location.href = "login.html";
   }
-  
+
+const token = localStorage.getItem("token");
+
+if (!token) {
+  window.location.href = "login.html";
+}
+ 
   // DOM Elements
   const teacherNameInput = document.getElementById("teacherNameInput");
-  const teacherNameDisplay = document.getElementById("teacherNameDisplay");
-  const teacherImageUpload = document.getElementById("teacherImageUpload");
-  const headerAvatar = document.getElementById("headerAvatar");
-  
+  const teacherNameDisplay = document.getElementById("teacherNameDisplay");  
+ 
   // Initialize teacher info from storage
   function updateTeacherUI() {
     if(teacherNameInput) teacherNameInput.value = teacherName;
     teacherNameDisplay.innerText = `للأستاذ / ${teacherName}`;
-    if(teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
-      headerAvatar.src = teacherImageBase64;
     } else {
-      headerAvatar.src = "https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg";
-    }
   }
   
   teacherNameInput?.addEventListener("input", function(e) {
     teacherName = e.target.value;
     localStorage.setItem("teacherName", teacherName);
     teacherNameDisplay.innerText = `للأستاذ / ${teacherName}`;
-  });
-  
-  teacherImageUpload?.addEventListener("change", function(e) {
-    const file = e.target.files[0];
-    if(file) {
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        teacherImageBase64 = ev.target.result;
-        localStorage.setItem("teacherImage", teacherImageBase64);
-        headerAvatar.src = teacherImageBase64;
-      };
-      reader.readAsDataURL(file);
-    }
   });
   
   // Students data handlers
@@ -763,11 +746,6 @@
     });
     
     let teacherImageHtml = "";
-    if (teacherImageBase64 && teacherImageBase64.startsWith("data:image")) {
-      teacherImageHtml = `<img src="${teacherImageBase64}" style="width:80px;height:80px;border-radius:50%; object-fit:cover;">`;
-    } else {
-      teacherImageHtml = `<img src="https://i.postimg.cc/T1mHWHHK/Ⲭⲣⲓⲥⲧⲟⲥ-ⲁⲛⲉⲥⲧⲏ.jpg" style="width:80px;height:80px;border-radius:50%;">`;
-    }
     
     pdfContainer.innerHTML = `
       <div style="font-family: 'Cairo', 'Tajawal', 'Segoe UI', Arial, sans-serif; padding: 30px 20px; background:#fff; max-width: 100%;">
