@@ -138,16 +138,5 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "login.html"));
 });
 
-app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "login.html"));
-});
-
-app.get("/signin", (req, res) => {
-  res.sendFile(path.join(__dirname, "signin.html"));
-});
-
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin-login.html"));
-});
 
 app.listen(3000, () => console.log("Server running"));
