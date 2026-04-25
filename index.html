@@ -875,6 +875,34 @@ if (!token) {
   if(logoutBtn) {
     logoutBtn.addEventListener("click", logout);
   }
+
+async function checkAuth() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    location.href = "login.html";
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/admin/users", {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error();
+    }
+
+  } catch {
+    localStorage.clear();
+    location.href = "login.html";
+  }
+}
+
+checkAuth();
+ 
 </script>
 </body>
 </html>
