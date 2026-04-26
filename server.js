@@ -63,21 +63,56 @@ function auth(req, res, next) {
   }
 }
 
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: false, // true لو 465
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+});
+
+async function sendEmail(to, subject, html) {
+  try {
+    await transporter.sendMail({
+      from: `"Teacher System" <${process.env.SMTP_USER}>`,
+      to,
+      subject,
+      html
+    });
+  } catch (err) {
+    console.error("Email Error:", err.message);
+  }
+}
+
 // ================= AUTH =================
 
 // SIGNIN
 app.post("/api/signin", async (req, res) => {
-  const { name, password } = req.body;
+  const { name, password, email } = req.body;
 
   const hashed = await bcrypt.hash(password, 10);
 
-  const docRef = await db.collection("teachers").add({
-    name,
-    password: hashed,
-    status: "pending",
-    paid: false,
-    createdAt: Date.now()
-  });
+const docRef = await db.collection("teachers").add({
+  name,
+  email,
+  password: hashed,
+  status: "pending",
+  paid: false,
+  createdAt: Date.now()
+});
+
+await sendEmail(
+  email,
+  "تم استلام طلبك",
+  `
+    <h3>مرحباً ${name}</h3>
+    <p>تم استلام طلب تسجيلك، وسيتم مراجعته قريباً.</p>
+  `
+);
 
   const token = jwt.sign(
     { id: docRef.id, name },
@@ -146,10 +181,27 @@ app.get("/api/admin/users", auth, async (req, res) => {
 app.post("/api/admin/activate", auth, async (req, res) => {
   const { id } = req.body;
 
-  await db.collection("teachers").doc(id).update({
+  const userRef = db.collection("teachers").doc(id);
+  const userDoc = await userRef.get();
+
+  if (!userDoc.exists) return res.status(404).send("User not found");
+
+  const user = userDoc.data();
+
+  await userRef.update({
     status: "active",
     paid: true
   });
+
+  // 📧 إرسال إيميل
+  await sendEmail(
+    user.email,
+    "تم تفعيل حسابك",
+    `
+      <h2>🎉 مبروك ${user.name}</h2>
+      <p>تم تفعيل حسابك ويمكنك تسجيل الدخول الآن.</p>
+    `
+  );
 
   res.json({ message: "Activated" });
 });
@@ -158,7 +210,27 @@ app.post("/api/admin/activate", auth, async (req, res) => {
 app.post("/api/admin/reject", auth, async (req, res) => {
   const { id } = req.body;
 
-  await db.collection("teachers").doc(id).delete();
+  const userRef = db.collection("teachers").doc(id);
+  const userDoc = await userRef.get();
+
+  if (!userDoc.exists) {
+    return res.status(404).send("User not found");
+  }
+
+  const user = userDoc.data();
+
+  // 📧 ابعت الإيميل قبل الحذف
+  await sendEmail(
+    user.email,
+    "تم رفض الطلب",
+    `
+      <h3>مرحباً ${user.name}</h3>
+      <p>نأسف، تم رفض طلب التسجيل الخاص بك.</p>
+    `
+  );
+
+  // ❌ بعد كده احذفه
+  await userRef.delete();
 
   res.json({ message: "Deleted" });
 });
