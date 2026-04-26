@@ -446,6 +446,12 @@
         }
         return true;
     }
+        if (emailValue === "") {
+    showToast("البريد الإلكتروني مطلوب", true);
+    emailInput.focus();
+    return;
+        }
+    }
     
     // simulate loading state and call actual API (mock /api/signin)
     async function signup() {
@@ -533,7 +539,7 @@ if (response.ok) {
     });
     
     // optional: allow pressing Enter key on any input to submit
-    const inputs = [nameInput, passwordInput, email];
+    const inputs = [nameInput, passwordInput, emailInput];
     inputs.forEach(input => {
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
