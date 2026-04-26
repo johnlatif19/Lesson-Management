@@ -132,35 +132,29 @@ await sendEmail(
 
 // LOGIN
 app.post("/api/login", async (req, res) => {
-  const { emailOrName, password } = req.body;
+  const { name, password } = req.body;
 
   let user = null;
 
-  // 1) نجرب بالإيميل
-  let snap = await db.collection("teachers")
-    .where("email", "==", emailOrName)
-    .get();
+  const snap1 = await db.collection("teachers").where("name", "==", name).get();
 
-  if (!snap.empty) {
-    snap.forEach(doc => user = { id: doc.id, ...doc.data() });
+  if (!snap1.empty) {
+    snap1.forEach(doc => user = { id: doc.id, ...doc.data() });
   } else {
-    // 2) نجرب بالاسم
-    snap = await db.collection("teachers")
-      .where("name", "==", emailOrName)
-      .get();
+    const snap2 = await db.collection("teachers").where("email", "==", name).get();
 
-    if (!snap.empty) {
-      snap.forEach(doc => user = { id: doc.id, ...doc.data() });
+    if (!snap2.empty) {
+      snap2.forEach(doc => user = { id: doc.id, ...doc.data() });
     }
   }
 
-  if (!user) {
-    return res.status(400).json({ msg: "User not found" });
-  }
+  if (!user) return res.status(400).json({ msg: "User not found" });
 
   const match = await bcrypt.compare(password, user.password);
-  if (!match) {
-    return res.status(400).json({ msg: "Wrong password" });
+  if (!match) return res.status(400).json({ msg: "Wrong password" });
+
+  if (user.status !== "active") {
+    return res.status(403).json({ msg: "Account not activated" });
   }
 
   const token = jwt.sign(
