@@ -365,6 +365,11 @@
         <input type="password" id="password" placeholder="كلمة المرور">
     </div>
 
+<div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="email" id="email" placeholder="البريد الالكتروني">
+    </div>
+    
     <button class="btn-signup" id="signupBtn">
         <i class="fas fa-pen-fancy"></i> تسجيل المعلم
         <i class="fas fa-arrow-left"></i>
@@ -392,6 +397,7 @@
     // DOM elements
     const nameInput = document.getElementById('name');
     const passwordInput = document.getElementById('password');
+    const emailInput = document.getElementById('email');
     const signupBtn = document.getElementById('signupBtn');
     const previewImg = document.getElementById('previewImg');
     const previewPlaceholder = document.getElementById('previewPlaceholder');
@@ -451,11 +457,13 @@
         // get fresh values
         const nameValue = nameInput.value.trim();
         const passwordValue = passwordInput.value;
+        const emailValue = emailInput.value;
         
         // prepare payload
         const payload = {
             name: nameValue,
             password: passwordValue,
+            email: emailValue,
         };
         
         // disable button and add loading class
@@ -525,7 +533,7 @@ if (response.ok) {
     });
     
     // optional: allow pressing Enter key on any input to submit
-    const inputs = [nameInput, passwordInput];
+    const inputs = [nameInput, passwordInput, email];
     inputs.forEach(input => {
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
