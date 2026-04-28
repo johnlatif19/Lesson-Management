@@ -23,7 +23,7 @@
       position: relative;
     }
 
-    /* إضافة تأثير خلفية أنيق */
+    /* تأثير خلفية أنيق */
     body::before {
       content: '';
       position: fixed;
@@ -35,7 +35,7 @@
       pointer-events: none;
     }
 
-    /* تصميم البطاقة الرئيسية - كأنها فاتورة حقيقية */
+    /* تصميم الفاتورة الرئيسي */
     .invoice-card {
       max-width: 520px;
       width: 100%;
@@ -44,7 +44,6 @@
       box-shadow: 0 35px 65px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
       overflow: hidden;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      backdrop-filter: blur(0px);
     }
 
     .invoice-card:hover {
@@ -215,7 +214,7 @@
       color: #9A3412;
     }
 
-    /* أزرار */
+    /* الأزرار */
     .actions {
       display: flex;
       flex-direction: column;
@@ -262,33 +261,7 @@
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     }
 
-    /* مؤشر التحميل */
-    .loader-indicator {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: 500;
-      color: #94A3B8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid #E2E8F0;
-      border-top-color: #4F46E5;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* شعار توثيق */
+    /* تذييل الفاتورة */
     .invoice-footer {
       text-align: center;
       padding-top: 20px;
@@ -298,7 +271,7 @@
       margin-top: 20px;
     }
 
-    /* استجابة كاملة */
+    /* تحسينات الاستجابة الكاملة */
     @media (max-width: 560px) {
       body {
         padding: 16px;
@@ -354,7 +327,7 @@
   </div>
 
   <div class="invoice-body">
-    <!-- قسم المستخدم -->
+    <!-- قسم بيانات المستخدم -->
     <div class="user-section">
       <div class="user-label">
         <span>👤</span> بيانات المشترك
@@ -377,7 +350,7 @@
 
     <div class="invoice-row">
       <div class="row-label">
-        <span>🏦</span> رقم التحويل (اورنچ كاش)
+        <span>🏦</span> رقم التحويل (فودافون كاش)
       </div>
       <div class="row-value transfer-number">
         01274445091
@@ -393,7 +366,7 @@
       </div>
     </div>
 
-    <!-- حالة الحساب ديناميكية -->
+    <!-- حالة الحساب الديناميكية -->
     <div class="status-container" id="statusContainer">
       <div class="status-card status-pending" id="statusBox">
         <span>⏳</span> جاري المراجعة
@@ -415,40 +388,38 @@
 
 <script>
   (function() {
-    // 🔒 الحصول على التوكن من localStorage (حقيقي كما هو)
+    // الحصول على التوكن من localStorage
     const token = localStorage.getItem("token");
 
-    // التحقق من التوكن وإعادة التوجيه في حالة عدم وجوده
+    // التحقق من وجود التوكن وإعادة التوجيه إذا لم يكن موجوداً
     if (!token) {
       window.location.href = "/login";
       return;
     }
 
-    // عناصر DOM
+    // عناصر DOM الرئيسية
     const userNameSpan = document.getElementById("userNameDisplay");
     const userIdBadge = document.getElementById("userIdBadge");
     const priceSpan = document.getElementById("priceValue");
     const statusBox = document.getElementById("statusBox");
     const dynamicButtonsDiv = document.getElementById("dynamicButtons");
-    const loaderSpinner = document.getElementById("liveSpinner");
-    const loaderTextSpan = document.getElementById("loaderText");
     const invoiceDateSpan = document.getElementById("invoiceDate");
 
-    // عرض التاريخ الحالي (تاريخ حقيقي للفاتورة)
+    // عرض التاريخ الحالي للفاتورة (تاريخ حقيقي)
     const today = new Date();
     const formattedDate = today.toLocaleDateString("ar-EG", { year: 'numeric', month: 'long', day: 'numeric' });
     if (invoiceDateSpan) invoiceDateSpan.innerText = formattedDate;
 
-
+    // دالة تحديث واجهة الفاتورة بناءً على البيانات الحقيقية من الـ API
     function renderUI(userData) {
-      // تعيين الاسم بالكامل
-      if (userData.name) {
+      // تعيين اسم المستخدم
+      if (userData.name && userData.name.trim() !== "") {
         userNameSpan.innerText = userData.name;
       } else {
         userNameSpan.innerText = "مستخدم المنصة";
       }
 
-      // إظهار معرف اختياري في حالة وجود id
+      // إظهار معرف المستخدم إذا كان موجوداً
       if (userData.id) {
         userIdBadge.innerText = `#${userData.id}`;
       } else if (userData.userId) {
@@ -457,27 +428,28 @@
         userIdBadge.innerText = "#المستخدم";
       }
 
-      // معالجة السعر الفعلي من الـ API
-      let priceAmount = 150; // افتراضي احتياطي فقط في حال عدم إرسال السعر
+      // معالجة السعر الفعلي (قيمة حقيقية من السيرفر)
+      let priceAmount = 150; // قيمة احتياطية فقط في حال عدم وجود سعر في الرد
       if (userData.price !== undefined && userData.price !== null) {
         priceAmount = userData.price;
-      } else if (userData.amount) {
+      } else if (userData.amount !== undefined && userData.amount !== null) {
         priceAmount = userData.amount;
       }
+      
       let priceText = `${priceAmount} جنيه`;
-      // في حال وجود offer (عرض خاص) من الـ API الحقيقي
-      if (userData.offer === true || userData.offer === "true" || userData.specialOffer) {
-        priceText += ` <span style="background:#FEF3C7; font-size:12px; padding:2px 10px; border-radius:30px; margin-right:6px;">🎁 عرض خاص</span>`;
+      // التحقق من وجود عرض خاص (offer) حقيقي من البيانات
+      if (userData.offer === true || userData.offer === "true" || userData.specialOffer === true) {
+        priceText += ` <span style="background:#FEF3C7; font-size:12px; padding:2px 10px; border-radius:30px; margin-right:6px; display:inline-block;">🎁 عرض خاص</span>`;
       }
       priceSpan.innerHTML = priceText;
 
-      // الحالة الفعلية من الباك اند (active, pending, rejected, stopped, expired)
+      // تحديد الحالة الفعلية من الـ API
       const userStatus = userData.status || "pending";
       let statusClass = "status-pending";
       let statusIcon = "⏳";
       let statusMessage = "الحساب قيد المراجعة";
 
-      // تحديث شكل الحالة والرسالة
+      // تخصيص شكل الحالة حسب القيمة المستلمة
       switch (userStatus) {
         case "active":
           statusClass = "status-active";
@@ -510,11 +482,11 @@
           statusMessage = "جاري المراجعة";
       }
 
-      // تعيين الـ status box
+      // تحديث واجهة حالة الحساب
       statusBox.className = `status-card ${statusClass}`;
       statusBox.innerHTML = `<span>${statusIcon}</span> ${statusMessage}`;
 
-      // بناء الأزرار ديناميكيًا (مع الاحتفاظ بواتساب الأساسي وبناء إضافات حسب الحالة)
+      // بناء الأزرار بناءً على الحالة (مع الحفاظ على زر واتساب الأساسي)
       let buttonsHtml = `<a class="btn btn-whatsapp" href="https://wa.me/201274445091" target="_blank" rel="noopener noreferrer">📱 تواصل عبر واتساب</a>`;
 
       if (userStatus === "active") {
@@ -530,18 +502,16 @@
         buttonsHtml += `<a href="https://wa.me/201274445091" class="btn btn-whatsapp" target="_blank">📞 التواصل مع الدعم</a>`;
       }
       else if (userStatus === "pending") {
-        // لا نضيف أزرار إضافية سوى واتساب الأساسي
-        // لكن نضيف رسالة توجيهية اختيارية
-        buttonsHtml += `<div style="font-size:12px; color:#64748b; text-align:center; margin-top:6px;">⚠️ بعد الدفع، سيتم التحديث تلقائياً</div>`;
+        // إضافة ملاحظة مرئية للمستخدم بدون لودر
+        buttonsHtml += `<div style="font-size:12px; color:#64748b; text-align:center; margin-top:6px;">📌 بعد إتمام الدفع، سيتم تحديث الحالة تلقائياً</div>`;
       }
 
       dynamicButtonsDiv.innerHTML = buttonsHtml;
     }
 
-    // دالة جلب البيانات الحقيقية من الـ API بدون أي بيانات وهمية
+    // دالة جلب البيانات من الـ API الحقيقي (بدون أي بيانات تجريبية)
     async function loadUserData() {
       try {
-        setLoading(true);
         const response = await fetch("/api/me", {
           method: "GET",
           headers: {
@@ -551,53 +521,43 @@
           cache: "no-store"
         });
 
-        // في حال الـ response غير موافق (401/403/500..)
+        // التحقق من صلاحية التوكن
         if (!response.ok) {
           if (response.status === 401 || response.status === 403) {
-            // التوكن غير صالح أو انتهى
+            // التوكن غير صالح أو منتهي الصلاحية
             localStorage.removeItem("token");
             window.location.href = "/login";
             return;
           } else {
-            // خطأ اخر ولكن نعرض رسالة مؤقتة ولا نغير التوكن
-            console.warn("API responded with status:", response.status);
-            setLoading(false);
-            // عرض رسالة احتياطية للمستخدم دون مسح بيانات حقيقية
-            userNameSpan.innerText = "خطأ في التحميل";
+            // خطأ آخر من السيرفر - نعرض رسالة خطأ واضحة دون لودر
+            console.warn("API responded with error status:", response.status);
+            userNameSpan.innerText = "حدث خطأ";
             priceSpan.innerHTML = "--- جنيه";
-            dynamicButtonsDiv.innerHTML = `<a class="btn btn-whatsapp" href="https://wa.me/201274445091" target="_blank">📱 تواصل عبر واتساب</a><div style="font-size:12px;color:#e11d48; margin-top:8px;">⚠️ حدث خطأ، أعد المحاولة لاحقاً</div>`;
-            setLoading(false);
+            dynamicButtonsDiv.innerHTML = `<a class="btn btn-whatsapp" href="https://wa.me/201274445091" target="_blank">📱 تواصل عبر واتساب</a><div style="font-size:12px;color:#e11d48; margin-top:8px;">⚠️ حدث خطأ في تحميل البيانات، سيتم إعادة المحاولة</div>`;
             return;
           }
         }
 
         const userData = await response.json();
-        setLoading(false);
-        // تحديث واجهة الفاتورة بناءً على البيانات الحقيقية (اسم، سعر، حالة، offer..)
+        // تحديث الفاتورة بالبيانات الحقيقية
         renderUI(userData);
       } catch (error) {
+        // خطأ في الاتصال بالشبكة - لا نستخدم لودر
         console.error("Fetch error:", error);
-        setLoading(false);
-        // في حالة خطأ الشبكة أو عدم الاتصال - نعرض رسالة ودية مع الاحتفاظ بالوظيفة
-        userNameSpan.innerText = "غير متاح حالياً";
+        userNameSpan.innerText = "خطأ في الاتصال";
         priceSpan.innerHTML = "--- جنيه";
-        dynamicButtonsDiv.innerHTML = `<a class="btn btn-whatsapp" href="https://wa.me/201274445091" target="_blank">📱 اتصل بالدعم</a><div style="font-size:12px;color:#dc2626; margin-top:8px;">⚠️ حدث خطأ في الاتصال، سيتم التحديث تلقائياً</div>`;
-        // لا نقوم بتسجيل خروج تلقائي لأنها مشكلة شبكة مؤقتة
+        dynamicButtonsDiv.innerHTML = `<a class="btn btn-whatsapp" href="https://wa.me/201274445091" target="_blank">📱 تواصل عبر واتساب</a><div style="font-size:12px;color:#dc2626; margin-top:8px;">⚠️ خطأ في الشبكة، جارٍ إعادة المحاولة</div>`;
       }
     }
 
-    // تنفيذ التحميل الأول
+    // التحميل الأول للبيانات
     loadUserData();
 
-    // تحديث دوري كل 4 ثواني لمتابعة الحالة بشكل حي (منتج حقيقي)
-    let intervalId = setInterval(() => {
+    // تحديث دوري كل 4 ثواني لمتابعة الحالة بشكل لحظي (بدون ظهور أي لودر)
+    // المستخدم لن يشعر بأي مؤشر تحميل، فقط يتم تحديث المحتوى تلقائياً
+    setInterval(() => {
       loadUserData();
-    }, 3000);
-
-    // تنظيف الـ interval اختياري عند مغادرة الصفحة لكن ليس ضرورياً
-    window.addEventListener("beforeunload", function() {
-      if (intervalId) clearInterval(intervalId);
-    });
+    }, 4000);
   })();
 </script>
 </body>
