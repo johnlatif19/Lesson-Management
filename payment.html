@@ -184,7 +184,7 @@ document.getElementById("loader").style.display = "none";
 
         // 🔥 عرض لأول 5
         if(data.offer){
-            priceEl.innerHTML += " 🔥 عرض خاص";
+            priceEl.innerHTML += "عرض خاص";
         }
 
         const statusBox = document.getElementById("statusBox");
@@ -210,6 +210,17 @@ document.getElementById("loader").style.display = "none";
             statusBox.innerHTML = "⏳ الحساب قيد المراجعة";
         }
 
+else if(data.status === "rejected"){
+    statusBox.className = "status pending";
+    statusBox.innerHTML = "❌ تم رفض الطلب";
+
+    loginBtn.innerHTML = `
+        <a href="/signup.html" class="btn login">
+            تسجيل مرة أخرى
+        </a>
+    `;
+}
+            
         // ❌ متوقف من الأدمن
         else if(data.status === "stopped"){
             statusBox.className = "status pending";
