@@ -146,14 +146,34 @@ app.post("/api/signin", async (req, res) => {
     createdAt: now
   });
 
-  await sendEmail(
-    email,
-    "تم استلام طلبك",
+await sendEmail(
+  email,
+  "📩 تم استلام طلبك بنجاح",
+  emailTemplate(
+    "📩 تم استلام طلبك",
     `
-      <h3>مرحباً ${name}</h3>
-      <p>تم استلام طلب تسجيلك، وسيتم مراجعته قريباً.</p>
-    `
-  );
+      <p>مرحباً <b>${name}</b> 👋</p>
+
+      <p>
+        تم استلام طلب تسجيلك بنجاح على منصة التعليم، وجاري مراجعته من الإدارة.
+      </p>
+
+      <div style="background:#f1f5ff;padding:15px;border-radius:12px;margin-top:15px">
+        ⏳ حالة الطلب: <b style="color:#f59e0b">قيد المراجعة</b><br>
+        📅 وقت التسجيل: ${new Date().toLocaleString()}
+      </div>
+
+      <p style="margin-top:15px">
+        سيتم إشعارك فور قبول الطلب أو رفضه.
+      </p>
+
+      <div style="margin-top:20px;padding:10px;background:#eef2ff;border-radius:10px">
+        💡 نصيحة: تأكد من متابعة رسائل البريد باستمرار
+      </div>
+    `,
+    "#4F46E5"
+  )
+);
 
   const token = jwt.sign(
     { id: docRef.id, name },
