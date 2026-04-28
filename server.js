@@ -246,7 +246,6 @@ app.post("/api/admin/reject", auth, async (req, res) => {
 
   const user = userDoc.data();
 
-  // 📧 ابعت الإيميل قبل الحذف
   await sendEmail(
     user.email,
     "تم رفض الطلب",
@@ -256,10 +255,12 @@ app.post("/api/admin/reject", auth, async (req, res) => {
     `
   );
 
-  // ❌ بعد كده احذفه
-  await userRef.delete();
+  // ✅ بدل الحذف
+  await userRef.update({
+    status: "rejected"
+  });
 
-  res.json({ message: "Deleted" });
+  res.json({ message: "Rejected" });
 });
 
 app.get("/payment", requirePaymentAccess, (req, res) => {
