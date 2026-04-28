@@ -439,17 +439,17 @@ app.get("/api/me", async (req, res) => {
     // ===============================
     // إرسال البيانات للفرونت
     // ===============================
-    res.json({
-      id: doc.id,
-      name: user.name,
-      email: user.email,
-      status: user.status,
-      price: user.price || 150,
-      offer: user.offer || false,
-      activatedAt: user.activatedAt || null,
-      expireAt: user.expireAt || null,
-      createdAt: user.createdAt
-    });
+res.json({
+  id: doc.id,
+  name: user.name,
+  email: user.email,
+  status: user.status,
+  price: user.price || 150,
+  offer: user.offer || false,
+  activatedAt: user.activatedAt ? new Date(user.activatedAt).toISOString() : null,
+  expireAt: user.expireAt ? new Date(user.expireAt).toISOString() : null,
+  createdAt: user.createdAt
+});
 
   } catch (err) {
     return res.status(401).json({ msg: "Invalid token" });
