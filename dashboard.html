@@ -383,6 +383,22 @@
                 grid-template-columns: 1fr;
             }
         }
+        .btn-toggle{
+    flex:1;
+    background: linear-gradient(95deg, #6366f1, #4f46e5);
+    border:none;
+    padding:0.7rem;
+    border-radius:1rem;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.btn-toggle:hover{
+    transform: scale(0.97);
+    background: linear-gradient(95deg, #4f46e5, #4338ca);
+}
     </style>
 </head>
 <body>
@@ -496,14 +512,22 @@
 
     // Helper to get status badge class and arabic text
     function getStatusInfo(status) {
-        if (status === "active" || status === "مفعل") {
-            return { class: "status-active", text: "✅ مفعل" };
-        } else if (status === "rejected" || status === "مرفوض") {
-            return { class: "status-rejected", text: "❌ مرفوض" };
-        } else {
-            return { class: "status-pending", text: "⏳ قيد الانتظار" };
-        }
+    if (status === "active") {
+        return { class: "status-active", text: "✅ مفعل" };
+    } 
+    else if (status === "stopped") {
+        return { class: "status-pending", text: "⛔ موقوف" };
     }
+    else if (status === "expired") {
+        return { class: "status-rejected", text: "⌛ منتهي" };
+    }
+    else if (status === "rejected") {
+        return { class: "status-rejected", text: "❌ مرفوض" };
+    } 
+    else {
+        return { class: "status-pending", text: "⏳ قيد الانتظار" };
+    }
+}
 
     // Render users function
     function renderUsers(users) {
@@ -547,14 +571,19 @@
                         ${user.image ? `<div class="detail-item"><i class="fas fa-image"></i><span>صورة شخصية</span></div>` : ''}
                     </div>
                     <div class="action-buttons">
-                        <button class="btn-activate" onclick="activateUser('${user.id}')">
-                            <i class="fas fa-user-check"></i> تفعيل
-                        </button>
-                        <button class="btn-reject" onclick="rejectUser('${user.id}')">
-                            <i class="fas fa-user-slash"></i> رفض
-                        </button>
-                    </div>
-                </div>
+    <button class="btn-activate" onclick="activateUser('${user.id}')">
+        <i class="fas fa-user-check"></i> تفعيل
+    </button>
+
+    <button class="btn-toggle" onclick="toggleUser('${user.id}')">
+        <i class="fas fa-power-off"></i> تشغيل / إيقاف
+    </button>
+
+    <button class="btn-reject" onclick="rejectUser('${user.id}')">
+        <i class="fas fa-user-slash"></i> رفض
+    </button>
+    </div>
+    </div>
             `;
         }).join("");
         
@@ -605,6 +634,37 @@
         }
     }
 
+window.toggleUser = async function(id){
+    try{
+        const res = await fetch("/api/admin/toggle",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                Authorization:"Bearer " + token
+            },
+            body: JSON.stringify({ id })
+        });
+
+        if(!res.ok){
+            showToast("فشل تغيير الحالة", true);
+            return;
+        }
+
+        const data = await res.json();
+
+        if(data.status === "active"){
+            showToast("🟢 تم تشغيل الحساب");
+        }else{
+            showToast("⛔ تم إيقاف الحساب");
+        }
+
+        loadUsers();
+
+    }catch(e){
+        showToast("خطأ في الاتصال", true);
+    }
+}
+    
     // Activate user function (original activate endpoint)
     window.activateUser = async function(id) {
         if (!token) return;
