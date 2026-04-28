@@ -153,7 +153,6 @@ app.post("/api/signin", async (req, res) => {
     price,
     offer,
     offerStart: offer ? now : null,
-    expireAt: user.expireAt ? new Date(user.expireAt).toISOString() : null,
     createdAt: now
   });
 
@@ -448,7 +447,9 @@ res.json({
   price: user.price || 150,
   offer: user.offer || false,
   activatedAt: user.activatedAt ? new Date(user.activatedAt).toISOString() : null,
-  expireAt: user.expireAt ? new Date(user.expireAt).toISOString() : null,
+  expireAt: user.expireAt
+  ? new Date(user.expireAt).toLocaleString("ar-EG")
+  : null,
   createdAt: user.createdAt
 });
 
