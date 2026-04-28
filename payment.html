@@ -130,7 +130,7 @@ body{
         👤 الاسم: <span id="userName">...</span>
     </div>
 
-    <div class="row">💰 المبلغ: <b>150 جنيه</b></div>
+    <div class="row">💰 المبلغ: <b id="price">...</b></div>
     <div class="row">📲 رقم التحويل: <b>01274445091</b></div>
 
     <div id="statusBox" class="status pending">
@@ -161,10 +161,11 @@ async function loadUser(){
 
     try{
         const res = await fetch("/api/me", {
-            headers:{
-                Authorization: "Bearer " + token
-            }
-        });
+    headers:{
+        Authorization: "Bearer " + token
+    },
+    cache: "no-store" // 🔥 أهم سطر
+});
 
         if(!res.ok){
             return window.location.href = "/login";
@@ -172,12 +173,14 @@ async function loadUser(){
 
         const data = await res.json();
 
+document.getElementById("loader").style.display = "none";
+
         // ✅ الاسم
         document.getElementById("userName").innerText = data.name;
 
         // ✅ السعر
         const priceEl = document.getElementById("price");
-        priceEl.innerText = data.price + " جنيه";
+        priceEl.innerText = (data.price || 150) + " جنيه";
 
         // 🔥 عرض لأول 5
         if(data.offer){
@@ -228,15 +231,12 @@ async function loadUser(){
     }catch(e){
         console.log(e);
     }
-}
-
-document.getElementById("loader").style.display = "none";
-    
+}    
 // تحميل أول مرة
 loadUser();
 
 // تحديث كل 5 ثواني (متابعة حقيقية)
-setInterval(loadUser, 5000);
+setInterval(loadUser, 3000);
 </script>
 
 </body>
