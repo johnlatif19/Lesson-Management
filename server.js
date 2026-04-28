@@ -104,7 +104,7 @@ app.post("/api/signin", async (req, res) => {
   let price = 150;
   let offer = false;
 
-  if (count < 5) {
+  if (count < 1) {
     price = 100;
     offer = true;
   }
