@@ -277,20 +277,25 @@ app.post("/api/admin/activate", auth, async (req, res) => {
   const userRef = db.collection("teachers").doc(id);
   const userDoc = await userRef.get();
 
-  if (!userDoc.exists) return res.status(404).send("User not found");
+  if (!userDoc.exists) {
+    return res.status(404).send("User not found");
+  }
 
   const user = userDoc.data();
 
-  const now = Date.now();
-  const month = 30 * 24 * 60 * 60 * 1000;
+  // ===============================
+  // ⏳ مدة الاشتراك (للاختبار خليه يوم واحد أو حتى الآن)
+  // ===============================
+  const now = new Date();
 
-  const expireAt = now + month;
+  // 👇 للاختبار: خلي الانتهاء بعد 10 ثواني فقط
+  const expireDate = new Date(Date.now() + 10 * 1000);
 
   await userRef.update({
     status: "active",
     paid: true,
-    activatedAt: now,
-    expireAt
+    activatedAt: admin.firestore.Timestamp.fromDate(now),
+    expireAt: admin.firestore.Timestamp.fromDate(expireDate)
   });
 
   await sendEmail(
@@ -302,20 +307,20 @@ app.post("/api/admin/activate", auth, async (req, res) => {
       <p>تم تفعيل حسابك بنجاح</p>
 
       <div style="background:#f1f5ff;padding:15px;border-radius:10px;margin-top:10px">
-        📅 تاريخ التفعيل: ${new Date(now).toLocaleDateString()}
+        📅 التفعيل: ${now.toLocaleString()}
         <br>
-        ⏳ ينتهي في: ${new Date(expireAt).toLocaleDateString()}
+        ⏳ ينتهي في: ${expireDate.toLocaleString()}
       </div>
 
-      <a href="/login"
-         style="display:inline-block;margin-top:15px;background:#4F46E5;color:#fff;padding:10px 15px;border-radius:8px;text-decoration:none">
-         تسجيل الدخول
-      </a>
+      <p>جرّب الآن وشوف إيه اللي هيحصل عند الانتهاء 👀</p>
     </div>
     `
   );
 
-  res.json({ message: "Activated" });
+  res.json({
+    message: "Activated",
+    expireAt: expireDate
+  });
 });
 
 // REJECT
