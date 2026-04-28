@@ -172,13 +172,24 @@ async function loadUser(){
 
         const data = await res.json();
 
-        // الاسم
+        // ✅ الاسم
         document.getElementById("userName").innerText = data.name;
+
+        // ✅ السعر
+        const priceEl = document.getElementById("price");
+        priceEl.innerText = data.price + " جنيه";
+
+        // 🔥 عرض لأول 5
+        if(data.offer){
+            priceEl.innerHTML += " 🔥 عرض خاص";
+        }
 
         const statusBox = document.getElementById("statusBox");
         const loginBtn = document.getElementById("loginBtn");
 
-        // الحالة
+        // ================= الحالات =================
+
+        // ✅ مفعل
         if(data.status === "active"){
             statusBox.className = "status active";
             statusBox.innerHTML = "✅ الحساب مفعل";
@@ -188,9 +199,30 @@ async function loadUser(){
                     تسجيل الدخول
                 </a>
             `;
-        }else{
+        }
+
+        // ⏳ قيد المراجعة
+        else if(data.status === "pending"){
             statusBox.className = "status pending";
             statusBox.innerHTML = "⏳ الحساب قيد المراجعة";
+        }
+
+        // ❌ متوقف من الأدمن
+        else if(data.status === "stopped"){
+            statusBox.className = "status pending";
+            statusBox.innerHTML = "⛔ الحساب موقوف مؤقتاً";
+        }
+
+        // ⌛ الاشتراك انتهى
+        else if(data.status === "expired"){
+            statusBox.className = "status pending";
+            statusBox.innerHTML = "⌛ الاشتراك انتهى - يرجى التجديد";
+
+            loginBtn.innerHTML = `
+                <a href="https://wa.me/201274445091" class="btn whatsapp">
+                    تجديد الاشتراك
+                </a>
+            `;
         }
 
     }catch(e){
@@ -198,6 +230,8 @@ async function loadUser(){
     }
 }
 
+document.getElementById("loader").style.display = "none";
+    
 // تحميل أول مرة
 loadUser();
 
