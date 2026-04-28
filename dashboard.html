@@ -732,6 +732,11 @@ window.toggleUser = async function(id){
     } else {
         usersContainer.innerHTML = `<div class="empty-state"><i class="fas fa-lock"></i><p>الرجاء تسجيل الدخول أولاً</p><button onclick="location.href='admin.html'" style="margin-top:1rem; background:#fbbf24; border:none; padding:0.5rem 1rem; border-radius:1rem; color:#0f172a; cursor:pointer;">تسجيل الدخول</button></div>`;
     }
+    // تحميل أول مرة
+loadUsers();
+
+// 🔥 تحديث كل 3 ثواني
+setInterval(loadUsers, 3000);
 </script>
 </body>
 </html>
