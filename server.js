@@ -96,12 +96,26 @@ app.post("/api/signin", async (req, res) => {
 
   const hashed = await bcrypt.hash(password, 10);
 
+const snapshot = await db.collection("teachers").get();
+const count = snapshot.size;
+
+// أول 5
+let price = 150;
+let offer = false;
+
+if (count < 5) {
+  price = 100;
+  offer = true;
+}
+  
 const docRef = await db.collection("teachers").add({
   name,
   email,
   password: hashed,
   status: "pending",
   paid: false,
+  price,
+  offer,
   createdAt: Date.now()
 });
 
