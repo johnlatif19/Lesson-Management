@@ -88,6 +88,29 @@ async function sendEmail(to, subject, html) {
   }
 }
 
+function emailTemplate(title, message, color = "#4F46E5") {
+  return `
+  <div style="font-family:Tajawal,Arial;direction:rtl;text-align:right;background:#f4f6fb;padding:20px">
+    
+    <div style="max-width:500px;margin:auto;background:#fff;border-radius:15px;padding:20px;border-top:5px solid ${color}">
+      
+      <h2 style="margin-bottom:10px;color:${color}">${title}</h2>
+      
+      <div style="color:#444;font-size:15px;line-height:1.7">
+        ${message}
+      </div>
+
+      <hr style="margin:20px 0;border:none;border-top:1px solid #eee">
+
+      <p style="font-size:12px;color:#888">
+        منصة التعليم © جميع الحقوق محفوظة
+      </p>
+
+    </div>
+  </div>
+  `;
+}
+
 // ================= AUTH =================
 
 // SIGNIN
@@ -104,7 +127,7 @@ app.post("/api/signin", async (req, res) => {
   let price = 150;
   let offer = false;
 
-  if (count < 1) {
+  if (count < 5) {
     price = 100;
     offer = true;
   }
@@ -214,19 +237,34 @@ app.post("/api/admin/activate", auth, async (req, res) => {
   const now = Date.now();
   const month = 30 * 24 * 60 * 60 * 1000;
 
+  const expireAt = now + month;
+
   await userRef.update({
     status: "active",
     paid: true,
     activatedAt: now,
-    expireAt: now + month
+    expireAt
   });
 
   await sendEmail(
     user.email,
-    "تم تفعيل حسابك",
+    "🎉 تم تفعيل حسابك",
     `
-      <h2>🎉 مبروك ${user.name}</h2>
-      <p>تم تفعيل حسابك ويمكنك تسجيل الدخول الآن.</p>
+    <div style="font-family:Tajawal;padding:20px">
+      <h2 style="color:#4F46E5">🎉 مبروك ${user.name}</h2>
+      <p>تم تفعيل حسابك بنجاح</p>
+
+      <div style="background:#f1f5ff;padding:15px;border-radius:10px;margin-top:10px">
+        📅 تاريخ التفعيل: ${new Date(now).toLocaleDateString()}
+        <br>
+        ⏳ ينتهي في: ${new Date(expireAt).toLocaleDateString()}
+      </div>
+
+      <a href="/login"
+         style="display:inline-block;margin-top:15px;background:#4F46E5;color:#fff;padding:10px 15px;border-radius:8px;text-decoration:none">
+         تسجيل الدخول
+      </a>
+    </div>
     `
   );
 
@@ -246,19 +284,30 @@ app.post("/api/admin/reject", auth, async (req, res) => {
 
   const user = userDoc.data();
 
-  await sendEmail(
-    user.email,
-    "تم رفض الطلب",
-    `
-      <h3>مرحباً ${user.name}</h3>
-      <p>نأسف، تم رفض طلب التسجيل الخاص بك.</p>
-    `
-  );
-
-  // ✅ بدل الحذف
   await userRef.update({
     status: "rejected"
   });
+
+  await sendEmail(
+    user.email,
+    "❌ تم رفض طلبك",
+    `
+    <div style="font-family:Tajawal;padding:20px">
+      <h2 style="color:#dc2626">❌ تم رفض طلب التسجيل</h2>
+
+      <p>مرحباً ${user.name}</p>
+
+      <div style="background:#fee2e2;padding:15px;border-radius:10px">
+        نأسف، تم رفض طلبك حالياً
+      </div>
+
+      <p style="margin-top:10px">
+        يمكنك التواصل معنا لمعرفة السبب:
+        <a href="https://wa.me/201274445091">اضغط هنا</a>
+      </p>
+    </div>
+    `
+  );
 
   res.json({ message: "Rejected" });
 });
@@ -268,9 +317,12 @@ app.get("/payment", requirePaymentAccess, (req, res) => {
 });
 
 app.get("/api/me", async (req, res) => {
+app.get("/api/me", async (req, res) => {
   const token = req.headers.authorization;
 
-  if (!token) return res.status(401).json({ msg: "No token" });
+  if (!token) {
+    return res.status(401).json({ msg: "No token" });
+  }
 
   try {
     const decoded = jwt.verify(token.split(" ")[1], JWT_SECRET);
@@ -278,28 +330,56 @@ app.get("/api/me", async (req, res) => {
     const docRef = db.collection("teachers").doc(decoded.id);
     const doc = await docRef.get();
 
-    if (!doc.exists) return res.status(404).json({ msg: "Not found" });
+    if (!doc.exists) {
+      return res.status(404).json({ msg: "User not found" });
+    }
 
-    const user = doc.data();
+    let user = doc.data();
 
-    // ✅ انتهاء الاشتراك
-    if (user.expireAt && Date.now() > user.expireAt) {
+    const now = Date.now();
+
+    // ===============================
+    // ⌛ انتهاء الاشتراك
+    // ===============================
+    if (user.expireAt && now > user.expireAt && user.status !== "expired") {
+
       await docRef.update({
         status: "expired"
       });
 
-      return res.json({
-        id: doc.id,
-        ...user,
-        status: "expired"
-      });
+      user.status = "expired";
+
+      // (اختياري) إرسال إيميل انتهاء الاشتراك
+      await sendEmail(
+        user.email,
+        "⌛ انتهى اشتراكك",
+        `
+        <div style="font-family:Tajawal;padding:20px">
+          <h2 style="color:#f59e0b">⌛ انتهى الاشتراك</h2>
+
+          <p>مرحباً ${user.name}</p>
+
+          <div style="background:#fff3cd;padding:15px;border-radius:10px">
+            📅 تاريخ التفعيل: ${new Date(user.activatedAt).toLocaleDateString()}  
+            <br>
+            ⛔ تاريخ الانتهاء: ${new Date(user.expireAt).toLocaleDateString()}
+          </div>
+
+          <p style="margin-top:10px">
+            لتجديد الاشتراك تواصل معنا عبر واتساب
+          </p>
+        </div>
+        `
+      );
     }
 
-    // ✅ انتهاء العرض بعد 3 شهور
+    // ===============================
+    // 🔥 انتهاء العرض
+    // ===============================
     if (user.offer && user.offerStart) {
       const threeMonths = 90 * 24 * 60 * 60 * 1000;
 
-      if (Date.now() - user.offerStart > threeMonths) {
+      if (now - user.offerStart > threeMonths) {
         await docRef.update({
           offer: false,
           price: 150
@@ -310,10 +390,23 @@ app.get("/api/me", async (req, res) => {
       }
     }
 
-    res.json({ id: doc.id, ...user });
+    // ===============================
+    // إرسال البيانات للفرونت
+    // ===============================
+    res.json({
+      id: doc.id,
+      name: user.name,
+      email: user.email,
+      status: user.status,
+      price: user.price || 150,
+      offer: user.offer || false,
+      activatedAt: user.activatedAt || null,
+      expireAt: user.expireAt || null,
+      createdAt: user.createdAt
+    });
 
-  } catch (e) {
-    res.status(401).json({ msg: "Invalid token" });
+  } catch (err) {
+    return res.status(401).json({ msg: "Invalid token" });
   }
 });
 
@@ -335,9 +428,47 @@ app.post("/api/admin/toggle", auth, async (req, res) => {
     newStatus = "active";
   }
 
-  await userRef.update({
-    status: newStatus
-  });
+  await userRef.update({ status: newStatus });
+
+  // ✅ إرسال إيميل
+  if (newStatus === "stopped") {
+    await sendEmail(
+      user.email,
+      "⛔ تم إيقاف حسابك",
+      `
+      <div style="font-family:Tajawal;padding:20px">
+        <h2 style="color:red">⛔ تم إيقاف حسابك</h2>
+        <p>مرحباً ${user.name}</p>
+
+        <div style="background:#fff3cd;padding:15px;border-radius:10px">
+          تم إيقاف حسابك مؤقتاً من الإدارة
+        </div>
+
+        <p style="margin-top:10px">
+          للتواصل معنا:
+          <a href="https://wa.me/201274445091">اضغط هنا</a>
+        </p>
+      </div>
+      `
+    );
+  }
+
+  if (newStatus === "active") {
+    await sendEmail(
+      user.email,
+      "✅ تم إعادة تفعيل حسابك",
+      `
+      <div style="font-family:Tajawal;padding:20px">
+        <h2 style="color:#16a34a">✅ تم إعادة تفعيل حسابك</h2>
+        <p>مرحباً ${user.name}</p>
+
+        <div style="background:#d1e7dd;padding:15px;border-radius:10px">
+          يمكنك الآن استخدام المنصة مرة أخرى
+        </div>
+      </div>
+      `
+    );
+  }
 
   res.json({ message: "updated", status: newStatus });
 });
