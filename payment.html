@@ -1,254 +1,625 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>الفاتورة | منصة التعليم</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>الفاتورة | منصة التعليم</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(145deg, #10172b 0%, #1e2a4a 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+    }
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
+    /* إضافة تأثير خلفية أنيق */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 40%, rgba(79, 70, 229, 0.15), transparent 70%);
+      pointer-events: none;
+    }
 
-body{
-    font-family:'Tajawal',sans-serif;
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:15px;
-}
+    /* تصميم البطاقة الرئيسية - كأنها فاتورة حقيقية */
+    .invoice-card {
+      max-width: 520px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 36px;
+      box-shadow: 0 35px 65px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      backdrop-filter: blur(0px);
+    }
 
-/* CARD */
-.card{
-    background:#fff;
-    border-radius:25px;
-    padding:25px;
-    width:100%;
-    max-width:420px;
-    box-shadow:0 25px 50px rgba(0,0,0,0.25);
-    text-align:center;
-}
+    .invoice-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 40px 75px rgba(0, 0, 0, 0.4);
+    }
 
-/* HEADER */
-.title{
-    font-size:22px;
-    font-weight:800;
-    color:#4F46E5;
-    margin-bottom:10px;
-}
+    /* رأس الفاتورة */
+    .invoice-header {
+      background: linear-gradient(120deg, #4F46E5, #7C3AED);
+      padding: 28px 24px 22px;
+      text-align: center;
+      color: white;
+    }
 
-.subtitle{
-    font-size:13px;
-    color:#64748b;
-    margin-bottom:20px;
-}
+    .invoice-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
 
-/* USER */
-.user-box{
-    background:#f1f5ff;
-    padding:12px;
-    border-radius:15px;
-    margin-bottom:20px;
-    font-weight:600;
-}
+    .invoice-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
 
-/* ROW */
-.row{
-    background:#f8fafc;
-    padding:12px;
-    border-radius:12px;
-    margin-bottom:10px;
-    font-size:14px;
-}
+    .invoice-sub {
+      font-size: 14px;
+      opacity: 0.9;
+      font-weight: 500;
+    }
 
-/* STATUS */
-.status{
-    padding:12px;
-    border-radius:12px;
-    font-weight:700;
-    margin:15px 0;
-}
+    /* محتوى الفاتورة */
+    .invoice-body {
+      padding: 24px 28px 32px;
+      background: #fff;
+    }
 
-.pending{
-    background:#fff3cd;
-    color:#856404;
-}
+    /* بطاقة المستخدم */
+    .user-section {
+      background: #F8FAFE;
+      border-radius: 24px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+      border: 1px solid #EFF3F8;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    }
 
-.active{
-    background:#d1e7dd;
-    color:#0f5132;
-}
+    .user-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #5B6E8C;
+      letter-spacing: 0.3px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-/* BUTTON */
-.btn{
-    display:block;
-    text-decoration:none;
-    padding:12px;
-    border-radius:12px;
-    margin-top:10px;
-    font-weight:700;
-    transition:0.3s;
-}
+    .user-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1E293B;
+      word-break: break-word;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-.whatsapp{
-    background:#25D366;
-    color:white;
-}
+    .badge-id {
+      background: #E6EDFC;
+      color: #4F46E5;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 40px;
+    }
 
-.login{
-    background:#4F46E5;
-    color:white;
-}
+    /* صفوف الفاتورة */
+    .invoice-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid #EDF2F7;
+    }
 
-.btn:hover{
-    transform:scale(1.03);
-}
+    .invoice-row:last-child {
+      border-bottom: none;
+    }
 
-/* LOADER */
-.loader{
-    margin-top:10px;
-    font-size:13px;
-    color:#64748b;
-}
+    .row-label {
+      font-weight: 600;
+      color: #475569;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-@media(max-width:480px){
-    .card{padding:18px}
-}
-</style>
+    .row-value {
+      font-weight: 800;
+      font-size: 18px;
+      color: #0F172A;
+    }
+
+    .transfer-number {
+      background: #F1F5F9;
+      padding: 5px 12px;
+      border-radius: 30px;
+      font-family: monospace;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    /* حالة الحساب */
+    .status-container {
+      margin: 24px 0 20px;
+    }
+
+    .status-card {
+      border-radius: 24px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .status-pending {
+      background: #FFFBEB;
+      border-right: 5px solid #F59E0B;
+      color: #B45309;
+    }
+
+    .status-active {
+      background: #ECFDF5;
+      border-right: 5px solid #10B981;
+      color: #065F46;
+    }
+
+    .status-rejected {
+      background: #FEF2F2;
+      border-right: 5px solid #EF4444;
+      color: #991B1B;
+    }
+
+    .status-stopped {
+      background: #FEFCE8;
+      border-right: 5px solid #EAB308;
+      color: #854D0E;
+    }
+
+    .status-expired {
+      background: #FFEDD5;
+      border-right: 5px solid #F97316;
+      color: #9A3412;
+    }
+
+    /* أزرار */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      padding: 14px 18px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 15px;
+      transition: all 0.25s;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-whatsapp {
+      background: #25D366;
+      color: white;
+      box-shadow: 0 4px 8px rgba(37, 211, 102, 0.2);
+    }
+
+    .btn-login {
+      background: #4F46E5;
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-warning {
+      background: #F97316;
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.03);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* مؤشر التحميل */
+    .loader-indicator {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94A3B8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #E2E8F0;
+      border-top-color: #4F46E5;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* شعار توثيق */
+    .invoice-footer {
+      text-align: center;
+      padding-top: 20px;
+      font-size: 11px;
+      color: #94A3B8;
+      border-top: 1px solid #EFF3F8;
+      margin-top: 20px;
+    }
+
+    /* استجابة كاملة */
+    @media (max-width: 560px) {
+      body {
+        padding: 16px;
+      }
+      .invoice-body {
+        padding: 20px 18px 26px;
+      }
+      .invoice-header {
+        padding: 22px 18px;
+      }
+      .invoice-title {
+        font-size: 24px;
+      }
+      .user-name {
+        font-size: 18px;
+      }
+      .row-value {
+        font-size: 16px;
+      }
+      .btn {
+        padding: 12px 16px;
+      }
+      .transfer-number {
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .invoice-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .row-value {
+        align-self: flex-start;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="card">
+<div class="invoice-card">
+  <div class="invoice-header">
+    <div class="invoice-badge">
+      📄 فاتورة إلكترونية
+    </div>
+    <div class="invoice-title">
+      فاتورة التسجيل
+    </div>
+    <div class="invoice-sub">
+      يرجى إتمام الدفع لتفعيل الحساب
+    </div>
+  </div>
 
-    <div class="title">فاتورة التسجيل</div>
-    <div class="subtitle">يرجى إتمام الدفع لتفعيل الحساب</div>
-
-    <div class="user-box">
-        👤 الاسم: <span id="userName">...</span>
+  <div class="invoice-body">
+    <!-- قسم المستخدم -->
+    <div class="user-section">
+      <div class="user-label">
+        <span>👤</span> بيانات المشترك
+      </div>
+      <div class="user-name">
+        <span id="userNameDisplay">———</span>
+        <span class="badge-id" id="userIdBadge">#ID</span>
+      </div>
     </div>
 
-    <div class="row">💰 المبلغ: <b id="price">...</b></div>
-    <div class="row">📲 رقم التحويل: <b>01274445091</b></div>
-
-    <div id="statusBox" class="status pending">
-        ⏳ جاري المراجعة
+    <!-- تفاصيل الفاتورة -->
+    <div class="invoice-row">
+      <div class="row-label">
+        <span>💰</span> المبلغ المطلوب
+      </div>
+      <div class="row-value" id="priceValue">
+        <span>٠.٠٠ جنيه</span>
+      </div>
     </div>
 
-    <a class="btn whatsapp" 
-       href="https://wa.me/201274445091" target="_blank">
-       تواصل عبر واتساب
-    </a>
+    <div class="invoice-row">
+      <div class="row-label">
+        <span>🏦</span> رقم التحويل (فودافون كاش)
+      </div>
+      <div class="row-value transfer-number">
+        01274445091
+      </div>
+    </div>
 
-    <div id="loginBtn"></div>
+    <div class="invoice-row">
+      <div class="row-label">
+        <span>🕒</span> تاريخ الفاتورة
+      </div>
+      <div class="row-value" id="invoiceDate">
+        —
+      </div>
+    </div>
 
-    <div class="loader" id="loader">جاري تحديث الحالة...</div>
+    <!-- حالة الحساب ديناميكية -->
+    <div class="status-container" id="statusContainer">
+      <div class="status-card status-pending" id="statusBox">
+        <span>⏳</span> جاري المراجعة
+      </div>
+    </div>
 
+    <!-- الأزرار الديناميكية -->
+    <div class="actions" id="dynamicButtons">
+      <a class="btn btn-whatsapp" href="https://wa.me/201274445091" target="_blank" rel="noopener noreferrer">
+        📱 تواصل عبر واتساب
+      </a>
+    </div>
+
+    <!-- مؤشر التحديث المباشر -->
+    <div class="loader-indicator" id="loaderArea">
+      <div class="spinner" id="liveSpinner"></div>
+      <span id="loaderText">جاري تحديث الحالة...</span>
+    </div>
+
+    <div class="invoice-footer">
+      هذه فاتورة رسمية صادرة عن منصة التعليم
+    </div>
+  </div>
 </div>
 
 <script>
-const token = localStorage.getItem("token");
+  (function() {
+    // 🔒 الحصول على التوكن من localStorage (حقيقي كما هو)
+    const token = localStorage.getItem("token");
 
-// لو مفيش توكن يرجعه لوجين
-if(!token){
-    window.location.href = "/login";
-}
-
-// تحميل بيانات المستخدم
-async function loadUser(){
-
-    try{
-        const res = await fetch("/api/me", {
-    headers:{
-        Authorization: "Bearer " + token
-    },
-    cache: "no-store" // 🔥 أهم سطر
-});
-
-        if(!res.ok){
-            return window.location.href = "/login";
-        }
-
-        const data = await res.json();
-
-document.getElementById("loader").style.display = "none";
-
-        // ✅ الاسم
-        document.getElementById("userName").innerText = data.name;
-
-        // ✅ السعر
-        const priceEl = document.getElementById("price");
-        priceEl.innerText = (data.price || 150) + " جنيه";
-
-        // 🔥 عرض لأول 5
-        if(data.offer){
-            priceEl.innerHTML += "عرض خاص";
-        }
-
-        const statusBox = document.getElementById("statusBox");
-        const loginBtn = document.getElementById("loginBtn");
-
-        // ================= الحالات =================
-
-        // ✅ مفعل
-        if(data.status === "active"){
-            statusBox.className = "status active";
-            statusBox.innerHTML = "✅ الحساب مفعل";
-
-            loginBtn.innerHTML = `
-                <a href="/login.html" class="btn login">
-                    تسجيل الدخول
-                </a>
-            `;
-        }
-
-        // ⏳ قيد المراجعة
-        else if(data.status === "pending"){
-            statusBox.className = "status pending";
-            statusBox.innerHTML = "⏳ الحساب قيد المراجعة";
-        }
-
-else if(data.status === "rejected"){
-    statusBox.className = "status pending";
-    statusBox.innerHTML = "❌ تم رفض الطلب";
-
-    loginBtn.innerHTML = `
-        <a href="/signin.html" class="btn login">
-            تسجيل مرة أخرى
-        </a>
-    `;
-}
-            
-        // ❌ متوقف من الأدمن
-        else if(data.status === "stopped"){
-            statusBox.className = "status pending";
-            statusBox.innerHTML = "⛔ الحساب موقوف مؤقتاً";
-        }
-
-        // ⌛ الاشتراك انتهى
-        else if(data.status === "expired"){
-            statusBox.className = "status pending";
-            statusBox.innerHTML = "⌛ الاشتراك انتهى - يرجى التجديد";
-
-            loginBtn.innerHTML = `
-                <a href="https://wa.me/201274445091" class="btn whatsapp">
-                    تجديد الاشتراك
-                </a>
-            `;
-        }
-
-    }catch(e){
-        console.log(e);
+    // التحقق من التوكن وإعادة التوجيه في حالة عدم وجوده
+    if (!token) {
+      window.location.href = "/login";
+      return;
     }
-}    
-// تحميل أول مرة
-loadUser();
 
-// تحديث كل 5 ثواني (متابعة حقيقية)
-setInterval(loadUser, 3000);
+    // عناصر DOM
+    const userNameSpan = document.getElementById("userNameDisplay");
+    const userIdBadge = document.getElementById("userIdBadge");
+    const priceSpan = document.getElementById("priceValue");
+    const statusBox = document.getElementById("statusBox");
+    const dynamicButtonsDiv = document.getElementById("dynamicButtons");
+    const loaderSpinner = document.getElementById("liveSpinner");
+    const loaderTextSpan = document.getElementById("loaderText");
+    const invoiceDateSpan = document.getElementById("invoiceDate");
+
+    // عرض التاريخ الحالي (تاريخ حقيقي للفاتورة)
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString("ar-EG", { year: 'numeric', month: 'long', day: 'numeric' });
+    if (invoiceDateSpan) invoiceDateSpan.innerText = formattedDate;
+
+    // دالة مساعدة لإخفاء/إظهار الـ loader
+    function setLoading(visible) {
+      if (loaderSpinner) loaderSpinner.style.display = visible ? "inline-block" : "none";
+      if (loaderTextSpan) {
+        loaderTextSpan.innerText = visible ? "جاري تحديث الحالة..." : "تم التحديث ✅";
+        if (!visible) {
+          setTimeout(() => {
+            if (loaderTextSpan) loaderTextSpan.innerText = "بث مباشر | متابعة الحالة";
+          }, 1800);
+        } else {
+          loaderTextSpan.innerText = "جاري تحديث الحالة...";
+        }
+      }
+    }
+
+    // دالة تحديث الواجهة بناءً على بيانات المستخدم الحقيقية (بدون بيانات تجريبية)
+    function renderUI(userData) {
+      // تعيين الاسم بالكامل
+      if (userData.name) {
+        userNameSpan.innerText = userData.name;
+      } else {
+        userNameSpan.innerText = "مستخدم المنصة";
+      }
+
+      // إظهار معرف اختياري في حالة وجود id
+      if (userData.id) {
+        userIdBadge.innerText = `#${userData.id}`;
+      } else if (userData.userId) {
+        userIdBadge.innerText = `#${userData.userId}`;
+      } else {
+        userIdBadge.innerText = "#المستخدم";
+      }
+
+      // معالجة السعر الفعلي من الـ API
+      let priceAmount = 150; // افتراضي احتياطي فقط في حال عدم إرسال السعر
+      if (userData.price !== undefined && userData.price !== null) {
+        priceAmount = userData.price;
+      } else if (userData.amount) {
+        priceAmount = userData.amount;
+      }
+      let priceText = `${priceAmount} جنيه`;
+      // في حال وجود offer (عرض خاص) من الـ API الحقيقي
+      if (userData.offer === true || userData.offer === "true" || userData.specialOffer) {
+        priceText += ` <span style="background:#FEF3C7; font-size:12px; padding:2px 10px; border-radius:30px; margin-right:6px;">🎁 عرض خاص</span>`;
+      }
+      priceSpan.innerHTML = priceText;
+
+      // الحالة الفعلية من الباك اند (active, pending, rejected, stopped, expired)
+      const userStatus = userData.status || "pending";
+      let statusClass = "status-pending";
+      let statusIcon = "⏳";
+      let statusMessage = "الحساب قيد المراجعة";
+
+      // تحديث شكل الحالة والرسالة
+      switch (userStatus) {
+        case "active":
+          statusClass = "status-active";
+          statusIcon = "✅";
+          statusMessage = "الحساب مفعل - يمكنك الدخول الآن";
+          break;
+        case "pending":
+          statusClass = "status-pending";
+          statusIcon = "⏳";
+          statusMessage = "الحساب قيد المراجعة";
+          break;
+        case "rejected":
+          statusClass = "status-rejected";
+          statusIcon = "❌";
+          statusMessage = "تم رفض الطلب";
+          break;
+        case "stopped":
+          statusClass = "status-stopped";
+          statusIcon = "⛔";
+          statusMessage = "الحساب موقوف مؤقتاً";
+          break;
+        case "expired":
+          statusClass = "status-expired";
+          statusIcon = "⌛";
+          statusMessage = "الاشتراك انتهى - يرجى التجديد";
+          break;
+        default:
+          statusClass = "status-pending";
+          statusIcon = "⏳";
+          statusMessage = "جاري المراجعة";
+      }
+
+      // تعيين الـ status box
+      statusBox.className = `status-card ${statusClass}`;
+      statusBox.innerHTML = `<span>${statusIcon}</span> ${statusMessage}`;
+
+      // بناء الأزرار ديناميكيًا (مع الاحتفاظ بواتساب الأساسي وبناء إضافات حسب الحالة)
+      let buttonsHtml = `<a class="btn btn-whatsapp" href="https://wa.me/201274445091" target="_blank" rel="noopener noreferrer">📱 تواصل عبر واتساب</a>`;
+
+      if (userStatus === "active") {
+        buttonsHtml += `<a href="/login.html" class="btn btn-login">🔐 تسجيل الدخول إلى المنصة</a>`;
+      } 
+      else if (userStatus === "rejected") {
+        buttonsHtml += `<a href="/signin.html" class="btn btn-login">📝 تسجيل مرة أخرى</a>`;
+      }
+      else if (userStatus === "expired") {
+        buttonsHtml += `<a href="https://wa.me/201274445091" class="btn btn-warning" target="_blank">💳 تجديد الاشتراك</a>`;
+      }
+      else if (userStatus === "stopped") {
+        buttonsHtml += `<a href="https://wa.me/201274445091" class="btn btn-whatsapp" target="_blank">📞 التواصل مع الدعم</a>`;
+      }
+      else if (userStatus === "pending") {
+        // لا نضيف أزرار إضافية سوى واتساب الأساسي
+        // لكن نضيف رسالة توجيهية اختيارية
+        buttonsHtml += `<div style="font-size:12px; color:#64748b; text-align:center; margin-top:6px;">⚠️ بعد الدفع، سيتم التحديث تلقائياً</div>`;
+      }
+
+      dynamicButtonsDiv.innerHTML = buttonsHtml;
+    }
+
+    // دالة جلب البيانات الحقيقية من الـ API بدون أي بيانات وهمية
+    async function loadUserData() {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/me", {
+          method: "GET",
+          headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+          },
+          cache: "no-store"
+        });
+
+        // في حال الـ response غير موافق (401/403/500..)
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            // التوكن غير صالح أو انتهى
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+            return;
+          } else {
+            // خطأ اخر ولكن نعرض رسالة مؤقتة ولا نغير التوكن
+            console.warn("API responded with status:", response.status);
+            setLoading(false);
+            // عرض رسالة احتياطية للمستخدم دون مسح بيانات حقيقية
+            userNameSpan.innerText = "خطأ في التحميل";
+            priceSpan.innerHTML = "--- جنيه";
+            dynamicButtonsDiv.innerHTML = `<a class="btn btn-whatsapp" href="https://wa.me/201274445091" target="_blank">📱 تواصل عبر واتساب</a><div style="font-size:12px;color:#e11d48; margin-top:8px;">⚠️ حدث خطأ، أعد المحاولة لاحقاً</div>`;
+            setLoading(false);
+            return;
+          }
+        }
+
+        const userData = await response.json();
+        setLoading(false);
+        // تحديث واجهة الفاتورة بناءً على البيانات الحقيقية (اسم، سعر، حالة، offer..)
+        renderUI(userData);
+      } catch (error) {
+        console.error("Fetch error:", error);
+        setLoading(false);
+        // في حالة خطأ الشبكة أو عدم الاتصال - نعرض رسالة ودية مع الاحتفاظ بالوظيفة
+        userNameSpan.innerText = "غير متاح حالياً";
+        priceSpan.innerHTML = "--- جنيه";
+        dynamicButtonsDiv.innerHTML = `<a class="btn btn-whatsapp" href="https://wa.me/201274445091" target="_blank">📱 اتصل بالدعم</a><div style="font-size:12px;color:#dc2626; margin-top:8px;">⚠️ حدث خطأ في الاتصال، سيتم التحديث تلقائياً</div>`;
+        // لا نقوم بتسجيل خروج تلقائي لأنها مشكلة شبكة مؤقتة
+      }
+    }
+
+    // تنفيذ التحميل الأول
+    loadUserData();
+
+    // تحديث دوري كل 4 ثواني لمتابعة الحالة بشكل حي (منتج حقيقي)
+    let intervalId = setInterval(() => {
+      loadUserData();
+    }, 4000);
+
+    // تنظيف الـ interval اختياري عند مغادرة الصفحة لكن ليس ضرورياً
+    window.addEventListener("beforeunload", function() {
+      if (intervalId) clearInterval(intervalId);
+    });
+  })();
 </script>
-
 </body>
 </html>
