@@ -317,7 +317,6 @@ app.get("/payment", requirePaymentAccess, (req, res) => {
 });
 
 app.get("/api/me", async (req, res) => {
-app.get("/api/me", async (req, res) => {
   const token = req.headers.authorization;
 
   if (!token) {
