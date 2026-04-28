@@ -96,37 +96,41 @@ app.post("/api/signin", async (req, res) => {
 
   const hashed = await bcrypt.hash(password, 10);
 
-const snapshot = await db.collection("teachers").get();
-const count = snapshot.size;
+  // ✅ عدد المستخدمين
+  const snapshot = await db.collection("teachers").get();
+  const count = snapshot.size;
 
-// أول 5
-let price = 150;
-let offer = false;
+  // ✅ تحديد السعر
+  let price = 150;
+  let offer = false;
 
-if (count < 5) {
-  price = 100;
-  offer = true;
-}
-  
-const docRef = await db.collection("teachers").add({
-  name,
-  email,
-  password: hashed,
-  status: "pending",
-  paid: false,
-  price,
-  offer,
-  createdAt: Date.now()
-});
+  if (count < 5) {
+    price = 100;
+    offer = true;
+  }
 
-await sendEmail(
-  email,
-  "تم استلام طلبك",
-  `
-    <h3>مرحباً ${name}</h3>
-    <p>تم استلام طلب تسجيلك، وسيتم مراجعته قريباً.</p>
-  `
-);
+  const now = Date.now();
+
+  const docRef = await db.collection("teachers").add({
+    name,
+    email,
+    password: hashed,
+    status: "pending",
+    paid: false,
+    price,
+    offer,
+    offerStart: offer ? now : null,
+    createdAt: now
+  });
+
+  await sendEmail(
+    email,
+    "تم استلام طلبك",
+    `
+      <h3>مرحباً ${name}</h3>
+      <p>تم استلام طلب تسجيلك، وسيتم مراجعته قريباً.</p>
+    `
+  );
 
   const token = jwt.sign(
     { id: docRef.id, name },
@@ -134,11 +138,8 @@ await sendEmail(
     { expiresIn: "7d" }
   );
 
-  // 📩 Telegram Notification
   await sendTelegramMessage(
-  `🆕 <b>تسجيل معلم جديد</b>\n
-    👤 الاسم: ${name}\n
-    🆔 المعرف: ${docRef.id}`
+    `🆕 <b>تسجيل معلم جديد</b>\n👤 الاسم: ${name}\n🆔 المعرف: ${docRef.id}`
   );
 
   res.json({ message: "Teacher created", token });
@@ -210,17 +211,16 @@ app.post("/api/admin/activate", auth, async (req, res) => {
 
   const user = userDoc.data();
 
-const now = Date.now();
-const month = 30 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const month = 30 * 24 * 60 * 60 * 1000;
 
-await userRef.update({
-  status: "active",
-  paid: true,
-  activatedAt: now,
-  expireAt: now + month
-});
+  await userRef.update({
+    status: "active",
+    paid: true,
+    activatedAt: now,
+    expireAt: now + month
+  });
 
-  // 📧 إرسال إيميل
   await sendEmail(
     user.email,
     "تم تفعيل حسابك",
@@ -262,7 +262,7 @@ app.post("/api/admin/reject", auth, async (req, res) => {
   res.json({ message: "Deleted" });
 });
 
-app.get("/payment", (req, res) => {
+app.get("/payment", requirePaymentAccess, (req, res) => {
   res.sendFile(path.join(__dirname, "payment.html"));
 });
 
@@ -274,16 +274,72 @@ app.get("/api/me", async (req, res) => {
   try {
     const decoded = jwt.verify(token.split(" ")[1], JWT_SECRET);
 
-    const doc = await db.collection("teachers").doc(decoded.id).get();
+    const docRef = db.collection("teachers").doc(decoded.id);
+    const doc = await docRef.get();
 
     if (!doc.exists) return res.status(404).json({ msg: "Not found" });
 
-    res.json({ id: doc.id, ...doc.data() });
+    const user = doc.data();
+
+    // ✅ انتهاء الاشتراك
+    if (user.expireAt && Date.now() > user.expireAt) {
+      await docRef.update({
+        status: "expired"
+      });
+
+      return res.json({
+        id: doc.id,
+        ...user,
+        status: "expired"
+      });
+    }
+
+    // ✅ انتهاء العرض بعد 3 شهور
+    if (user.offer && user.offerStart) {
+      const threeMonths = 90 * 24 * 60 * 60 * 1000;
+
+      if (Date.now() - user.offerStart > threeMonths) {
+        await docRef.update({
+          offer: false,
+          price: 150
+        });
+
+        user.offer = false;
+        user.price = 150;
+      }
+    }
+
+    res.json({ id: doc.id, ...user });
+
   } catch (e) {
     res.status(401).json({ msg: "Invalid token" });
   }
 });
 
+app.post("/api/admin/toggle", auth, async (req, res) => {
+  const { id } = req.body;
+
+  const userRef = db.collection("teachers").doc(id);
+  const doc = await userRef.get();
+
+  if (!doc.exists) return res.status(404).send("User not found");
+
+  const user = doc.data();
+
+  let newStatus = "active";
+
+  if (user.status === "active") {
+    newStatus = "stopped";
+  } else if (user.status === "stopped") {
+    newStatus = "active";
+  }
+
+  await userRef.update({
+    status: newStatus
+  });
+
+  res.json({ message: "updated", status: newStatus });
+});
     
 const path = require("path");
 
