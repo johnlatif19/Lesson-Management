@@ -117,6 +117,16 @@ function emailTemplate(title, message, color = "#4F46E5") {
 app.post("/api/signin", async (req, res) => {
   const { name, password, email } = req.body;
 
+  const checkName = await db.collection("teachers").where("name", "==", name).get();
+  if (!checkName.empty) {
+    return res.status(409).json({ msg: "هذا الاسم مستخدم بالفعل" });
+  }
+
+  const checkEmail = await db.collection("teachers").where("email", "==", email).get();
+  if (!checkEmail.empty) {
+    return res.status(409).json({ msg: "هذا البريد مستخدم بالفعل" });
+  }
+  
   const hashed = await bcrypt.hash(password, 10);
 
   // ✅ عدد المستخدمين
@@ -206,14 +216,31 @@ app.post("/api/login", async (req, res) => {
     }
   }
 
-  if (!user) return res.status(400).json({ msg: "User not found" });
+if (!user) {
+  return res.status(400).json({ msg: "User not found" });
+}
 
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.status(400).json({ msg: "كلمة السر غير صحيحة" });
+const match = await bcrypt.compare(password, user.password);
+if (!match) {
+  return res.status(400).json({ msg: "كلمة المرور غير صحيحة" });
+}
 
-  if (user.status !== "active") {
-    return res.status(403).json({ msg: "الحساب غير مفعل" });
-  }
+// 🔴 الحالات المختلفة
+if (user.status === "pending") {
+  return res.status(403).json({ msg: "الحساب قيد المراجعة" });
+}
+
+if (user.status === "rejected") {
+  return res.status(403).json({ msg: "تم رفض هذا الحساب" });
+}
+
+if (user.status === "stopped") {
+  return res.status(403).json({ msg: "الحساب موقوف مؤقتاً" });
+}
+
+if (user.status !== "active") {
+  return res.status(403).json({ msg: "الحساب غير مفعل" });
+}
 
 const token = jwt.sign(user, JWT_SECRET, { expiresIn: "7d" });
 res.json({ token, user });
