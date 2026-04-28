@@ -157,9 +157,8 @@ app.post("/api/login", async (req, res) => {
     return res.status(403).json({ msg: "Account not activated" });
   }
 
-  const token = jwt.sign(user, JWT_SECRET, { expiresIn: "7d" }); res.json({ token, user }); }); //
-
-  res.json({ token, user });
+const token = jwt.sign(user, JWT_SECRET, { expiresIn: "7d" });
+res.json({ token, user });
 });
 
 // ================= ADMIN =================
