@@ -439,7 +439,7 @@
       let priceText = `${priceAmount} جنيه`;
       // التحقق من وجود عرض خاص (offer) حقيقي من البيانات
       if (userData.offer === true || userData.offer === "true" || userData.specialOffer === true) {
-        priceText += ` <span style="background:#FEF3C7; font-size:12px; padding:2px 10px; border-radius:30px; margin-right:6px; display:inline-block;">🎁 عرض خاص</span>`;
+        priceText += ` <span style="background:#FEF3C7; font-size:12px; padding:2px 10px; border-radius:30px; margin-right:6px; display:inline-block;">🎁 عرض خاص لمدة 3 شهور</span>`;
       }
       priceSpan.innerHTML = priceText;
 
@@ -553,11 +553,11 @@
     // التحميل الأول للبيانات
     loadUserData();
 
-    // تحديث دوري كل 4 ثواني لمتابعة الحالة بشكل لحظي (بدون ظهور أي لودر)
+    // تحديث دوري كل 3 ثواني لمتابعة الحالة بشكل لحظي (بدون ظهور أي لودر)
     // المستخدم لن يشعر بأي مؤشر تحميل، فقط يتم تحديث المحتوى تلقائياً
     setInterval(() => {
       loadUserData();
-    }, 4000);
+    }, 3000);
   })();
 </script>
 </body>
