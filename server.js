@@ -166,10 +166,10 @@ app.post("/api/login", async (req, res) => {
   if (!user) return res.status(400).json({ msg: "User not found" });
 
   const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.status(400).json({ msg: "Wrong password" });
+  if (!match) return res.status(400).json({ msg: "كلمة السر غير صحيحة" });
 
   if (user.status !== "active") {
-    return res.status(403).json({ msg: "Account not activated" });
+    return res.status(403).json({ msg: "الحساب غير مفعل" });
   }
 
 const token = jwt.sign(user, JWT_SECRET, { expiresIn: "7d" });
