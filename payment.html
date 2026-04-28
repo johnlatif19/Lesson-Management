@@ -377,7 +377,7 @@
 
     <div class="invoice-row">
       <div class="row-label">
-        <span>🏦</span> رقم التحويل (فودافون كاش)
+        <span>🏦</span> رقم التحويل (اورنچ كاش)
       </div>
       <div class="row-value transfer-number">
         01274445091
@@ -405,12 +405,6 @@
       <a class="btn btn-whatsapp" href="https://wa.me/201274445091" target="_blank" rel="noopener noreferrer">
         📱 تواصل عبر واتساب
       </a>
-    </div>
-
-    <!-- مؤشر التحديث المباشر -->
-    <div class="loader-indicator" id="loaderArea">
-      <div class="spinner" id="liveSpinner"></div>
-      <span id="loaderText">جاري تحديث الحالة...</span>
     </div>
 
     <div class="invoice-footer">
@@ -445,22 +439,7 @@
     const formattedDate = today.toLocaleDateString("ar-EG", { year: 'numeric', month: 'long', day: 'numeric' });
     if (invoiceDateSpan) invoiceDateSpan.innerText = formattedDate;
 
-    // دالة مساعدة لإخفاء/إظهار الـ loader
-    function setLoading(visible) {
-      if (loaderSpinner) loaderSpinner.style.display = visible ? "inline-block" : "none";
-      if (loaderTextSpan) {
-        loaderTextSpan.innerText = visible ? "جاري تحديث الحالة..." : "تم التحديث ✅";
-        if (!visible) {
-          setTimeout(() => {
-            if (loaderTextSpan) loaderTextSpan.innerText = "بث مباشر | متابعة الحالة";
-          }, 1800);
-        } else {
-          loaderTextSpan.innerText = "جاري تحديث الحالة...";
-        }
-      }
-    }
 
-    // دالة تحديث الواجهة بناءً على بيانات المستخدم الحقيقية (بدون بيانات تجريبية)
     function renderUI(userData) {
       // تعيين الاسم بالكامل
       if (userData.name) {
@@ -613,7 +592,7 @@
     // تحديث دوري كل 4 ثواني لمتابعة الحالة بشكل حي (منتج حقيقي)
     let intervalId = setInterval(() => {
       loadUserData();
-    }, 4000);
+    }, 3000);
 
     // تنظيف الـ interval اختياري عند مغادرة الصفحة لكن ليس ضرورياً
     window.addEventListener("beforeunload", function() {
