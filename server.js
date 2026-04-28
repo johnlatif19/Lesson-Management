@@ -210,10 +210,15 @@ app.post("/api/admin/activate", auth, async (req, res) => {
 
   const user = userDoc.data();
 
-  await userRef.update({
-    status: "active",
-    paid: true
-  });
+const now = Date.now();
+const month = 30 * 24 * 60 * 60 * 1000;
+
+await userRef.update({
+  status: "active",
+  paid: true,
+  activatedAt: now,
+  expireAt: now + month
+});
 
   // 📧 إرسال إيميل
   await sendEmail(
