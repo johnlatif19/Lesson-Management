@@ -10,7 +10,7 @@
     { "src": "/login", "dest": "/login.html" },
     { "src": "/index", "dest": "/index.html" },
     { "src": "/admin-login", "dest": "/admin-login.html" },
-    { "src": "/signin", "dest": "/signin.html" },
+    { "src": "/signup", "dest": "/signup.html" },
     { "src": "/dashboard", "dest": "/dashboard.html" },
     { "src": "/payment", "dest": "/payment.html" },
     
