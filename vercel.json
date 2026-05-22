@@ -13,6 +13,7 @@
     { "src": "/signup", "dest": "/signup.html" },
     { "src": "/dashboard", "dest": "/dashboard.html" },
     { "src": "/payment", "dest": "/payment.html" },
+    { "src": "/privacy-policy", "dest": "/privacy-policy.html" },
     
     
     { "src": "/", "dest": "/login.html" }
